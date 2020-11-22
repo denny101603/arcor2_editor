@@ -18,6 +18,10 @@ public class ControlBoxManager : Singleton<ControlBoxManager> {
     public Toggle RotateToggle;
     public Toggle TrackablesToggle;
     public Toggle ConnectionsToggle;
+    public Toggle VRModeToggle;
+    public Toggle CalibrationElementsToggle;
+
+    private ManualTooltip calibrationElementsTooltip;
 
     private bool useGizmoMove = false;
     public bool UseGizmoMove {
@@ -54,9 +58,56 @@ public class ControlBoxManager : Singleton<ControlBoxManager> {
         RotateToggle.isOn = PlayerPrefsHelper.LoadBool("control_box_gizmo_rotate", false);
 #if UNITY_ANDROID && !UNITY_EDITOR
         TrackablesToggle.isOn = PlayerPrefsHelper.LoadBool("control_box_display_trackables", false);
+        CalibrationElementsToggle.interactable = false;
+        CalibrationElementsToggle.isOn = true;
+        calibrationElementsTooltip = CalibrationElementsToggle.GetComponent<ManualTooltip>();
+        calibrationElementsTooltip.ShowAlternativeDescription();
 #endif
         ConnectionsToggle.isOn = PlayerPrefsHelper.LoadBool("control_box_display_connections", true);
         GameManager.Instance.OnGameStateChanged += GameStateChanged;
+    }
+
+
+    private void OnEnable() {
+        CalibrationManager.Instance.OnARCalibrated += OnARCalibrated;
+        CalibrationManager.Instance.OnARRecalibrate += OnARRecalibrate;
+    }
+
+    private void OnDisable() {
+        CalibrationManager.Instance.OnARCalibrated -= OnARCalibrated;
+        CalibrationManager.Instance.OnARRecalibrate -= OnARRecalibrate;
+    }
+
+    /// <summary>
+    /// Triggered when the system calibrates = anchor is created (either when user clicks on calibration cube or when system loads the cloud anchor).
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    private void OnARCalibrated(object sender, GameObjectEventArgs args) {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        // Activate toggle to enable hiding/displaying calibration cube
+        CalibrationElementsToggle.interactable = true;
+        calibrationElementsTooltip.ShowDefaultDescription();
+#endif
+    }
+
+
+    private void OnARRecalibrate(object sender, EventArgs args) {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        // Disactivate toggle to disable hiding/displaying calibration cube
+        CalibrationElementsToggle.interactable = false;
+        calibrationElementsTooltip.ShowAlternativeDescription();
+#endif
+    }
+
+
+    /// <summary>
+    /// Called when the user tries to click on the show/hide toggle before the system is calibrated.
+    /// </summary>
+    public void OnCalibrationElementsToggleClick() {
+        if (!CalibrationManager.Instance.Calibrated) {
+            Notifications.Instance.ShowNotification("System is not calibrated", "Please locate the visual marker, wait for the calibration cube to show up and click on it, in order to calibrate the system");
+        }
     }
 
     private void GameStateChanged(object sender, GameStateEventArgs args) {
@@ -86,10 +137,23 @@ public class ControlBoxManager : Singleton<ControlBoxManager> {
 
     public void DisplayTrackables(bool active) {
 #if UNITY_ANDROID && !UNITY_EDITOR
-        TrackingManager.Instance.DisplayPlanesAndFeatures(active);
+        TrackingManager.Instance.DisplayPlanesAndPointClouds(active);
 #endif
     }
 
+    public void DisplayCalibrationElements(bool active) {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        CalibrationManager.Instance.ActivateCalibrationElements(active);
+#endif
+    }
+
+    public void ToggleVRMode(bool active) {
+        if (active) {
+            VRModeManager.Instance.EnableVRMode();
+        } else {
+            VRModeManager.Instance.DisableVRMode();
+        }
+    }
 
     public void ShowActionObjectSettingsMenu() {
         MenuManager.Instance.ShowMenu(MenuManager.Instance.ActionObjectSettingsMenu);
@@ -109,14 +173,13 @@ public class ControlBoxManager : Singleton<ControlBoxManager> {
     }
 
     public async void CreateGlobalActionPoint(string name) {
-        Vector3 abovePoint = SceneManager.Instance.GetCollisionFreePointAbove(SceneManager.Instance.SceneOrigin.transform.InverseTransformPoint(ProjectManager.Instance.ActionPointsOrigin.transform.position));
+       Vector3 abovePoint = SceneManager.Instance.GetCollisionFreePointAbove(SceneManager.Instance.SceneOrigin.transform, Vector3.one * 0.1f, Quaternion.identity);
         IO.Swagger.Model.Position offset = DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(abovePoint)); 
 
         bool result = await GameManager.Instance.AddActionPoint(name, "", offset);
         if (result)
             InputDialog.Close();
     }
-
     
     private void OnDestroy() {
         PlayerPrefsHelper.SaveBool("control_box_gizmo_move", MoveToggle.isOn);

@@ -6,18 +6,17 @@ using Michsky.UI.ModernUIPack;
 
 public class ServiceButton : MonoBehaviour
 {
-    //public string Type;
-    public IO.Swagger.Model.ServiceTypeMeta ServiceMetadata;
+   
     public GameObject Yes, No;
     private bool state;
     [SerializeField]
-    private Button button;
+    private ActionButton button;
     [SerializeField]
     private TooltipContent tooltipContent;
 
     private void Start() {
-        tooltipContent.tooltipRect = TooltipRef.Instance.Tooltip;
-        tooltipContent.descriptionText = TooltipRef.Instance.Text;
+        //tooltipContent.tooltipRect = TooltipRef.Instance.Tooltip;
+        //tooltipContent.descriptionText = TooltipRef.Instance.Text;
     }
 
     public bool State {
@@ -33,7 +32,7 @@ public class ServiceButton : MonoBehaviour
             }
         }
     }
-
+    /*
     public void SetInteractable(bool interactable) {
         button.interactable = interactable;
         if (!interactable) {
@@ -43,5 +42,6 @@ public class ServiceButton : MonoBehaviour
             tooltipContent.enabled = false;
         }
     }
-
+    */
 }
+

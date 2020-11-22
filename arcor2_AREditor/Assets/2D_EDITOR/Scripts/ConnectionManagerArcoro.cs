@@ -1,112 +1,74 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Base;
 using UnityEngine;
 
 public class ConnectionManagerArcoro : Base.Singleton<ConnectionManagerArcoro> {
 
-    public GameObject ConnectionPrefab, CameraManager;
+    public GameObject ConnectionPrefab;
     public List<Connection> Connections = new List<Connection>();
     private Connection virtualConnectionToMouse;
     private GameObject virtualPointer;
+    [SerializeField]
+    private Material EnabledMaterial, DisabledMaterial;
 
-    public bool ConnectionsActive = true;
-
-    // Start is called before the first frame update
     private void Start() {
-        virtualPointer = CameraManager.GetComponent<Base.VirtualConnection>().VirtualPointer;
-
-        Base.GameManager.Instance.OnCloseProject += OnCloseProject;
-    }
-
-    // Update is called once per frame
-    private void Update() {
+        virtualPointer = VirtualConnectionOnTouch.Instance.VirtualPointer;
 
     }
+
 
     public Connection CreateConnection(GameObject o1, GameObject o2) {
-        if (!ConnectionsActive)
-            return null;
-        GameObject c = Instantiate(ConnectionPrefab);
+        Connection c = Instantiate(ConnectionPrefab).GetComponent<Connection>();
         c.transform.SetParent(transform);
         // Set correct targets. Output has to be always at 0 index, because we are connecting output to input.
         // Output has direction to the east, while input has direction to the west.
         if (o1.GetComponent<Base.InputOutput>().GetType() == typeof(Base.PuckOutput)) {
-            c.GetComponent<Connection>().target[0] = o1.GetComponent<RectTransform>();
-            c.GetComponent<Connection>().target[1] = o2.GetComponent<RectTransform>();
+            c.target[0] = o1.GetComponent<RectTransform>();
+            c.target[1] = o2.GetComponent<RectTransform>();
         } else {
-            c.GetComponent<Connection>().target[1] = o1.GetComponent<RectTransform>();
-            c.GetComponent<Connection>().target[0] = o2.GetComponent<RectTransform>();
+            c.target[1] = o1.GetComponent<RectTransform>();
+            c.target[0] = o2.GetComponent<RectTransform>();
         }
-        Connections.Add(c.GetComponent<Connection>());
-        return c.GetComponent<Connection>();
-    }
-
-    public Connection CreateConnectionToPointer(GameObject o) {
-        if (!ConnectionsActive)
-            return null;
-        if (virtualConnectionToMouse != null)
-            Destroy(virtualConnectionToMouse.gameObject);
-        CameraManager.GetComponent<Base.VirtualConnection>().DrawVirtualConnection = true;
-        virtualConnectionToMouse = CreateConnection(o, virtualPointer);
-
-        return virtualConnectionToMouse;
-    }
-
-    public void DestroyConnectionToMouse() {
-        if (!ConnectionsActive)
-            return;
-        int i = GetIndexByType(virtualConnectionToMouse, typeof(Base.InputOutput));
-        if (i >= 0) {
-            virtualConnectionToMouse.target[i].GetComponent<Base.InputOutput>().Connection = null;
-            virtualConnectionToMouse.target[i].GetComponent<Base.InputOutput>().InitData();
-        }
-        Destroy(virtualConnectionToMouse.gameObject);
-        Connections.Remove(virtualConnectionToMouse);
-        CameraManager.GetComponent<Base.VirtualConnection>().DrawVirtualConnection = false;
-    }
-
-    public Connection ConnectVirtualConnectionToObject(GameObject o) {
-        if (!ConnectionsActive)
-            return null;
-        if (virtualConnectionToMouse == null)
-            return null;
-
-
-        int i = GetIndexOf(virtualConnectionToMouse, virtualPointer);
-        if (i < 0) {
-            return null;
-        }
-        if (virtualConnectionToMouse.target[1 - i].gameObject.GetComponent<Base.InputOutput>().GetType() != o.GetComponent<Base.InputOutput>().GetType()) {
-            virtualConnectionToMouse.target[i] = o.GetComponent<RectTransform>();
-        } else {
-            return null;
-        }
-        Connection c = virtualConnectionToMouse;
-        virtualConnectionToMouse = null;
-        CameraManager.GetComponent<Base.VirtualConnection>().DrawVirtualConnection = false;
+        Connections.Add(c);
+        if (!ControlBoxManager.Instance.ConnectionsToggle.isOn)
+            c.gameObject.SetActive(false);
+        
         return c;
     }
 
-    public Connection AttachConnectionToPointer(Connection c, GameObject o) {
-        if (!ConnectionsActive)
-            return null;
-        int i = GetIndexOf(c, o);
-        if (i < 0)
-            return null;
-        c.target[i] = virtualPointer.GetComponent<RectTransform>();
-        o.GetComponent<Base.InputOutput>().Connection = null;
-        o.GetComponent<Base.InputOutput>().InitData();
-        virtualConnectionToMouse = c;
-        CameraManager.GetComponent<Base.VirtualConnection>().DrawVirtualConnection = true;
-        return virtualConnectionToMouse;
+    public void CreateConnectionToPointer(GameObject o) {
+        if (virtualConnectionToMouse != null)
+            Destroy(virtualConnectionToMouse.gameObject);
+        VirtualConnectionOnTouch.Instance.DrawVirtualConnection = true;
+        virtualConnectionToMouse = CreateConnection(o, virtualPointer);
+    }
+
+    public void DestroyConnectionToMouse() {
+        Destroy(virtualConnectionToMouse.gameObject);
+        Connections.Remove(virtualConnectionToMouse);
+        VirtualConnectionOnTouch.Instance.DrawVirtualConnection = false;
     }
 
     public bool IsConnecting() {
         return virtualConnectionToMouse != null;
     }
 
-    public Connection GetVirtualConnectionToMouse() {
-        return virtualConnectionToMouse;
+    public Base.Action GetActionConnectedToPointer() {
+        Debug.Assert(virtualConnectionToMouse != null);
+        GameObject obj = GetConnectedTo(virtualConnectionToMouse, virtualPointer);
+        return obj.GetComponent<InputOutput>().Action;
+    }
+
+    public GameObject GetConnectedToPointer() {
+        Debug.Assert(virtualConnectionToMouse != null);
+        return GetConnectedTo(virtualConnectionToMouse, virtualPointer);
+    }
+
+     public Base.Action GetActionConnectedTo(Connection c, GameObject o) {        
+        return GetConnectedTo(c, o).GetComponent<InputOutput>().Action;
     }
 
     private int GetIndexOf(Connection c, GameObject o) {
@@ -150,9 +112,24 @@ public class ConnectionManagerArcoro : Base.Singleton<ConnectionManagerArcoro> {
         return input + output == 1;
     }
 
-    private void OnCloseProject(object sender, EventArgs e) {
+    public async Task<bool> ValidateConnection(InputOutput output, InputOutput input) {
+        string[] startEnd = new[] { "START", "END" };
+        if (output.GetType() == input.GetType() ||
+            output.Action.Data.Id.Equals(input.Action.Data.Id) ||
+            (startEnd.Contains(output.Action.Data.Id) && startEnd.Contains(input.Action.Data.Id))) {
+            return false;
+        }
+        try {
+            await WebsocketManager.Instance.AddLogicItem(output.Action.Data.Id, input.Action.Data.Id, true);
+        } catch (RequestFailedException) {
+            return false;
+        }
+        return true;
+    }
+
+    public void Clear() {
         foreach (Connection c in Connections) {
-            if (c.gameObject != null) {
+            if (c != null && c.gameObject != null) {
                 Destroy(c.gameObject);
             }
         }
@@ -163,7 +140,16 @@ public class ConnectionManagerArcoro : Base.Singleton<ConnectionManagerArcoro> {
         foreach (Connection connection in Connections) {
             connection.gameObject.SetActive(active);
         }
-        ConnectionsActive = active;
+    }
+
+    public void DisableConnectionToMouse() {
+        if (virtualConnectionToMouse != null)
+            virtualConnectionToMouse.GetComponent<LineRenderer>().material = DisabledMaterial;
+    }
+
+    public void EnableConnectionToMouse() {
+        if (virtualConnectionToMouse != null)
+            virtualConnectionToMouse.GetComponent<LineRenderer>().material = EnabledMaterial;
     }
 
 }

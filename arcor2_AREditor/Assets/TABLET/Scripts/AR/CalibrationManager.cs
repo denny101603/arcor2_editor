@@ -9,6 +9,7 @@ using UnityEngine.XR.ARSubsystems;
 using Google.XR.ARCoreExtensions;
 #endif
 
+
 public class CalibrationManager : Singleton<CalibrationManager> {
 
     public ARAnchorManager ARAnchorManager;
@@ -16,9 +17,13 @@ public class CalibrationManager : Singleton<CalibrationManager> {
     public ARRaycastManager ARRaycastManager;
     public ARTrackedImageManager ARTrackedImageManager;
     public ARPointCloudManager ARPointCloudManager;
+    public Transform ARCamera;
     public GameObject WorldAnchorPrefab;
 
     public VideoPlayerImage TrackingLostAnimation;
+
+    [HideInInspector]
+    public bool UsingCloudAnchors = false;
 
     [HideInInspector]
     public ARAnchor WorldAnchorLocal;
@@ -31,7 +36,14 @@ public class CalibrationManager : Singleton<CalibrationManager> {
     [HideInInspector]
     public bool Calibrated = false;
 
+    public delegate void ARCalibratedEventHandler(object sender, GameObjectEventArgs args);
+    public event ARCalibratedEventHandler OnARCalibrated;
+
+    public delegate void ARRecalibrateEventHandler(object sender, EventArgs args);
+    public event ARRecalibrateEventHandler OnARRecalibrate;
+
     private bool activateTrackableMarkers = false;
+    private GameObject worldAnchorVis;
 
 #if UNITY_STANDALONE || UNITY_EDITOR
     private void Start() {
@@ -84,6 +96,11 @@ public class CalibrationManager : Singleton<CalibrationManager> {
                 StartCoroutine(HostCloudAnchor());
             } else {
                 Calibrated = true;
+                UsingCloudAnchors = false;
+                OnARCalibrated?.Invoke(this, new GameObjectEventArgs(WorldAnchorLocal.gameObject));
+                Notifications.Instance.ShowNotification("Calibration successful", "");
+                worldAnchorVis = null;
+                ActivateCalibrationElements(ControlBoxManager.Instance.CalibrationElementsToggle.isOn);
             }
 
             GameManager.Instance.Scene.SetActive(true);
@@ -104,6 +121,7 @@ public class CalibrationManager : Singleton<CalibrationManager> {
         HideCurrentWorldAnchor();
         ActivateTrackableMarkers(true);
         Calibrated = false;
+        OnARRecalibrate(this, new EventArgs());
         GameManager.Instance.Scene.SetActive(false);
 #endif
     }
@@ -120,7 +138,7 @@ public class CalibrationManager : Singleton<CalibrationManager> {
             PlayerPrefs.Save();
 
             // create new calibration cube representing cloud anchor and attach scene to it
-            GameObject worldAnchorVis = Instantiate(WorldAnchorPrefab, Vector3.zero, Quaternion.identity);
+            worldAnchorVis = Instantiate(WorldAnchorPrefab, Vector3.zero, Quaternion.identity);
             worldAnchorVis.transform.SetParent(WorldAnchorCloud.transform, false);
             AttachScene(WorldAnchorCloud.gameObject);
 
@@ -130,6 +148,10 @@ public class CalibrationManager : Singleton<CalibrationManager> {
             Notifications.Instance.ShowNotification("Cloud anchor created", WorldAnchorCloud.cloudAnchorState.ToString() + " ID: " + WorldAnchorCloud.cloudAnchorId);
 
             Calibrated = true;
+            UsingCloudAnchors = true;
+            OnARCalibrated?.Invoke(this, new GameObjectEventArgs(WorldAnchorCloud.gameObject));
+            Notifications.Instance.ShowNotification("Calibration successful", "");
+            ActivateCalibrationElements(ControlBoxManager.Instance.CalibrationElementsToggle.isOn);
             GameManager.Instance.Scene.SetActive(true);
         } else {
             Notifications.Instance.ShowNotification("Cloud anchor error", WorldAnchorCloud.cloudAnchorState.ToString());
@@ -214,7 +236,7 @@ public class CalibrationManager : Singleton<CalibrationManager> {
                 // if anchor exist in the cloud, wait for it to be fully loaded
                 yield return new WaitUntil(() => WorldAnchorCloud.cloudAnchorState == CloudAnchorState.Success);
 
-                GameObject worldAnchorVis = Instantiate(WorldAnchorPrefab, Vector3.zero, Quaternion.identity);
+                worldAnchorVis = Instantiate(WorldAnchorPrefab, Vector3.zero, Quaternion.identity);
                 worldAnchorVis.transform.SetParent(WorldAnchorCloud.transform, false);
                 AttachScene(WorldAnchorCloud.gameObject);
 
@@ -224,6 +246,9 @@ public class CalibrationManager : Singleton<CalibrationManager> {
                 Notifications.Instance.ShowNotification("Cloud anchor loaded", "Cloud anchor loaded sucessfully");
 
                 Calibrated = true;
+                UsingCloudAnchors = true;
+                OnARCalibrated?.Invoke(this, new GameObjectEventArgs(WorldAnchorCloud.gameObject));
+                Notifications.Instance.ShowNotification("Calibration successful", "");
                 GameManager.Instance.Scene.SetActive(true);
             }
             //TODO If anchor is not present in the system, play animation to manually calibrate by clicking on marker
@@ -256,9 +281,30 @@ public class CalibrationManager : Singleton<CalibrationManager> {
     private void ActivateTrackableMarkers(bool active) {
         activateTrackableMarkers = active;
         foreach (ARTrackedImage trackedImg in ARTrackedImageManager.trackables) {
-            trackedImg.gameObject.SetActive(active);
+            // Control if camera is 5 cm from the marker cube, if so clip the cube and don't display it.
+            // Fixes the situation when user detects the marker but won't click on it, when he closes the scene and reopens,
+            // marker cube stays positioned at the camera position (transforms should be the same).
+            if (Vector3.Distance(trackedImg.transform.position, ARCamera.position) <= 0.05f) {
+                trackedImg.gameObject.SetActive(false);
+            } else {
+                trackedImg.gameObject.SetActive(active);
+            }
         }
     }
-    
+
+    public void ActivateCalibrationElements(bool active) {
+        if (worldAnchorVis == null) {
+            foreach (Transform child in WorldAnchorLocal.transform) {
+                if (child.tag == "world_anchor") {
+                    worldAnchorVis = child.gameObject;
+                    break;
+                }
+            }
+        }
+
+        if (worldAnchorVis != null) {
+            worldAnchorVis.SetActive(active);
+        }
+    }
 #endif
 }

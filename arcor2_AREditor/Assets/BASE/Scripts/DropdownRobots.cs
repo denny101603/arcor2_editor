@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using Michsky.UI.ModernUIPack;
 using System.Linq;
+using System.Threading.Tasks;
+using Base;
 
 public class DropdownRobots : MonoBehaviour
 {
@@ -13,19 +15,25 @@ public class DropdownRobots : MonoBehaviour
     /// Initialize dropdown with list of robots in scene
     /// </summary>
     /// <param name="callback">Function to call when item is selected. Will pass robot_id</param>
-    /// <param name="withEEOnly">Only puts robots with at lease one end effector</param>
-    public void Init(UnityAction<string> callback, bool withEEOnly) {
+    /// <param name="withEEOnly">Only puts robots with at least one end effector</param>
+    public async Task Init(UnityAction<string> callback, bool withEEOnly) {
         List<string> robotNames = new List<string>();
-        foreach (IRobot robot in Base.SceneManager.Instance.GetRobots()) {
-            List<string> endEffectors = robot.GetEndEffectors();
-            if (withEEOnly) {
+
+        if (!withEEOnly) {
+            foreach (IRobot robot in Base.SceneManager.Instance.GetRobots()) {
+                robotNames.Add(robot.GetName());
+            }
+        } else if (withEEOnly && SceneManager.Instance.SceneStarted) {
+            foreach (IRobot robot in Base.SceneManager.Instance.GetRobots()) {
+                List<string> endEffectors = await robot.GetEndEffectorIds();
                 if (endEffectors.Count > 0) {
                     robotNames.Add(robot.GetName());
                 }
-            } else {
-                robotNames.Add(robot.GetName());
-            }            
+            }
+        } else {
+            return;
         }
+
         Init(robotNames, callback);
     }
 
