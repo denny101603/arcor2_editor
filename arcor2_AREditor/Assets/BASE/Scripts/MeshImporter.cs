@@ -21,14 +21,27 @@ public class MeshImporter : Singleton<MeshImporter> {
     private Dictionary<string, bool> meshSources = new Dictionary<string, bool>();
 
     /// <summary>
+    /// Content: MeshID, action object ID
+    /// After downloading a mesh file all meshes stored here are imported
+    /// </summary>
+    private Dictionary<string, string> meshesToImport = new Dictionary<string, string>();
+
+    /// <summary>
     /// Loads mesh - takes care of downloading, updating and importing mesh
     /// </summary>
     /// <param name="mesh"></param>
     /// <param name="aoId">ID of action object which is asociated with the mesh</param>
     public void LoadModel(IO.Swagger.Model.Mesh mesh, string aoId) {
-        if(CheckIfNewerRobotModelExists(mesh.Id, mesh.Uri))
-            StartCoroutine(DownloadMesh(mesh.Id, mesh.Uri, aoId));
-        ImportMesh(string.Format("{0}/meshes/{1}/{1}", Application.persistentDataPath, mesh.Id), aoId);
+        if (CheckIfNewerRobotModelExists(mesh.Id, mesh.Uri)) {
+            meshesToImport.Add(aoId, mesh.Id);
+            StartCoroutine(DownloadMesh(mesh.Id, mesh.Uri, aoId)); //downloads + imports mesh
+        } else {
+            if (CanReadMeshFile(mesh.Id)) {
+                ImportMesh(GetPathToMesh(mesh.Id), aoId);
+            } else { // mesh is just being downloaded
+                meshesToImport.Add(aoId, mesh.Id);
+            }
+        }
     }
 
     /// <summary>
@@ -39,18 +52,23 @@ public class MeshImporter : Singleton<MeshImporter> {
     /// <param name="aoId">ID of action object which is asociated with mesh</param>
     /// <returns></returns>
     private void ImportMesh(string path, string aoId) {
+        Debug.LogError("importing mesh path: " + path);
 
-        GameObject loadedObject = new GameObject("ImportedMeshObject");
 
         if (Path.GetExtension(path).ToLower() == ".dae") {
-        Debug.LogError("importing dae mesh name: " + path);
             StreamReader reader = File.OpenText(path);
             string daeFile = reader.ReadToEnd();
+            GameObject loadedObject = new GameObject("ImportedMesh");
 
             // Requires Simple Collada asset from Unity Asset Store: https://assetstore.unity.com/packages/tools/input-management/simple-collada-19579
             // Supports: DAE
+            //var go = ColladaImporter.Import(daeFile);
+            //OnMeshImported?.Invoke(this, new ImportedMeshEventArgs(go, aoId));
             StartCoroutine(ColladaImporter.Instance.ImportAsync(daeFile, Quaternion.identity, Vector3.one, Vector3.zero,
-                onModelImported: delegate (GameObject loadedGameObject) { OnMeshImported?.Invoke(this, new ImportedMeshEventArgs(loadedGameObject, aoId));}));
+                onMImported: delegate (GameObject loadedGameObject) {
+                    OnMeshImported?.Invoke(this, new ImportedMeshEventArgs(loadedGameObject, aoId));
+                },
+                includeEmptyNodes: true, wrapperGameObject: loadedObject));
 
         } else {
             // Requires Trilib 2 asset from Unity Asset Store: https://assetstore.unity.com/packages/tools/modeling/trilib-2-model-loading-package-157548
@@ -94,7 +112,7 @@ public class MeshImporter : Singleton<MeshImporter> {
                     }
                     try {
                         ZipFile.ExtractToDirectory(savePath, meshUnzipDirectory);
-                        OnMeshDownloaded(meshUnzipDirectory, meshId, aoId);
+                        OnMeshDownloaded(meshId);
                     } catch (Exception ex) when (ex is ArgumentException ||
                                                     ex is ArgumentNullException ||
                                                     ex is DirectoryNotFoundException ||
@@ -107,7 +125,7 @@ public class MeshImporter : Singleton<MeshImporter> {
                         Notifications.Instance.ShowNotification("Failed to extract mesh", "");
                     }
                 } else { //not *.zip
-                    OnMeshDownloaded(meshId, savePath, aoId);
+                    OnMeshDownloaded(meshId);
                 }
             }
         }
@@ -116,37 +134,58 @@ public class MeshImporter : Singleton<MeshImporter> {
     }
 
     /// <summary>
-    /// 
+    /// imports mesh for all action objects, which need it
+    /// Uses meshesToImport dictionary
     /// </summary>
     /// <param name="meshID"></param>
-    /// <param name="path">Full path to mesh, except zip files - then it is path to extracted directory</param>
-    /// <param name="aoId">Id of action object which is asociated with mesh</param>
-    private void OnMeshDownloaded(string meshID, string path, string aoId) {
-        if (Path.GetExtension(path).ToLower() == ".zip") {
-            //todo find the object file
-        } else {
-            ImportMesh(path, aoId);
+    private void OnMeshDownloaded(string meshID) {
+        meshSources[meshID] = false; //not downloading anymore
+        List<string> toRemove = new List<string>();
+
+        foreach (KeyValuePair<string, string> toImport in meshesToImport) {
+            if (toImport.Value != meshID)
+                continue;
+
+            toRemove.Add(toImport.Key);
+            string path = GetPathToMesh(meshID);
+            if (Path.GetExtension(path).ToLower() == ".zip") {
+                try {
+                    ImportMesh(GetPathToMesh(meshID), toImport.Key);
+                } catch (FileNotFoundException ex) {
+                    OnModelLoadError(ex.Message);
+                }
+            } else {
+                ImportMesh(path, toImport.Key);
+            }
+        }
+
+        foreach (var aoid in toRemove) {
+            meshesToImport.Remove(aoid);
         }
     }
 
     private string GetPathToMesh(string meshId) {
         if (Path.GetExtension(meshId).ToLower() == ".zip") {
             string path = string.Format("{0}/meshes/{1}/mesh/", Application.persistentDataPath, meshId);
-            string[] extensions = { "dae", "fbx", "obj", "gltf2", "stl", "ply", "3mf"};
+            string[] extensions = { "fbx", "dae", "obj", "gltf2", "stl", "ply", "3mf" };
             string[] files = { };
             foreach (var extension in extensions) {
                 files = System.IO.Directory.GetFiles(path, "*." + extension);
                 if (files.Length > 0)
                     return files[0];
             }
-            throw new FileNotFoundException();
-        } else {
+            throw new FileNotFoundException("Not found mesh file with a known extension.");
+        } else { //not .zip
             return string.Format("{0}/meshes/{1}/{1}", Application.persistentDataPath, meshId);
         }
     }
 
     private void OnModelLoadError(IContextualizedError obj) {
         Notifications.Instance.ShowNotification("Unable to show mesh ", obj.GetInnerException().Message);
+    }
+
+    private void OnModelLoadError(string message) {
+        Notifications.Instance.ShowNotification("Unable to show mesh ", message);
     }
 
     /// <summary>
@@ -159,6 +198,9 @@ public class MeshImporter : Singleton<MeshImporter> {
     /// <returns></returns>
     public bool CheckIfNewerRobotModelExists(string meshId, string uri) {
         Debug.LogError("mesh: Checking if newer  mesh exists " + meshId);
+        if (string.IsNullOrEmpty(uri)) {
+            return false;
+        }
 
         FileInfo meshFileInfo = new FileInfo(Application.persistentDataPath + "/meshes/" + meshId + "/" + meshId);
         if (!meshFileInfo.Exists) {
@@ -173,6 +215,7 @@ public class MeshImporter : Singleton<MeshImporter> {
         HttpWebResponse httpWebResponse = (HttpWebResponse) httpWebRequest.GetResponse();
 
         // t1 is earlier than t2 --> newer version of urdf is present on the server
+        //Debug.LogError("zip: " + downloadedZipLastModified + " http lastmodified: " + httpWebResponse.LastModified);
         if (DateTime.Compare(downloadedZipLastModified, httpWebResponse.LastModified) < 0) {
             Debug.LogError("mesh: Newer version is present on the server.");
             httpWebResponse.Close();
@@ -208,6 +251,14 @@ public class MeshImporter : Singleton<MeshImporter> {
             return true;
         }
     }
+
+    private bool CanReadMeshFile(string meshId) {
+        if (meshSources.TryGetValue(meshId, out bool downloadInProgress)) {
+            return !downloadInProgress;
+        } else {
+            return true;
+        }
+    }
 }
 
 
@@ -222,13 +273,13 @@ public class ImportedMeshEventArgs : EventArgs {
         get; set;
     }
 
-    public string Name {
+    public string aoId {
         get;set;
     }
 
     public ImportedMeshEventArgs(GameObject gameObject, string name) {
         RootGameObject = gameObject;
-        Name = name;
+        aoId = name;
     }
 }
 

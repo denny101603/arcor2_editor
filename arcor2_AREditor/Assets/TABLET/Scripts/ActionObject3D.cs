@@ -334,14 +334,16 @@ public class ActionObject3D : ActionObject {
     /// </summary>
     /// <param name="assetLoaderContext"></param>
     public void OnModelLoaded(object sender, ImportedMeshEventArgs args) {
-        if (args.Name != this.GetId())
+        if (args.aoId != this.GetId())
             return;
+        Debug.LogError("onmodelLoaded for " + GetName() + " ao with ID: " + args.aoId);
         Model.SetActive(false);
         Destroy(Model);
         Model = args.RootGameObject;
 
         Model.gameObject.transform.parent = Visual.transform;
         Model.gameObject.transform.localPosition = Vector3.zero;
+        
 
         gameObject.GetComponent<BindParentToChild>().ChildToBind = Model;
         Model.AddComponent<GizmoOutlineHandler>().OutlineOnClick = outlineOnClick;
