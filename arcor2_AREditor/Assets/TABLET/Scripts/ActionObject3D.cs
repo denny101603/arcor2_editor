@@ -336,14 +336,19 @@ public class ActionObject3D : ActionObject {
     public void OnModelLoaded(object sender, ImportedMeshEventArgs args) {
         if (args.aoId != this.GetId())
             return;
-        Debug.LogError("onmodelLoaded for " + GetName() + " ao with ID: " + args.aoId);
+
+        Quaternion rotation_backup = Model.transform.rotation;
+        
+
+        Debug.LogError("onmodelLoaded for " + GetName() + " ao with ID: " + args.aoId + " wrappername: " + args.RootGameObject.gameObject.name);
         Model.SetActive(false);
         Destroy(Model);
+
         Model = args.RootGameObject;
 
         Model.gameObject.transform.parent = Visual.transform;
         Model.gameObject.transform.localPosition = Vector3.zero;
-        
+        Model.gameObject.transform.localRotation = TransformConvertor.ROSToUnity(rotation_backup);
 
         gameObject.GetComponent<BindParentToChild>().ChildToBind = Model;
         Model.AddComponent<GizmoOutlineHandler>().OutlineOnClick = outlineOnClick;
