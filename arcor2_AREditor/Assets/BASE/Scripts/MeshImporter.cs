@@ -32,7 +32,7 @@ public class MeshImporter : Singleton<MeshImporter> {
     /// <param name="mesh"></param>
     /// <param name="aoId">ID of action object which is asociated with the mesh</param>
     public void LoadModel(IO.Swagger.Model.Mesh mesh, string aoId) {
-        if (CheckIfNewerRobotModelExists(mesh.Id, mesh.Uri)) {
+        if (CheckIfNewerMeshExists(mesh.Id, mesh.Uri)) {
             meshesToImport.Add(aoId, mesh.Id);
             StartCoroutine(DownloadMesh(mesh.Id, mesh.Uri, aoId)); //downloads + imports mesh
         } else {
@@ -56,19 +56,24 @@ public class MeshImporter : Singleton<MeshImporter> {
 
 
         if (Path.GetExtension(path).ToLower() == ".dae") {
-            StreamReader reader = File.OpenText(path);
-            string daeFile = reader.ReadToEnd();
-            GameObject loadedObject = new GameObject("ImportedMesh");
+            try {
+                StreamReader reader = File.OpenText(path);
+                string daeFile = reader.ReadToEnd();
+                GameObject loadedObject = new GameObject("ImportedMesh");
 
-            // Requires Simple Collada asset from Unity Asset Store: https://assetstore.unity.com/packages/tools/input-management/simple-collada-19579
-            // Supports: DAE
-            //var go = ColladaImporter.Import(daeFile);
-            //OnMeshImported?.Invoke(this, new ImportedMeshEventArgs(go, aoId));
-            StartCoroutine(ColladaImporter.Instance.ImportAsync(daeFile, Quaternion.identity, Vector3.one, Vector3.zero,
-                onMImported: delegate (GameObject loadedGameObject) {
-                    OnMeshImported?.Invoke(this, new ImportedMeshEventArgs(loadedGameObject, aoId));
-                },
-                includeEmptyNodes: true, wrapperGameObject: loadedObject));
+                // Requires Simple Collada asset from Unity Asset Store: https://assetstore.unity.com/packages/tools/input-management/simple-collada-19579
+                // Supports: DAE
+                StartCoroutine(ColladaImporter.Instance.ImportAsync(daeFile, Quaternion.identity, Vector3.one, Vector3.zero,
+                    onMImported: delegate (GameObject loadedGameObject) {
+                        OnMeshImported?.Invoke(this, new ImportedMeshEventArgs(loadedGameObject, aoId));
+                    },
+                    includeEmptyNodes: true, wrapperGameObject: loadedObject));
+            } catch (DirectoryNotFoundException e) {
+                OnModelLoadError(e.Message);
+            } catch(FileNotFoundException e) {
+                OnModelLoadError(e.Message);
+            }
+            
 
         } else {
             // Requires Trilib 2 asset from Unity Asset Store: https://assetstore.unity.com/packages/tools/modeling/trilib-2-model-loading-package-157548
@@ -196,19 +201,19 @@ public class MeshImporter : Singleton<MeshImporter> {
     /// <param name="meshId"></param>
     /// <param name="uri">Where the mesh should be downloaded from</param>
     /// <returns></returns>
-    public bool CheckIfNewerRobotModelExists(string meshId, string uri) {
+    public bool CheckIfNewerMeshExists(string meshId, string uri) {
         Debug.LogError("mesh: Checking if newer  mesh exists " + meshId);
         if (string.IsNullOrEmpty(uri)) {
+            Debug.LogError("mesh: there is no uri, false checking" + uri);
             return false;
         }
 
-        FileInfo meshFileInfo = new FileInfo(Application.persistentDataPath + "/meshes/" + meshId + "/" + meshId);
+        FileInfo meshFileInfo = new FileInfo(GetPathToMesh(meshId));
         if (!meshFileInfo.Exists) {
             Debug.LogError("mesh: mesh file " + meshId + " has to be downloaded.");
             // Check whether downloading can be started and start it, if so.
             return CanIDownload(meshId);
         }
-
         DateTime downloadedZipLastModified = meshFileInfo.LastWriteTime;
 
         HttpWebRequest httpWebRequest = (HttpWebRequest) WebRequest.Create(uri);
