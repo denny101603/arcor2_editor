@@ -254,4 +254,16 @@ public class ActionPoint3D : Base.ActionPoint {
             }
         }
     }
+
+    public async override void Remove() {
+        try {
+            await WebsocketManager.Instance.RemoveActionPoint(Data.Id);
+        } catch (RequestFailedException e) {
+            Notifications.Instance.ShowNotification("Failed to remove action point", e.Message);
+        }
+    }
+
+    public override bool Removable() {
+        return true;
+    }
 }

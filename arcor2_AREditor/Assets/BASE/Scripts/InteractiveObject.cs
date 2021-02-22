@@ -12,6 +12,8 @@ public abstract class InteractiveObject : Clickable {
     public abstract bool HasMenu();
     public abstract bool Movable();
     public abstract void StartManipulation();
+    public abstract void Remove();
+    public abstract bool Removable();
     public virtual float GetDistance(Vector3 origin) {
         float minDist = float.MaxValue;
         foreach (Collider collider in Colliders) {

@@ -622,5 +622,13 @@ namespace Base {
             TransformGizmo.Instance.AddTarget(transform);
             outlineOnClick.GizmoHighlight();
         }
+
+        public override void Remove() {
+            throw new NotImplementedException();
+        }
+
+        public override bool Removable() {
+            return false;
+        }
     }
 }

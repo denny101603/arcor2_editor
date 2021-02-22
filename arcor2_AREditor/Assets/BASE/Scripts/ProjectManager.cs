@@ -69,6 +69,8 @@ namespace Base {
         /// OnProjectSavedSatusChanged when projectChanged value differs from original value (i.e. when project
         /// was not changed and now it is and vice versa) 
         /// </summary>
+        ///
+        public GameObject DummyBoxPrefab;
         public bool ProjectChanged {
             get => projectChanged;
             set {
@@ -325,6 +327,24 @@ namespace Base {
             if (project.HasLogic)
                 UpdateLogicItems(project.Logic);
 
+
+
+            ///////////////////////////////
+            /// FOR EXPERIMENT ONLY
+            ///////////////////////////////
+
+
+            string dummyBoxes = PlayerPrefsHelper.LoadString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", "");
+            if (!string.IsNullOrEmpty(dummyBoxes)) {
+                List<string> boxes = dummyBoxes.Split(';').ToList();
+                foreach (string name in boxes) {
+                    DummyBox b = Instantiate(DummyBoxPrefab, GameManager.Instance.Scene.transform).GetComponent<DummyBox>();
+                    b.Init(name);
+                }
+            }
+           
+            
+
             projectChanged = project.Modified == DateTime.MinValue;
             OnLoadProject?.Invoke(this, EventArgs.Empty);
             
@@ -544,6 +564,26 @@ namespace Base {
             } while (!hasFreeName);
 
             return freeName;
+        }
+
+        public void DuplicateAP(string id) {
+
+        }
+
+        public void AddDummyBox(string name) {
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0f));
+            DummyBox box = Instantiate(DummyBoxPrefab, ray.GetPoint(0.5f), Camera.main.transform.rotation, GameManager.Instance.Scene.transform).GetComponent<DummyBox>();
+            string dummyBoxes = PlayerPrefsHelper.LoadString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", "");
+            string newName = name;
+            int i = 2;
+            if (!string.IsNullOrEmpty(dummyBoxes)) {
+                List<string> boxes = dummyBoxes.Split(';').ToList();
+                while (boxes.Contains(newName)) {
+                    newName = name + "_" + i++;
+                } 
+                PlayerPrefsHelper.SaveString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", string.Join(";", boxes));
+            }
+            box.Init(newName, 0.05f, 0.05f, 0.05f);
         }
 
         /// <summary>

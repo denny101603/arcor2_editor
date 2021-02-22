@@ -51,7 +51,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (selectedObject is null)
             return;
         if (selectedObject.Movable()) {
-            selectedObject.StartManipulation();
+            selectedObject.Remove();
         }
 
     }
