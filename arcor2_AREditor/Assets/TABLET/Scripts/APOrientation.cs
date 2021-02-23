@@ -89,4 +89,12 @@ public class APOrientation : InteractiveObject {
     public override void StartManipulation() {
         throw new System.NotImplementedException();
     }
+
+    public override void Remove() {
+        throw new System.NotImplementedException();
+    }
+
+    public override bool Removable() {
+        return false;
+    }
 }

@@ -368,6 +368,14 @@ namespace Base {
         public override void StartManipulation() {
             throw new NotImplementedException();
         }
+
+        public override void Remove() {
+            throw new NotImplementedException();
+        }
+
+        public override bool Removable() {
+            return false;
+        }
     }
 
 }

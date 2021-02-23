@@ -150,4 +150,12 @@ public class Action3D : Base.Action {
     public override void StartManipulation() {
         throw new NotImplementedException();
     }
+
+    public override void Remove() {
+        WebsocketManager.Instance.RemoveAction(Data.Id, false);
+    }
+
+    public override bool Removable() {
+        return true;
+    }
 }

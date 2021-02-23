@@ -1791,6 +1791,19 @@ namespace Base {
             }
         }
 
+        public async void AddActionPointExperiment() {
+            string name = ProjectManager.Instance.GetFreeAPName("ap");
+            Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0f));
+            
+            Position position = DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(ray.GetPoint(0.5f)));
+
+            try {
+                await WebsocketManager.Instance.AddActionPoint(name, "", position);
+            } catch (RequestFailedException e) {
+                Notifications.Instance.ShowNotification("Failed to add action point", e.Message);
+            }
+        }
+
         /// <summary>
         /// Updates parent of action point
         /// </summary>
