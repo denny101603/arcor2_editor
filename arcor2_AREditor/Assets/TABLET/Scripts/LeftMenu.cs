@@ -92,12 +92,12 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (selectedObject is null)
             return;
         if (selectedObject.Movable()) {
-            selectedObject.StartManipulation();
+            selectedObject.Remove();
         }
 
     }
 
-    public void MenuButtonCb() {     
+    public void MenuButtonCb() {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
             return;
@@ -114,7 +114,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 selectedObject.GetType() == typeof(PuckOutput)) {
             ((InputOutput) selectedObject).OnClick(Clickable.Click.TOUCH);
         }
-        
+
     }
 
     public void InteractButtonCb() {

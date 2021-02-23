@@ -634,5 +634,13 @@ namespace Base {
         public List<RobotEE> GetAllEE() {
             return EndEffectors;
         }
+
+        public override void Remove() {
+            throw new NotImplementedException();
+        }
+
+        public override bool Removable() {
+            return false;
+        }
     }
 }
