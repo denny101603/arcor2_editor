@@ -76,4 +76,12 @@ public class ActionObjectNoPose : ActionObject {
     public override bool Movable() {
         return false;
     }
+
+    public override void Remove() {
+        throw new NotImplementedException();
+    }
+
+    public override bool Removable() {
+        throw new NotImplementedException();
+    }
 }

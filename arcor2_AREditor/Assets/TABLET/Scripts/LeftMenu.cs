@@ -15,7 +15,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     public Button TargetButton, RobotButton, AddButton, SettingsButton, HomeButton;
     public Button AddMeshButton, MoveButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons;
-    public TMPro.TMP_Text ProjectName;
+    public TMPro.TMP_Text ProjectName, SelectedObject;
 
     private void Awake() {
         CanvasGroup = GetComponent<CanvasGroup>();
@@ -60,11 +60,19 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
         //InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         //if (requestingObject || selectedObject == null) {
+        //    TargetButton.interactable = false;
+
+        //} else {
+        //    TargetButton.interactable = true;
+        //}
+
+        //InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        //if (requestingObject || selectedObject == null) {
         //    ConnectionsBtn.interactable = false;
         //    MoveBtn.interactable = false;
         //    MenuBtn.interactable = false;
         //    InteractBtn.interactable = false;
-            
+
         //} else {
         //    ConnectionsBtn.interactable = selectedObject.GetType() == typeof(PuckInput) ||
         //         selectedObject.GetType() == typeof(PuckOutput);
@@ -79,7 +87,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             ;
         if(SceneManager.Instance.SceneMeta.Nam)
         */
-        ProjectName.text = "Project: " + SceneManager.Instance.SceneMeta.Name;
+        ProjectName.text = "Project: \n" + SceneManager.Instance.SceneMeta.Name;
     }
 
     private void UpdateVisibility() {
@@ -136,8 +144,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     #region Add submenu button click methods
 
     public void AddActionPointClick() {
-        Notifications.Instance.ShowNotification("Not implemented", "");
-
+        GameManager.Instance.AddActionPointExperiment();
     }
 
     public void AddMeshClick() {
