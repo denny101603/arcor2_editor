@@ -15,7 +15,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     public Button TargetButton, RobotButton, AddButton, SettingsButton, HomeButton;
     public Button AddMeshButton, MoveButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons;
-    public TMPro.TMP_Text ProjectName, SelectedObject;
+    public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
     private void Awake() {
         CanvasGroup = GetComponent<CanvasGroup>();
@@ -58,13 +58,15 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (!updateButtonsInteractivity)
             return;
 
-        //InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        //if (requestingObject || selectedObject == null) {
-        //    TargetButton.interactable = false;
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (requestingObject || selectedObject == null) {
+            SelectedObjectText.text = "";
+            //TargetButton.interactable = false;
 
-        //} else {
-        //    TargetButton.interactable = true;
-        //}
+        } else {
+            SelectedObjectText.text = selectedObject.GetName() + "\n" + selectedObject.GetType();
+            //TargetButton.interactable = true;
+        }
 
         //InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         //if (requestingObject || selectedObject == null) {
