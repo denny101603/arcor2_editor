@@ -12,7 +12,10 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     private CanvasGroup CanvasGroup;
 
-    public Button MoveBtn, MenuBtn, ConnectionsBtn, InteractBtn;
+    public Button TargetButton, RobotButton, AddButton, SettingsButton, HomeButton;
+    public Button AddMeshButton, MoveButton;
+    public GameObject HomeButtons, SettingsButtons, AddButtons;
+    public TMPro.TMP_Text ProjectName;
 
     private void Awake() {
         CanvasGroup = GetComponent<CanvasGroup>();
@@ -30,11 +33,11 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 updateButtonsInteractivity = true;
                 break;
             case GameManager.EditorStateEnum.InteractionDisabled:
-                updateButtonsInteractivity = false;
-                ConnectionsBtn.interactable = false;
-                MoveBtn.interactable = false;
-                MenuBtn.interactable = false;
-                InteractBtn.interactable = false;
+                //updateButtonsInteractivity = false;
+                //ConnectionsBtn.interactable = false;
+                //MoveBtn.interactable = false;
+                //MenuBtn.interactable = false;
+                //InteractBtn.interactable = false;
                 break;
             case GameManager.EditorStateEnum.Closed:
                 updateButtonsInteractivity = false;
@@ -54,23 +57,29 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         UpdateVisibility();
         if (!updateButtonsInteractivity)
             return;
-        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        if (requestingObject || selectedObject == null) {
-            ConnectionsBtn.interactable = false;
-            MoveBtn.interactable = false;
-            MenuBtn.interactable = false;
-            InteractBtn.interactable = false;
-            
-        } else {
-            ConnectionsBtn.interactable = selectedObject.GetType() == typeof(PuckInput) ||
-                 selectedObject.GetType() == typeof(PuckOutput);
 
-            MoveBtn.interactable = selectedObject.Movable();
-            MenuBtn.interactable = selectedObject.HasMenu();
-            InteractBtn.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
-                selectedObject.GetType() == typeof(CreateAnchor);
-        }
-        
+        //InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        //if (requestingObject || selectedObject == null) {
+        //    ConnectionsBtn.interactable = false;
+        //    MoveBtn.interactable = false;
+        //    MenuBtn.interactable = false;
+        //    InteractBtn.interactable = false;
+            
+        //} else {
+        //    ConnectionsBtn.interactable = selectedObject.GetType() == typeof(PuckInput) ||
+        //         selectedObject.GetType() == typeof(PuckOutput);
+
+        //    MoveBtn.interactable = selectedObject.Movable();
+        //    MenuBtn.interactable = selectedObject.HasMenu();
+        //    InteractBtn.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
+        //        selectedObject.GetType() == typeof(CreateAnchor);
+        //}
+        /*
+        if (GameManager.Instance.ProjectOpened)
+            ;
+        if(SceneManager.Instance.SceneMeta.Nam)
+        */
+        ProjectName.text = "Project: " + SceneManager.Instance.SceneMeta.Name;
     }
 
     private void UpdateVisibility() {
@@ -87,37 +96,32 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         }
     }
 
-    public void MoveButtonCb() {
-        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        if (selectedObject is null)
-            return;
-        if (selectedObject.Movable()) {
-            selectedObject.StartManipulation();
-        }
+    public void TargetButtonClick() {
+        SetActiveSubmenu(LeftMenuSelection.None);
+        Notifications.Instance.ShowNotification("Not implemented", "");
 
     }
 
-    public void MenuButtonCb() {     
-        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        if (selectedObject is null)
-            return;
-        if (selectedObject.HasMenu()) {
-            selectedObject.OpenMenu();
-        }
+    public void RobotButtonClick() {
+        SetActiveSubmenu(LeftMenuSelection.None);
+        Notifications.Instance.ShowNotification("Not implemented", "");
+
     }
 
-    public void ConnectionButtonCb() {
-        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        if (selectedObject is null)
-            return;
-        if (selectedObject.GetType() == typeof(PuckInput) ||
-                selectedObject.GetType() == typeof(PuckOutput)) {
-            ((InputOutput) selectedObject).OnClick(Clickable.Click.TOUCH);
-        }
-        
+    public void AddButtonClick() {
+        SetActiveSubmenu(LeftMenuSelection.Add, !AddButtons.activeInHierarchy);
+
     }
 
-    public void InteractButtonCb() {
+    public void SettingsButtonClick() {
+        SetActiveSubmenu(LeftMenuSelection.Settings, !SettingsButtons.activeInHierarchy);
+
+
+    }
+
+    public void HomeButtonClick() {
+        SetActiveSubmenu(LeftMenuSelection.Home, !HomeButtons.activeInHierarchy);
+        /*
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
             return;
@@ -126,5 +130,77 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         } else if (selectedObject.GetType() == typeof(CreateAnchor)) {
             ((CreateAnchor) selectedObject).OnClick(Clickable.Click.TOUCH);
         }
+        */
     }
+
+    #region Add submenu button click methods
+
+    public void AddActionPointClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+
+    }
+
+    public void AddMeshClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+        AddMeshButton.GetComponent<Image>().enabled = true;
+    }
+
+    #endregion
+
+    #region Settings submenu button click methods
+
+    public void RemoveClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+
+    }
+
+    public void MoveClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+        MoveButton.GetComponent<Image>().enabled = true;
+
+    }
+    #endregion
+
+    #region Home submenu button click methods
+
+    #endregion
+
+
+    private void SetActiveSubmenu(LeftMenuSelection which, bool active = true) {
+        DeactivateAllSubmenus();
+        if (!active)
+            return;
+        switch (which) {
+            case LeftMenuSelection.None:
+                break;
+            case LeftMenuSelection.Add:
+                AddButtons.SetActive(active);
+                AddButton.GetComponent<Image>().enabled = active;
+                break;
+            case LeftMenuSelection.Settings:
+                SettingsButtons.SetActive(active);
+                SettingsButton.GetComponent<Image>().enabled = active;
+                break;
+            case LeftMenuSelection.Home:
+                HomeButtons.SetActive(active);
+                HomeButton.GetComponent<Image>().enabled = active;
+                break;
+        }
+    }
+
+    private void DeactivateAllSubmenus() {
+        HomeButtons.SetActive(false);
+        SettingsButtons.SetActive(false);
+        AddButtons.SetActive(false);
+
+        TargetButton.GetComponent<Image>().enabled = false;
+        RobotButton.GetComponent<Image>().enabled = false;
+        AddButton.GetComponent<Image>().enabled = false;
+        SettingsButton.GetComponent<Image>().enabled = false;
+        HomeButton.GetComponent<Image>().enabled = false;
+    }
+}
+
+public enum LeftMenuSelection{
+    None, Add, Settings, Home
 }
