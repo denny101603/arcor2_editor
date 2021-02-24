@@ -73,8 +73,11 @@ namespace Base {
         /// OnProjectSavedSatusChanged when projectChanged value differs from original value (i.e. when project
         /// was not changed and now it is and vice versa) 
         /// </summary>
-        ///
+
+        public GameObject ActionPointSphere;
+
         public GameObject DummyBoxPrefab;
+
         public bool ProjectChanged {
             get => projectChanged;
             set {

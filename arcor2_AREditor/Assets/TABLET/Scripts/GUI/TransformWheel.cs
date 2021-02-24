@@ -7,12 +7,13 @@ using UnityEngine;
 public class TransformWheel : MonoBehaviour
 {
     public List<TransformWheelItem> TransformWheelItems = new List<TransformWheelItem>();
-    public GameObject ItemPrefab, List;
+    public GameObject ItemPrefab;
     public TranformWheelUnits Units;
+    public TransformWheelList List;
 
-    public void InitList() {
-        List.transform.localPosition = Vector3.zero;
+    public void InitList(float value = 0) {
         TransformWheelItems.Clear();
+        List.Init();
         foreach (Transform child in List.transform) {
             GameObject.Destroy(child.gameObject);
         }
@@ -22,10 +23,31 @@ public class TransformWheel : MonoBehaviour
         while (TransformWheelItems.Count < 12) {
             GenerateNewItem();
         }
+
+        SetValue(value);
+    }
+
+    private void SetValue(float value) {
+        int intValue = 0;
+        switch (Units.GetValue()) {
+           case "cm":
+                intValue = (int) (value * 100);
+                break;
+            case "mm":
+                intValue = (int) (value * 1000);
+                break;
+            case "μm":
+                intValue = (int) (value * 1000000);
+                break;
+            default:
+                intValue = (int) value;
+                break;
+        };
+        List.transform.localPosition = new Vector2(0, 0 - intValue * 80);
     }
 
     public float GetValue() {        
-        int v = ClosestInteger((int) List.transform.localPosition.y, 80) / 80;
+        int v = 0 - ClosestInteger((int) List.transform.localPosition.y, 80) / 80;
         switch (Units.GetValue()) 
         {
             case "m":

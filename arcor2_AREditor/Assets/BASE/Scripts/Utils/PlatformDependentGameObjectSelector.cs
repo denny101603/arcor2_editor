@@ -38,7 +38,7 @@ public class PlatformDependentGameObjectSelector : MonoBehaviour {
 #elif UNITY_EDITOR || UNITY_STANDALONE
         int i = 0;
         foreach (GameObject obj in GameObjectsForANDROIDOnly) {
-            if (i++ == 4)
+            if (i++ == 7)
                 break;
             obj.SetActive(false);
         }

@@ -102,8 +102,8 @@ MonoBehaviour:
   TransformWheelItems: []
   ItemPrefab: {fileID: 7577670672538842389, guid: 6ef80ec3e481fb8438facb8f117d546f,
     type: 3}
-  List: {fileID: 3226613439567104548}
   Units: {fileID: 6454234288915602822}
+  List: {fileID: 8412687463083745730}
 --- !u!1 &3226613439567104548
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,6 +115,7 @@ GameObject:
   - component: {fileID: 7047758191999514664}
   - component: {fileID: 3766602661936551713}
   - component: {fileID: 4033235021544197376}
+  - component: {fileID: 8412687463083745730}
   m_Layer: 5
   m_Name: List
   m_TagString: Untagged
@@ -180,6 +181,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &8412687463083745730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3226613439567104548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8a03bdc7abea374681e57ea40d4498d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates: []
 --- !u!1 &3788213046547767671
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,6 +328,7 @@ MonoBehaviour:
   PrevBtn: {fileID: 3734707525614656996}
   NextBtn: {fileID: 33081068504633975}
   Label: {fileID: 2960143139211563131}
+  TransformWheel: {fileID: 0}
 --- !u!1 &5241606286205295052
 GameObject:
   m_ObjectHideFlags: 0

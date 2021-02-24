@@ -308,6 +308,7 @@ MonoBehaviour:
   Outline: {fileID: 4574720086757277176}
   Value: {fileID: 517412492008689450}
   Delta: {fileID: 955910484288382112}
+  Axis: 
 --- !u!1 &3694649107317621279
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,7 +633,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.19215687, b: 1, a: 1}
+  m_Color: {r: 0, g: 0.14117648, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:

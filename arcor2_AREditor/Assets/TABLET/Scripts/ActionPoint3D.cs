@@ -266,4 +266,10 @@ public class ActionPoint3D : Base.ActionPoint {
     public override bool Removable() {
         return true;
     }
+
+    public GameObject GetModelCopy() {
+        GameObject copy = Instantiate(ProjectManager.Instance.ActionPointSphere, Vector3.zero, Quaternion.identity, transform);
+        copy.transform.localScale = Visual.transform.localScale;
+        return copy;
+    }
 }

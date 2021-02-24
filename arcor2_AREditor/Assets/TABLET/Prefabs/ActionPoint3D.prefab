@@ -501,7 +501,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Enabled: 1
   Colliders:
-  - {fileID: 2135223395522982168}
+  - {fileID: 3266424733314132156}
   ActionsSpawn: {fileID: 1416551817558692293}
   ConnectionToParent: {fileID: 0}
   orientations: {fileID: 1503747242841873625}
@@ -724,11 +724,11 @@ GameObject:
   - component: {fileID: 6478907844938790269}
   - component: {fileID: 3421034917608941167}
   - component: {fileID: 4618120162863866931}
-  - component: {fileID: 2135223395522982168}
-  - component: {fileID: 1162351292833498496}
-  - component: {fileID: 2592820939571358080}
+  - component: {fileID: 7284855970332001046}
+  - component: {fileID: 8835683521051676273}
+  - component: {fileID: 3266424733314132156}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: ActionPointSphere
   m_TagString: ActionPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -795,7 +795,45 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &2135223395522982168
+--- !u!114 &7284855970332001046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7822383090967264636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56dd716813c47194695f505324fcf244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OutlineOnClick: {fileID: 8835683521051676273}
+--- !u!114 &8835683521051676273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7822383090967264636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d190eacf2d73849ba8866ad2cb6072, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Enabled: 1
+  OutlineShaderType: 0
+  OutlineClickFirstPass: {fileID: 0}
+  OutlineClickSecondPass: {fileID: 0}
+  OutlineHoverFirstPass: {fileID: 0}
+  OutlineHoverSecondPass: {fileID: 0}
+  OutlineClickMaterial: {fileID: 2100000, guid: 1ef88d2e88b167344b7db905a28877ad,
+    type: 2}
+  OutlineHoverMaterial: {fileID: 2100000, guid: 6f85ebaaa5685a345b1269fa36ddcf6c,
+    type: 2}
+  Renderers:
+  - {fileID: 4618120162863866931}
+  HoverOnly: 0
+--- !u!135 &3266424733314132156
 SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -808,33 +846,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1162351292833498496
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7822383090967264636}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 10b0ea4ca6bb8264ca3aabbcc53b2254, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Enabled: 1
-  Target: {fileID: 2740470206176205867}
---- !u!114 &2592820939571358080
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7822383090967264636}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56dd716813c47194695f505324fcf244, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OutlineOnClick: {fileID: 8058654341286488384}
 --- !u!1 &7934289815226500860
 GameObject:
   m_ObjectHideFlags: 0

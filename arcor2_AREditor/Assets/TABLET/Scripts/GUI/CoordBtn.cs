@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,6 +13,14 @@ public class CoordBtn : MonoBehaviour
 
     public Image Background, Outline;
     public TMP_Text Value, Delta;
+
+    public void SetDelta(float value) {
+        Delta.text = "Δ " + string.Format("{0:0.#####}",value);
+    }
+
+    public void SetValue(float value) {
+        Value.text = string.Format("{0:0.#####}", value);
+    }
     public string Axis;
     public void Deselect() {
         Background.color = new Color(Outline.color.r, Outline.color.g, Outline.color.b, 0f);

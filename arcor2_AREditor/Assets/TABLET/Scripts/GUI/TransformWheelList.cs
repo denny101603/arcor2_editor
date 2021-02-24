@@ -15,6 +15,14 @@ public class TransformWheelList : EventTrigger {
     private float _smoothTime = 2f;
     private float _finishY;
 
+    public void Init() {
+        _underInertia = false;
+        _dragging = false;
+        _finishing = false;
+        _time = 0;
+        _finishY = 0;
+        _velocity = Vector2.zero;
+    }
 
     public void Update() {
 
