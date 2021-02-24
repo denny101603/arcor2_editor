@@ -13,7 +13,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private CanvasGroup CanvasGroup;
 
     public Button TargetButton, RobotButton, AddButton, SettingsButton, HomeButton;
-    public Button AddMeshButton, MoveButton;
+    public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
@@ -33,7 +33,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 updateButtonsInteractivity = true;
                 break;
             case GameManager.EditorStateEnum.InteractionDisabled:
-                //updateButtonsInteractivity = false;
+                updateButtonsInteractivity = false;
                 //ConnectionsBtn.interactable = false;
                 //MoveBtn.interactable = false;
                 //MenuBtn.interactable = false;
@@ -61,11 +61,18 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (requestingObject || selectedObject == null) {
             SelectedObjectText.text = "";
-            //TargetButton.interactable = false;
-
+            MoveButton.interactable = false;
+            RemoveButton.interactable = false;
+            SetActionPointParentButton.interactable = false;
+            AddActionButton.interactable = false;
         } else {
             SelectedObjectText.text = selectedObject.GetName() + "\n" + selectedObject.GetType();
-            //TargetButton.interactable = true;
+
+            MoveButton.interactable = selectedObject.Movable();
+            RemoveButton.interactable = selectedObject.Removable();
+
+            SetActionPointParentButton.interactable = selectedObject is ActionPoint3D;
+            AddActionButton.interactable = selectedObject is ActionPoint3D;
         }
 
         //InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
@@ -89,7 +96,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             ;
         if(SceneManager.Instance.SceneMeta.Nam)
         */
-        ProjectName.text = "Project: \n" + SceneManager.Instance.SceneMeta.Name;
+        if(ProjectName != null)
+            ProjectName.text = "Project: \n" + SceneManager.Instance.SceneMeta.Name;
     }
 
     private void UpdateVisibility() {
@@ -145,8 +153,13 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     #region Add submenu button click methods
 
+    public void AddActionClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+    }
+
     public void AddActionPointClick() {
         GameManager.Instance.AddActionPointExperiment();
+        SetActiveSubmenu(LeftMenuSelection.None);
     }
 
     public void AddMeshClick() {
@@ -158,7 +171,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     #region Settings submenu button click methods
 
-    public void RemoveClick() {
+    public void SetActionPointParentClick() {
         Notifications.Instance.ShowNotification("Not implemented", "");
 
     }
@@ -168,6 +181,17 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         MoveButton.GetComponent<Image>().enabled = true;
 
     }
+
+    public void RemoveClick() {
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null)
+            return;
+
+        selectedObject.Remove();
+        //Notifications.Instance.ShowToastMessage(selectedObject.GetName() + " removed successfuly");
+    }
+
+
     #endregion
 
     #region Home submenu button click methods
