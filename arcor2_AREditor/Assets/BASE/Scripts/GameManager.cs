@@ -287,6 +287,8 @@ namespace Base {
 
         private bool openPackageRunningScreenFlag = false;
 
+        public GameObject Gizmo;
+
         /// <summary>
         /// Checks whether scene is interactable
         /// </summary>

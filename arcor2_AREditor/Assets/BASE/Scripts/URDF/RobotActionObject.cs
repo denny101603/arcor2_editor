@@ -635,9 +635,6 @@ namespace Base {
             return EndEffectors;
         }
 
-        public override void Remove() {
-            throw new NotImplementedException();
-        }
 
         public override bool Removable() {
             return false;

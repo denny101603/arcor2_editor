@@ -76,4 +76,8 @@ public class ActionObjectNoPose : ActionObject {
     public override bool Movable() {
         return false;
     }
+
+    public override bool Removable() {
+        return true;
+    }
 }

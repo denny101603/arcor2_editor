@@ -33,7 +33,7 @@ public class SelectorItem : MonoBehaviour
         lastUpdate = currentIteration;
         if (interactiveObject.GetType() == typeof(RobotActionObject)) {
             Icon.sprite = Robot;
-        } else if (interactiveObject.GetType().IsSubclassOf(typeof(ActionObject))) {
+        } else if (interactiveObject.GetType().IsSubclassOf(typeof(ActionObject)) || interactiveObject.GetType() == typeof(DummyBox)) {
             Icon.sprite = ActionObject;
         } else if (interactiveObject.GetType() == typeof(PuckInput)) {
             Icon.sprite = ActionInput;

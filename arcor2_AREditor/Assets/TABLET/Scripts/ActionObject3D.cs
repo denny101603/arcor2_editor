@@ -425,14 +425,6 @@ public class ActionObject3D : ActionObject {
         }
     }
 
-    public async override void Remove() {
-        IO.Swagger.Model.RemoveFromSceneResponse response =
-            await WebsocketManager.Instance.RemoveFromScene(Data.Id, false);
-        if (!response.Result) {
-            Notifications.Instance.ShowNotification("Failed to remove object " + Data.Name, response.Messages[0]);
-            return;
-        }
-    }
 
     public override bool Removable() {
         return true;

@@ -271,6 +271,15 @@ namespace Base {
             return new IO.Swagger.Model.Pose(new IO.Swagger.Model.Orientation(), new IO.Swagger.Model.Position());
     }
 
+        public async override void Remove() {
+            IO.Swagger.Model.RemoveFromSceneResponse response =
+            await WebsocketManager.Instance.RemoveFromScene(Data.Id, false);
+            if (!response.Result) {
+                Notifications.Instance.ShowNotification("Failed to remove object " + Data.Name, response.Messages[0]);
+                return;
+            }
+        }
+
     }
 
    

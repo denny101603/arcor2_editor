@@ -163,6 +163,7 @@ public class InputHandler : Singleton<InputHandler> {
                         TransformGizmo.Instance.ClearTargets();
                     }
                 }
+                TransformMenu.Instance.Hide();
                 SelectorMenu.Instance.DeselectObject(true);
             }
         }
