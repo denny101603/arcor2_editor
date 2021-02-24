@@ -96,7 +96,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             ;
         if(SceneManager.Instance.SceneMeta.Nam)
         */
-        if(ProjectName != null)
+        if(SceneManager.Instance.SceneMeta != null)
             ProjectName.text = "Project: \n" + SceneManager.Instance.SceneMeta.Name;
     }
 
