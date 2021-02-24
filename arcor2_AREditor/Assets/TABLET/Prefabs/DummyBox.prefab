@@ -48,6 +48,7 @@ MonoBehaviour:
   Colliders:
   - {fileID: 2161508489054566050}
   Name: 
+  Visual: {fileID: 3755231564195354761}
 --- !u!1 &3755231564195354761
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,7 +109,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e51a66ac38771954699e15aa3d81a256, type: 3}
+  - {fileID: 2100000, guid: ddcf1a9644ceb1e4a9b8a3e95505fb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -328,7 +328,10 @@ MonoBehaviour:
   PrevBtn: {fileID: 3734707525614656996}
   NextBtn: {fileID: 33081068504633975}
   Label: {fileID: 2960143139211563131}
-  TransformWheel: {fileID: 0}
+  TransformWheel: {fileID: 255816899647063341}
+  OnChange:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5241606286205295052
 GameObject:
   m_ObjectHideFlags: 0

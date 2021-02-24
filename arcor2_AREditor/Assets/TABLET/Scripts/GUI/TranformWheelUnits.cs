@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class TranformWheelUnits : MonoBehaviour
@@ -12,6 +13,7 @@ public class TranformWheelUnits : MonoBehaviour
     public Button PrevBtn, NextBtn;
     public TMP_Text Label;
     public TransformWheel TransformWheel;
+    public UnityEvent OnChange;
 
     private void Awake() {
         if (Units.Contains(DefaultValue)) {
@@ -34,6 +36,7 @@ public class TranformWheelUnits : MonoBehaviour
         }
         Label.text = Units[index];
         CheckBounds();
+        OnChange?.Invoke();
     }
 
     public void Previous() {
@@ -42,6 +45,7 @@ public class TranformWheelUnits : MonoBehaviour
         }
         Label.text = Units[index];
         CheckBounds();
+        OnChange?.Invoke();
     }
 
     private void CheckBounds() {

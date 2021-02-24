@@ -76,7 +76,7 @@ namespace Base {
 
         public GameObject ActionPointSphere;
 
-        public GameObject DummyBoxPrefab;
+        public GameObject DummyBoxPrefab, DummyBoxVisual;
 
         public bool SelectNewlyCreatedAP = false;
 

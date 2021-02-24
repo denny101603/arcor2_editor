@@ -1,36 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Base;
 using UnityEngine;
 
-public class DummyBox : InteractiveObject
-{
+public class DummyBox : InteractiveObject {
     public string Name = "";
+    public GameObject Visual;
 
     protected virtual void Update() {
         if (Name == "")
             return;
         if (gameObject.transform.hasChanged) {
-            PlayerPrefsHelper.SaveVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxPos/" + Name, transform.position);
-            PlayerPrefsHelper.SaveQuaternion(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxRot/" + Name, transform.rotation);
+            PlayerPrefsHelper.SaveVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxPos/" + Name, transform.localPosition);
+            PlayerPrefsHelper.SaveQuaternion(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxRot/" + Name, transform.localRotation);
             transform.hasChanged = false;
         }
     }
 
     public void Init(string name) {
-        transform.position = PlayerPrefsHelper.LoadVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxPos/" + Name, new Vector3());
-        transform.rotation = PlayerPrefsHelper.LoadQuaternion(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxRot/" + Name, new Quaternion());
         Name = name;
+        transform.localPosition = PlayerPrefsHelper.LoadVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxPos/" + Name, new Vector3());
+        transform.localRotation = PlayerPrefsHelper.LoadQuaternion(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxRot/" + Name, new Quaternion());
         Vector3 dim = PlayerPrefsHelper.LoadVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxDim/" + Name, new Vector3(0.5f, 0.5f, 0.5f));
         SetDimensions(dim.x, dim.y, dim.z);
         SelectorMenu.Instance.ForceUpdateMenus();
     }
 
     public void Init(string name, float x, float y, float z) {
-        PlayerPrefsHelper.SaveVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxPos/" + Name, transform.position);
-        PlayerPrefsHelper.SaveQuaternion(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxRot/" + Name, transform.rotation);
-
         Name = name;
+        PlayerPrefsHelper.SaveVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxPos/" + Name, transform.localPosition);
+        PlayerPrefsHelper.SaveQuaternion(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxRot/" + Name, transform.localRotation);
         SetDimensions(x, y, z);
         string dummyBoxes = PlayerPrefsHelper.LoadString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", "");
         if (string.IsNullOrEmpty(dummyBoxes))
@@ -58,7 +58,7 @@ public class DummyBox : InteractiveObject
     }
 
     public override void OnClick(Click type) {
-        
+
     }
 
     public override void OnHoverEnd() {
@@ -76,7 +76,7 @@ public class DummyBox : InteractiveObject
     public void SetDimensions(float x, float y, float z) {
 
         PlayerPrefsHelper.SaveVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxDim/" + Name, new Vector3(x, y, z));
-        transform.localScale = new Vector3(x, y, z);
+        Visual.transform.localScale = new Vector3(x, y, z);
     }
 
     public override void StartManipulation() {
@@ -97,5 +97,12 @@ public class DummyBox : InteractiveObject
 
     public override bool Removable() {
         return true;
+    }
+
+    public GameObject GetModelCopy() {
+        GameObject copy = Instantiate(ProjectManager.Instance.DummyBoxVisual, Vector3.zero, Quaternion.identity, transform);
+        copy.transform.localScale = Visual.transform.localScale;
+        copy.transform.localRotation = Quaternion.identity;
+        return copy;
     }
 }
