@@ -394,7 +394,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d3cf7fbffb5bf64d953612faee05b90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TargetButton: {fileID: 6250738950793965085}
+  FocusButton: {fileID: 6250738950793965085}
   RobotButton: {fileID: 2052065426093053081}
   AddButton: {fileID: 8334671792117737244}
   SettingsButton: {fileID: 7449572088289718031}
@@ -407,6 +407,7 @@ MonoBehaviour:
   HomeButtons: {fileID: 2352594276438912108}
   SettingsButtons: {fileID: 6790344949304546063}
   AddButtons: {fileID: 931115812711425485}
+  MeshPicker: {fileID: 0}
   ProjectName: {fileID: 2062471341276025351}
   SelectedObjectText: {fileID: 21722107129564596}
 --- !u!225 &3646783553406478041
@@ -1959,7 +1960,7 @@ PrefabInstance:
     - target: {fileID: 1171430893015759436, guid: a37f66d2914458b4c85e50f9fa33cf93,
         type: 3}
       propertyPath: m_Name
-      value: MenuBtn
+      value: FocusButton
       objectReference: {fileID: 0}
     - target: {fileID: 4991226775622563084, guid: a37f66d2914458b4c85e50f9fa33cf93,
         type: 3}
@@ -1969,7 +1970,7 @@ PrefabInstance:
     - target: {fileID: 4991226775622563084, guid: a37f66d2914458b4c85e50f9fa33cf93,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: MenuButtonCb
+      value: FocusButtonClick
       objectReference: {fileID: 0}
     - target: {fileID: 4991226775622563084, guid: a37f66d2914458b4c85e50f9fa33cf93,
         type: 3}

@@ -12,7 +12,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     private CanvasGroup CanvasGroup;
 
-    public Button TargetButton, RobotButton, AddButton, SettingsButton, HomeButton;
+    public Button FocusButton, RobotButton, AddButton, SettingsButton, HomeButton;
     public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
@@ -34,10 +34,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 break;
             case GameManager.EditorStateEnum.InteractionDisabled:
                 updateButtonsInteractivity = false;
-                //ConnectionsBtn.interactable = false;
-                //MoveBtn.interactable = false;
-                //MenuBtn.interactable = false;
-                //InteractBtn.interactable = false;
+
+                
+
                 break;
             case GameManager.EditorStateEnum.Closed:
                 updateButtonsInteractivity = false;
@@ -57,6 +56,25 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         UpdateVisibility();
         if (!updateButtonsInteractivity)
             return;
+
+        if (MenuManager.Instance.CheckIsAnyRightMenuOpened()) {
+            SetActiveSubmenu(LeftMenuSelection.None);
+            FocusButton.GetComponent<Image>().enabled = false;
+
+            RobotButton.interactable = false;
+            AddButton.interactable = false;
+            SettingsButton.interactable = false;
+            HomeButton.interactable = false;
+            return;
+        }
+
+        FocusButton.GetComponent<Image>().enabled = true;
+        RobotButton.interactable = true;
+        AddButton.interactable = true;
+        SettingsButton.interactable = true;
+        HomeButton.interactable = true;
+
+        
 
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (requestingObject || selectedObject == null) {
@@ -103,7 +121,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private void UpdateVisibility() {
         if (GameManager.Instance.GetGameState() == GameManager.GameStateEnum.MainScreen ||
             GameManager.Instance.GetGameState() == GameManager.GameStateEnum.Disconnected ||
-            MenuManager.Instance.IsAnyMenuOpened) {
+            MenuManager.Instance.MainMenu.CurrentState == DanielLochner.Assets.SimpleSideMenu.SimpleSideMenu.State.Open) {
             CanvasGroup.interactable = false;
             CanvasGroup.blocksRaycasts = false;
             CanvasGroup.alpha = 0;
@@ -114,7 +132,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         }
     }
 
-    public void TargetButtonClick() {
+    public void FocusButtonClick() {
+        MenuManager.Instance.HideAllMenus();
+        SelectorMenu.Instance.gameObject.SetActive(true);
         SetActiveSubmenu(LeftMenuSelection.None);
         Notifications.Instance.ShowNotification("Not implemented", "");
 
@@ -260,7 +280,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         SettingsButtons.SetActive(false);
         AddButtons.SetActive(false);
 
-        TargetButton.GetComponent<Image>().enabled = false;
+        FocusButton.GetComponent<Image>().enabled = false;
         RobotButton.GetComponent<Image>().enabled = false;
         AddButton.GetComponent<Image>().enabled = false;
         SettingsButton.GetComponent<Image>().enabled = false;
