@@ -427,6 +427,6 @@ public class ActionObject3D : ActionObject {
 
 
     public override bool Removable() {
-        return true;
+        return GameManager.Instance.GetGameState() == GameManager.GameStateEnum.SceneEditor;
     }
 }
