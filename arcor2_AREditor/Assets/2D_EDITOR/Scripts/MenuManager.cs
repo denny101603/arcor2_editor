@@ -36,6 +36,20 @@ public class MenuManager : Base.Singleton<MenuManager> {
             OrientationJointsDetailMenu.CurrentState == SimpleSideMenu.State.Open;
     }
 
+    public bool CheckIsAnyRightMenuOpened() {
+        return ActionObjectMenuSceneEditor.CurrentState == SimpleSideMenu.State.Open ||
+            ActionPointMenu.CurrentState == SimpleSideMenu.State.Open ||
+            PuckMenu.CurrentState == SimpleSideMenu.State.Open ||
+            NewObjectTypeMenu.CurrentState == SimpleSideMenu.State.Open ||
+            ActionObjectSettingsMenu.CurrentState == SimpleSideMenu.State.Open ||
+            ActionObjectMenuProjectEditor.CurrentState == SimpleSideMenu.State.Open ||
+            NotificationMenu.CurrentState == SimpleSideMenu.State.Open ||
+            ActionPointAimingMenu.CurrentState == SimpleSideMenu.State.Open ||
+            AddOrientationMenu.CurrentState == SimpleSideMenu.State.Open ||
+            AddJointsMenu.CurrentState == SimpleSideMenu.State.Open ||
+            OrientationJointsDetailMenu.CurrentState == SimpleSideMenu.State.Open;
+    }
+
     public void ShowMenu(SimpleSideMenu menu) {
         Debug.Assert(menu != null); 
         HideAllMenus();
@@ -48,35 +62,27 @@ public class MenuManager : Base.Singleton<MenuManager> {
     public void HideAllMenus() {
         if (ActionObjectMenuSceneEditor.CurrentState == SimpleSideMenu.State.Open) {
             ActionObjectMenuSceneEditor.Close();
-            ActionObjectMenuSceneEditor.gameObject.SetActive(false);
         }
         if (ActionObjectMenuProjectEditor.CurrentState == SimpleSideMenu.State.Open) {
             ActionObjectMenuProjectEditor.Close();
-            ActionObjectMenuProjectEditor.gameObject.SetActive(false);
         }
         if (ActionPointMenu.CurrentState == SimpleSideMenu.State.Open) {
             ActionPointMenu.Close();
-            ActionPointMenu.gameObject.SetActive(false);
         }
         if (PuckMenu.CurrentState == SimpleSideMenu.State.Open) {
             PuckMenu.Close();
-            PuckMenu.gameObject.SetActive(false);
         }
         if (ActionPointAimingMenu.CurrentState == SimpleSideMenu.State.Open) {
             ActionPointAimingMenu.Close();
-            ActionPointAimingMenu.gameObject.SetActive(false);
         }
         if (AddOrientationMenu.CurrentState == SimpleSideMenu.State.Open) {
             AddOrientationMenu.Close();
-            AddOrientationMenu.gameObject.SetActive(false);
         }
         if (AddJointsMenu.CurrentState == SimpleSideMenu.State.Open) {
             AddJointsMenu.Close();
-            AddJointsMenu.gameObject.SetActive(false);
         }
         if (OrientationJointsDetailMenu.CurrentState == SimpleSideMenu.State.Open) {
             OrientationJointsDetailMenu.Close();
-            OrientationJointsDetailMenu.gameObject.SetActive(false);
         }
         if (MainMenu.CurrentState == SimpleSideMenu.State.Open) {
             MainMenu.Close();
