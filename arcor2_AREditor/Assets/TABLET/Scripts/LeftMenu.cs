@@ -14,7 +14,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public Button TargetButton, RobotButton, AddButton, SettingsButton, HomeButton;
     public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton;
-    public GameObject HomeButtons, SettingsButtons, AddButtons;
+    public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
     private void Awake() {
@@ -96,7 +96,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             ;
         if(SceneManager.Instance.SceneMeta.Nam)
         */
-        if(SceneManager.Instance.SceneMeta != null)
+        if (SceneManager.Instance.SceneMeta != null)
             ProjectName.text = "Project: \n" + SceneManager.Instance.SceneMeta.Name;
     }
 
@@ -163,8 +163,16 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
 
     public void AddMeshClick() {
-        Notifications.Instance.ShowNotification("Not implemented", "");
-        AddMeshButton.GetComponent<Image>().enabled = true;
+        if (AddMeshButton.GetComponent<Image>().enabled) {
+            AddMeshButton.GetComponent<Image>().enabled = false;
+            SelectorMenu.Instance.gameObject.SetActive(true);
+            MeshPicker.SetActive(false);
+        } else {
+            AddMeshButton.GetComponent<Image>().enabled = true;
+            SelectorMenu.Instance.gameObject.SetActive(false);
+            MeshPicker.SetActive(true);
+        }
+        
     }
 
     #endregion
@@ -193,6 +201,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             return;
 
         selectedObject.Remove();
+        SetActiveSubmenu(LeftMenuSelection.None);
         //Notifications.Instance.ShowToastMessage(selectedObject.GetName() + " removed successfuly");
     }
 
@@ -200,6 +209,17 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     #endregion
 
     #region Home submenu button click methods
+
+    #endregion
+
+    #region Mesh picker click methods
+
+    public void BlueBoxClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+        SelectorMenu.Instance.gameObject.SetActive(true);
+        MeshPicker.SetActive(false);
+        SetActiveSubmenu(LeftMenuSelection.None);
+    }
 
     #endregion
 
@@ -227,6 +247,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
 
     private void DeactivateAllSubmenus() {
+        SelectorMenu.Instance.gameObject.SetActive(true);
+        MeshPicker.SetActive(false);
+
         HomeButtons.SetActive(false);
         SettingsButtons.SetActive(false);
         AddButtons.SetActive(false);
@@ -236,6 +259,10 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         AddButton.GetComponent<Image>().enabled = false;
         SettingsButton.GetComponent<Image>().enabled = false;
         HomeButton.GetComponent<Image>().enabled = false;
+
+        AddMeshButton.GetComponent<Image>().enabled = false;
+        MoveButton.GetComponent<Image>().enabled = false;
+
     }
 }
 
