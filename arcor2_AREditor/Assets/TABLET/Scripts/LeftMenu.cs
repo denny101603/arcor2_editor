@@ -188,10 +188,16 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
             return;
-        if (selectedObject.Movable()) {
-            selectedObject.StartManipulation();
+        if (MoveButton.GetComponent<Image>().enabled) {
+            MoveButton.GetComponent<Image>().enabled = false;
+            SelectorMenu.Instance.gameObject.SetActive(true);
+            TransformMenu.Instance.Hide();
+        } else {
+            MoveButton.GetComponent<Image>().enabled = true;
+            SelectorMenu.Instance.gameObject.SetActive(false);
+            //selectedObject.StartManipulation();
+            TransformMenu.Instance.Show(selectedObject);
         }
-        MoveButton.GetComponent<Image>().enabled = true;
 
     }
 

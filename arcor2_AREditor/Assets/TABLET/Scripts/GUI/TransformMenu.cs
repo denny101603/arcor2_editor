@@ -16,10 +16,11 @@ public class TransformMenu : Singleton<TransformMenu>
     private Vector3 origPosition = new Vector3(), offsetPosition = new Vector3();
     private Quaternion origRotation;
 
-    private CanvasGroup canvasGroup;
+    [HideInInspector]
+    public CanvasGroup CanvasGroup;
 
     private void Awake() {
-        canvasGroup = GetComponent<CanvasGroup>();
+        CanvasGroup = GetComponent<CanvasGroup>();
     }
 
     private void Update() {
@@ -48,6 +49,8 @@ public class TransformMenu : Singleton<TransformMenu>
     }
 
     public void Show(InteractiveObject interactiveObject) {
+        offsetPosition = Vector3.zero;
+        ResetTransformWheel();
         InteractiveObject = interactiveObject;
         model = ((ActionPoint3D) interactiveObject).GetModelCopy();
         origPosition = TransformConvertor.UnityToROS(interactiveObject.transform.localPosition);
@@ -57,15 +60,17 @@ public class TransformMenu : Singleton<TransformMenu>
         GameManager.Instance.Gizmo.transform.localRotation = Quaternion.identity;
         GameManager.Instance.Gizmo.SetActive(true);
         enabled = true;
-        EditorHelper.EnableCanvasGroup(canvasGroup, true);
+        EditorHelper.EnableCanvasGroup(CanvasGroup, true);
     }
 
     public void Hide() {
         InteractiveObject = null;
+        GameManager.Instance.Gizmo.SetActive(false);
+        GameManager.Instance.Gizmo.transform.SetParent(GameManager.Instance.Scene.transform);
         Destroy(model);
         model = null;
         enabled = false;
-        EditorHelper.EnableCanvasGroup(canvasGroup, false);
+        EditorHelper.EnableCanvasGroup(CanvasGroup, false);        
     }
 
     public void ResetTransformWheel() {
