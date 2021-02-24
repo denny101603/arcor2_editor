@@ -1800,9 +1800,11 @@ namespace Base {
             Position position = DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(ray.GetPoint(0.5f)));
 
             try {
+                ProjectManager.Instance.SelectNewlyCreatedAP = true;
                 await WebsocketManager.Instance.AddActionPoint(name, "", position);
             } catch (RequestFailedException e) {
                 Notifications.Instance.ShowNotification("Failed to add action point", e.Message);
+                ProjectManager.Instance.SelectNewlyCreatedAP = false;
             }
         }
 

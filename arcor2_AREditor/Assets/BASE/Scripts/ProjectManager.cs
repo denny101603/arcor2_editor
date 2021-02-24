@@ -78,6 +78,8 @@ namespace Base {
 
         public GameObject DummyBoxPrefab;
 
+        public bool SelectNewlyCreatedAP = false;
+
         public bool ProjectChanged {
             get => projectChanged;
             set {
@@ -279,16 +281,25 @@ namespace Base {
         
 
         private void OnActionPointAdded(object sender, ProjectActionPointEventArgs data) {
+            ActionPoint ap = null;
             if (data.ActionPoint.Parent == null || data.ActionPoint.Parent == "") {
-                SpawnActionPoint(data.ActionPoint, null);
+                ap = SpawnActionPoint(data.ActionPoint, null);
+
             } else {
                 try {
                     IActionPointParent actionPointParent = GetActionPointParent(data.ActionPoint.Parent);
-                    ActionPoint ap = SpawnActionPoint(data.ActionPoint, actionPointParent);
+                    ap = SpawnActionPoint(data.ActionPoint, actionPointParent);
                 } catch (KeyNotFoundException ex) {
                     Debug.LogError(ex);
                 }
 
+            }
+            Debug.LogError(ap);
+            Debug.LogError(SelectNewlyCreatedAP);
+            if (ap != null && SelectNewlyCreatedAP) {
+                SelectorMenu.Instance.ForceUpdateMenus();
+                SelectorMenu.Instance.SetSelectedObject(ap, true);
+                SelectNewlyCreatedAP = false;
             }
             updateProject = true;
         }
@@ -580,7 +591,7 @@ namespace Base {
 
         }
 
-        public void AddDummyBox(string name) {
+        public DummyBox AddDummyBox(string name) {
             Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0f));
             DummyBox box = Instantiate(DummyBoxPrefab, ray.GetPoint(0.5f), Camera.main.transform.rotation, GameManager.Instance.Scene.transform).GetComponent<DummyBox>();
             string dummyBoxes = PlayerPrefsHelper.LoadString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", "");
@@ -594,6 +605,7 @@ namespace Base {
                 PlayerPrefsHelper.SaveString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", string.Join(";", boxes));
             }
             box.Init(newName, 0.05f, 0.05f, 0.05f);
+            return box;
         }
 
         /// <summary>

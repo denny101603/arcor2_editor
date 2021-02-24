@@ -135,8 +135,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     public void FocusButtonClick() {
         MenuManager.Instance.HideAllMenus();
         SelectorMenu.Instance.gameObject.SetActive(true);
+        TransformMenu.Instance.Hide();
         SetActiveSubmenu(LeftMenuSelection.None);
-        Notifications.Instance.ShowNotification("Not implemented", "");
 
     }
 
@@ -245,6 +245,13 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         SelectorMenu.Instance.gameObject.SetActive(true);
         MeshPicker.SetActive(false);
         SetActiveSubmenu(LeftMenuSelection.None);
+    }
+
+    public void CubeClick() {
+        SelectorMenu.Instance.gameObject.SetActive(true);
+        MeshPicker.SetActive(false);
+        SetActiveSubmenu(LeftMenuSelection.None);
+        SelectorMenu.Instance.SetSelectedObject(ProjectManager.Instance.AddDummyBox("Cube"), true);
     }
 
     #endregion
