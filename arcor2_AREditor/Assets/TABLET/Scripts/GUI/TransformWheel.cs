@@ -11,7 +11,7 @@ public class TransformWheel : MonoBehaviour
     public TranformWheelUnits Units;
     public TransformWheelList List;
 
-    public void InitList(float value = 0) {
+    public void InitList(int value = 0) {
         TransformWheelItems.Clear();
         List.Init();
         foreach (Transform child in List.transform) {
@@ -27,40 +27,12 @@ public class TransformWheel : MonoBehaviour
         SetValue(value);
     }
 
-    private void SetValue(float value) {
-        int intValue = 0;
-        switch (Units.GetValue()) {
-           case "cm":
-                intValue = (int) (value * 100);
-                break;
-            case "mm":
-                intValue = (int) (value * 1000);
-                break;
-            case "μm":
-                intValue = (int) (value * 1000000);
-                break;
-            default:
-                intValue = (int) value;
-                break;
-        };
-        List.transform.localPosition = new Vector2(0, 0 - intValue * 80);
+    private void SetValue(int value) {        
+        List.transform.localPosition = new Vector2(0, 0 - value * 80);
     }
 
-    public float GetValue() {        
-        int v = 0 - ClosestInteger((int) List.transform.localPosition.y, 80) / 80;
-        switch (Units.GetValue()) 
-        {
-            case "m":
-                return v;
-            case "cm":
-                return v * 0.01f;
-            case "mm":
-                return v * 0.001f;
-            case "μm":
-                return v * 0.000001f;
-            default:
-                return v;
-        };
+    public int GetValue() {        
+        return 0 - ClosestInteger((int) List.transform.localPosition.y, 80) / 80;        
     }
 
     private int ClosestInteger(int n, int m) {
