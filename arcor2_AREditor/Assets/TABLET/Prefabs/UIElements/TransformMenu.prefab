@@ -2136,6 +2136,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6164029822646280995, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6481120801409163770, guid: 54671356d1038bc4b81602941544096a,
         type: 3}
       propertyPath: m_Sprite
@@ -2357,6 +2362,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
         type: 3}
+      propertyPath: OnState2.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState1.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
       propertyPath: Icon1
       value: 
       objectReference: {fileID: 21300000, guid: 7418ac96cb40f354d86318d5b45ee23b,
@@ -2376,6 +2391,56 @@ PrefabInstance:
         type: 3}
       propertyPath: State2
       value: tablet
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState2.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState2.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState1.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState1.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState2.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3916810560632628191}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState1.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3916810560632628191}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState1.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SwitchToRobot
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState1.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState2.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SwitchToTablet
+      objectReference: {fileID: 0}
+    - target: {fileID: 916814318559143230, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: OnState2.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3029955015665185134, guid: 54671356d1038bc4b81602941544096a,
         type: 3}
@@ -2645,6 +2710,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6164029822646280995, guid: 54671356d1038bc4b81602941544096a,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6481120801409163770, guid: 54671356d1038bc4b81602941544096a,
         type: 3}
