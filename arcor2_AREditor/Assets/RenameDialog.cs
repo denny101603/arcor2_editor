@@ -30,7 +30,7 @@ public class RenameDialog : Dialog
             Title.text = "Rename dummy box";
 
         nameInput.SetValue(objectToRename.GetName());
-        nameInput.SetLabel("Name", "kde je tohle?");
+        nameInput.SetLabel("Name", "New name");
         nameInput.SetType("string");
     }
     public override async void Confirm() {
@@ -58,6 +58,7 @@ public class RenameDialog : Dialog
     public override void Close() {
         LeftMenu.Instance.gameObject.SetActive(true);
         SelectorMenu.Instance.gameObject.SetActive(true);
+
         base.Close();
     }
 
