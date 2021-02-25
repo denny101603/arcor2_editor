@@ -3659,7 +3659,7 @@ PrefabInstance:
     - target: {fileID: 1171430893015759436, guid: a37f66d2914458b4c85e50f9fa33cf93,
         type: 3}
       propertyPath: m_Name
-      value: MenuBtn
+      value: CopyObject
       objectReference: {fileID: 0}
     - target: {fileID: 4991226775622563084, guid: a37f66d2914458b4c85e50f9fa33cf93,
         type: 3}
@@ -3669,7 +3669,7 @@ PrefabInstance:
     - target: {fileID: 4991226775622563084, guid: a37f66d2914458b4c85e50f9fa33cf93,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: MenuButtonCb
+      value: CopyObjectClick
       objectReference: {fileID: 0}
     - target: {fileID: 4991226775622563084, guid: a37f66d2914458b4c85e50f9fa33cf93,
         type: 3}

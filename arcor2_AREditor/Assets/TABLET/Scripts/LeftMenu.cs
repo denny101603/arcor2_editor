@@ -153,6 +153,28 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     #region Add submenu button click methods
 
+    public void CopyObjectClick() {
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null)
+            return;
+        if (selectedObject.GetType() == typeof(ActionPoint3D)) {
+            WebsocketManager.Instance.CopyActionPoint(selectedObject.GetId(), null);
+        } else if (selectedObject.GetType() == typeof(Action3D)) {
+            Action3D action = (Action3D) selectedObject;
+            List<ActionParameter> parameters = new List<ActionParameter>();
+            foreach (Base.Parameter p in action.Parameters.Values) {
+                parameters.Add(new ActionParameter(p.ParameterMetadata.Name, p.ParameterMetadata.Type, p.Value));
+            }
+            WebsocketManager.Instance.AddAction(action.ActionPoint.GetId(), parameters, action.ActionProvider.GetProviderId() + "/" + action.Metadata.Name, action.GetName() + "_copy", action.GetFlows());
+        } else if (selectedObject.GetType() == typeof(DummyBox)) {
+            DummyBox box = ProjectManager.Instance.AddDummyBox(selectedObject.GetName());
+            box.transform.position = selectedObject.transform.position;
+            box.transform.rotation = selectedObject.transform.rotation;
+            box.SetDimensions(((DummyBox) selectedObject).GetDimensions());
+            SelectorMenu.Instance.SetSelectedObject(box, true);
+        }
+    }
+
     public void AddActionClick() {
         Notifications.Instance.ShowNotification("Not implemented", "");
     }

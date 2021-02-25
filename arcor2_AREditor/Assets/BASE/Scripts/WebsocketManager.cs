@@ -2325,9 +2325,9 @@ namespace Base {
             }
         }
 
-        public async Task CopyActionPoint(string actionPointId) {
+        public async Task CopyActionPoint(string actionPointId, Position position) {
             int r_id = Interlocked.Increment(ref requestID);
-            IO.Swagger.Model.CopyActionPointRequestArgs args = new CopyActionPointRequestArgs(id: actionPointId);
+            IO.Swagger.Model.CopyActionPointRequestArgs args = new CopyActionPointRequestArgs(id: actionPointId, position: position);
 
             IO.Swagger.Model.CopyActionPointRequest request = new IO.Swagger.Model.CopyActionPointRequest(r_id, "CopyActionPoint", args: args);
             SendDataToServer(request.ToJson(), r_id, true);
