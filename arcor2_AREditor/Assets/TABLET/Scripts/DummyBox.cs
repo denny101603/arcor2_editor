@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,25 @@ public class DummyBox : InteractiveObject {
         else
             dummyBoxes += ";" + name;
         PlayerPrefsHelper.SaveString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", dummyBoxes);
+        SelectorMenu.Instance.ForceUpdateMenus();
+    }
+
+    public void Rename(string newName) {
+        string dummyBoxes = PlayerPrefsHelper.LoadString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", "");
+
+        if (!string.IsNullOrEmpty(dummyBoxes)) {
+            List<string> boxes = dummyBoxes.Split(';').ToList();
+            boxes.Remove(Name);
+            boxes.Add(newName);
+            PlayerPrefsHelper.SaveString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", string.Join(";", boxes));
+        }
+        Vector3 dim = PlayerPrefsHelper.LoadVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxDim/" + Name, new Vector3(0.5f, 0.5f, 0.5f));
+
+
+        Name = newName;
+        PlayerPrefsHelper.SaveVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxPos/" + Name, transform.localPosition);
+        PlayerPrefsHelper.SaveQuaternion(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxRot/" + Name, transform.localRotation);
+        SetDimensions(dim.x, dim.y, dim.z);
         SelectorMenu.Instance.ForceUpdateMenus();
     }
 

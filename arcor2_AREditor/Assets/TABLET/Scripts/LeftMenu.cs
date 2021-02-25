@@ -13,8 +13,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private CanvasGroup CanvasGroup;
 
     public Button FocusButton, RobotButton, AddButton, SettingsButton, HomeButton;
-    public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton;
+    public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton, RenameButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker;
+    public RenameDialog RenameDialog;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
     private void Awake() {
@@ -84,6 +85,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             RemoveButton.interactable = false;
             SetActionPointParentButton.interactable = false;
             AddActionButton.interactable = false;
+            RenameButton.interactable = false;
         } else {
             SelectedObjectText.text = selectedObject.GetName() + "\n" + selectedObject.GetType();
 
@@ -92,6 +94,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
             SetActionPointParentButton.interactable = selectedObject is ActionPoint3D;
             AddActionButton.interactable = selectedObject is ActionPoint3D;
+            RenameButton.interactable = selectedObject is ActionPoint3D || selectedObject is DummyBox;
         }
 
         if (SceneManager.Instance.SceneMeta != null)
@@ -201,6 +204,18 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     }
 
+    public void RenameClick() {
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null)
+            return;
+
+        gameObject.SetActive(false);
+        SelectorMenu.Instance.gameObject.SetActive(false);
+
+        RenameDialog.Init(selectedObject);
+        RenameDialog.Open();
+    }
+
     public void RemoveClick() {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
@@ -208,7 +223,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
         selectedObject.Remove();
         SetActiveSubmenu(LeftMenuSelection.None);
-        //Notifications.Instance.ShowToastMessage(selectedObject.GetName() + " removed successfuly");
     }
 
 
