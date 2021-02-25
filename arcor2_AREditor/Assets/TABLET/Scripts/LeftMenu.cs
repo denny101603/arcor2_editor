@@ -68,7 +68,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             return;
         }
 
-        FocusButton.GetComponent<Image>().enabled = true;
+        FocusButton.GetComponent<Image>().enabled = SelectorMenu.Instance.gameObject.activeSelf;
+
         RobotButton.interactable = true;
         AddButton.interactable = true;
         SettingsButton.interactable = true;
@@ -93,27 +94,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             AddActionButton.interactable = selectedObject is ActionPoint3D;
         }
 
-        //InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        //if (requestingObject || selectedObject == null) {
-        //    ConnectionsBtn.interactable = false;
-        //    MoveBtn.interactable = false;
-        //    MenuBtn.interactable = false;
-        //    InteractBtn.interactable = false;
-
-        //} else {
-        //    ConnectionsBtn.interactable = selectedObject.GetType() == typeof(PuckInput) ||
-        //         selectedObject.GetType() == typeof(PuckOutput);
-
-        //    MoveBtn.interactable = selectedObject.Movable();
-        //    MenuBtn.interactable = selectedObject.HasMenu();
-        //    InteractBtn.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
-        //        selectedObject.GetType() == typeof(CreateAnchor);
-        //}
-        /*
-        if (GameManager.Instance.ProjectOpened)
-            ;
-        if(SceneManager.Instance.SceneMeta.Nam)
-        */
         if (SceneManager.Instance.SceneMeta != null)
             ProjectName.text = "Project: \n" + SceneManager.Instance.SceneMeta.Name;
     }
