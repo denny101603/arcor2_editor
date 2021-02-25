@@ -66,6 +66,8 @@ public class ActionObject3D : ActionObject {
         base.Update();
     }
 
+    
+
     private async void UpdatePose() {
         try {
             await WebsocketManager.Instance.UpdateActionObjectPose(Data.Id, GetPose());
