@@ -13,7 +13,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private CanvasGroup CanvasGroup;
 
     public Button FocusButton, RobotButton, AddButton, SettingsButton, HomeButton;
-    public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton, RenameButton;
+    public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton, RenameButton, CalibrationButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker;
     public RenameDialog RenameDialog;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
@@ -86,6 +86,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             SetActionPointParentButton.interactable = false;
             AddActionButton.interactable = false;
             RenameButton.interactable = false;
+            CalibrationButton.interactable = false;
         } else {
             SelectedObjectText.text = selectedObject.GetName() + "\n" + selectedObject.GetType();
 
@@ -95,6 +96,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             SetActionPointParentButton.interactable = selectedObject is ActionPoint3D;
             AddActionButton.interactable = selectedObject is ActionPoint3D;
             RenameButton.interactable = selectedObject is ActionPoint3D || selectedObject is DummyBox;
+
+            CalibrationButton.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
+                selectedObject.GetType() == typeof(CreateAnchor);
         }
 
         if (SceneManager.Instance.SceneMeta != null)
@@ -142,16 +146,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public void HomeButtonClick() {
         SetActiveSubmenu(LeftMenuSelection.Home, !HomeButtons.activeInHierarchy);
-        /*
-        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        if (selectedObject is null)
-            return;
-        if (selectedObject.GetType() == typeof(Recalibrate)) {
-            ((Recalibrate) selectedObject).OnClick(Clickable.Click.TOUCH);
-        } else if (selectedObject.GetType() == typeof(CreateAnchor)) {
-            ((CreateAnchor) selectedObject).OnClick(Clickable.Click.TOUCH);
-        }
-        */
     }
 
     #region Add submenu button click methods
@@ -261,6 +255,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         } else if (selectedObject.GetType() == typeof(CreateAnchor)) {
             ((CreateAnchor) selectedObject).OnClick(Clickable.Click.TOUCH);
         }
+
+        SetActiveSubmenu(LeftMenuSelection.None);
     }
 
     #endregion
