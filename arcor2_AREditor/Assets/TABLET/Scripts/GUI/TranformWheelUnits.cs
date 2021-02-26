@@ -30,6 +30,12 @@ public class TranformWheelUnits : MonoBehaviour
         return Units[index];
     }
 
+    public void SetIndex(int index) {
+        this.index = index;
+        Label.text = Units[index];
+        CheckBounds();
+    }
+
     public void Next() {
         if (index < Units.Count - 1) {
             ++index;

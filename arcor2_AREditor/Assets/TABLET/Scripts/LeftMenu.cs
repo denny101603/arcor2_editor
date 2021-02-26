@@ -13,9 +13,11 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private CanvasGroup CanvasGroup;
 
     public Button FocusButton, RobotButton, AddButton, SettingsButton, HomeButton;
-    public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton, RenameButton, CalibrationButton;
+    public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton,
+        AddActionButton, RenameButton, CalibrationButton, ResizeCubeButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
     public RenameDialog RenameDialog;
+    public CubeSizeDialog CubeSizeDialog;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
     private void Awake() {
@@ -75,7 +77,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         SettingsButton.interactable = true;
         HomeButton.interactable = true;
 
-        
+
 
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (requestingObject || selectedObject == null) {
@@ -86,6 +88,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             AddActionButton.interactable = false;
             RenameButton.interactable = false;
             CalibrationButton.interactable = false;
+            ResizeCubeButton.interactable = false;
         } else {
             SelectedObjectText.text = selectedObject.GetName() + "\n" + selectedObject.GetType();
 
@@ -97,9 +100,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             RenameButton.interactable = selectedObject is ActionPoint3D ||
                 selectedObject is DummyBox ||
                 selectedObject is Action3D;
-
             CalibrationButton.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
                 selectedObject.GetType() == typeof(CreateAnchor);
+            ResizeCubeButton.interactable = selectedObject is DummyBox;
         }
 
         if (SceneManager.Instance.SceneMeta != null)
@@ -204,7 +207,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             SelectorMenu.Instance.gameObject.SetActive(false);
             MeshPicker.SetActive(true);
         }
-        
+
     }
 
     #endregion
@@ -231,6 +234,17 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             TransformMenu.Instance.Show(selectedObject);
         }
 
+    }
+
+    public void ResizeCubeClick() {
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null || !(selectedObject is DummyBox))
+            return;
+        //todo cervene podbarveni a toggle chování
+        SelectorMenu.Instance.gameObject.SetActive(false);
+
+        CubeSizeDialog.Init((DummyBox) selectedObject);
+        CubeSizeDialog.Open();
     }
 
     public void RenameClick() {
