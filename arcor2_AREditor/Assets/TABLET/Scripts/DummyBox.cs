@@ -93,10 +93,18 @@ public class DummyBox : InteractiveObject {
         throw new System.NotImplementedException();
     }
 
+    public void SetDimensions(Vector3 dim) {
+        SetDimensions(dim.x, dim.y, dim.z);
+    }
+
     public void SetDimensions(float x, float y, float z) {
 
         PlayerPrefsHelper.SaveVector3(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxDim/" + Name, new Vector3(x, y, z));
         Visual.transform.localScale = new Vector3(x, y, z);
+    }
+
+    public Vector3 GetDimensions() {
+        return Visual.transform.localScale;
     }
 
     public override void StartManipulation() {

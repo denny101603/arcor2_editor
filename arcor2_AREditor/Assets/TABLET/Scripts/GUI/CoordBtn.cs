@@ -14,13 +14,50 @@ public class CoordBtn : MonoBehaviour
     public Image Background, Outline;
     public TMP_Text Value, Delta;
 
-    public void SetDelta(float value) {
-        Delta.text = "Δ " + string.Format("{0:0.#####}",value);
+    public void SetDeltaMeters(float value) {
+        SetMeters(value, Delta, true);
     }
 
-    public void SetValue(float value) {
-        Value.text = string.Format("{0:0.#####}", value);
+    public void SetValueMeters(float value) {
+        SetMeters(value, Value, false);
     }
+
+    private void SetMeters(float value, TMP_Text field, bool delta) {
+        if (delta) {
+            field.text = "Δ ";
+        } else {
+            field.text = "";
+        }
+        if (value < 0.99 && value >= 0.009 || value > -0.99 && value < -0.009 )
+            field.text += string.Format("{0:0.##cm}", value * 100);
+        else if (value < 0.009 && value > 0.009)
+            field.text += string.Format("{0:0.##mm}", value * 1000);
+        else
+            field.text += string.Format("{0:0.##m}", value);
+    }
+
+    public void SetDeltaDegrees(float value) {
+        SetDegrees(value, Delta, true);
+    }
+
+    public void SetValueDegrees(float value) {
+        SetDegrees(value, Value, false);
+    }
+
+    private void SetDegrees(float value, TMP_Text field, bool delta) {
+        if (delta) {
+            field.text = "Δ ";
+        } else {
+            field.text = "";
+        }
+        if (value < 0.99 && value >= 0.009 || value > -0.99 && value < -0.009)
+            field.text += string.Format("{0:0.##'}", value * 60);
+        else if (value < 0.009 && value > 0.009)
+            field.text += string.Format("{0:0.##''}", value * 3600);
+        else
+            field.text += string.Format("{0:0.##°}", value);
+    }
+
     public string Axis;
     public void Deselect() {
         Background.color = new Color(Outline.color.r, Outline.color.g, Outline.color.b, 0f);

@@ -217,6 +217,7 @@ public class ActionPoint3D : Base.ActionPoint {
         tfGizmo = TransformGizmo.Instance;
         sphereMaterial = Sphere.GetComponent<Renderer>().material;
         ActionPointName.text = apData.Name;
+        SetRotation(GetRotation());
     }
 
     public override void Enable(bool enable) {
@@ -266,8 +267,18 @@ public class ActionPoint3D : Base.ActionPoint {
     }
 
     public GameObject GetModelCopy() {
-        GameObject copy = Instantiate(ProjectManager.Instance.ActionPointSphere, Vector3.zero, Quaternion.identity, transform);
+        GameObject copy = Instantiate(ProjectManager.Instance.ActionPointSphere, transform);
         copy.transform.localScale = Visual.transform.localScale;
+        copy.transform.localPosition = Visual.transform.localPosition;
+        copy.transform.localRotation = Visual.transform.localRotation;
         return copy;
+    }
+
+    public void SetRotation(Quaternion quaternion) {
+        PlayerPrefsHelper.SaveQuaternion(Data.Id, quaternion);
+    }
+
+    public Quaternion GetRotation() {
+        return PlayerPrefsHelper.LoadQuaternion(Data.Id, Quaternion.identity);
     }
 }
