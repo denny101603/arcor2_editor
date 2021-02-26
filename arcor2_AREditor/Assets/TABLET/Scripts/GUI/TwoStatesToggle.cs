@@ -1,13 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Button))]
 public class TwoStatesToggle : MonoBehaviour
 {
-
+    [HideInInspector]
+    public Button Button;
     private void Awake() {
+        Button = GetComponent<Button>();
         icon1 = BigImage.sprite;
         icon2 = SmallImage.sprite;
         Toggle(false);
@@ -36,5 +40,11 @@ public class TwoStatesToggle : MonoBehaviour
                 OnState1?.Invoke();
             }
         }
+    }
+
+    public void SetState(string state) {
+        if (CurrentState != state)
+            Toggle(false);
+            
     }
 }
