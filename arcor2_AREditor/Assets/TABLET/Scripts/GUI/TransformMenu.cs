@@ -236,7 +236,7 @@ public class TransformMenu : Singleton<TransformMenu> {
     public void SwitchToTablet() {
         TransformWheel.gameObject.SetActive(true);
         ResetPosition();
-        RotateTranslateBtn.Button.interactable = true;
+        RotateTranslateBtn.SetInteractivity(true);
     }
 
     public void SwitchToRobot() {
@@ -253,7 +253,7 @@ public class TransformMenu : Singleton<TransformMenu> {
             RotateTranslateBtn.SetState("translate");
             SwitchToTranslate();
         }
-        RotateTranslateBtn.Button.interactable = false;
+        RotateTranslateBtn.SetInteractivity(false);
     }
 
     public void HoldPressed() {

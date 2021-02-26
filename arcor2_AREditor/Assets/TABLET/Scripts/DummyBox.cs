@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Base;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class DummyBox : InteractiveObject {
     public string Name = "", id = "";

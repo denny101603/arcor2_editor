@@ -87,7 +87,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 6481120801409163770}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -114,10 +114,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 856c66a99c2cdec4f854051d2424daf7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Button: {fileID: 0}
   BigImage: {fileID: 6481120801409163770}
   SmallImage: {fileID: 8895267250206916035}
-  Icon1: {fileID: 0}
-  Icon2: {fileID: 0}
   State1: 
   State2: 
   CurrentState: 

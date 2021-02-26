@@ -45,6 +45,17 @@ public class TwoStatesToggle : MonoBehaviour
     public void SetState(string state) {
         if (CurrentState != state)
             Toggle(false);
-            
+
+    }
+
+    public void SetInteractivity(bool interactive) {
+        Button.interactable = interactive;
+        if (!interactive) {
+            BigImage.color = Color.gray;
+            SmallImage.color = Color.gray;
+        } else {
+            BigImage.color = Color.white;
+            SmallImage.color = Color.white;
+        }
     }
 }
