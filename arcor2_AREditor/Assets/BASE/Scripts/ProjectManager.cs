@@ -280,7 +280,7 @@ namespace Base {
         }
         
 
-        private void OnActionPointAdded(object sender, ProjectActionPointEventArgs data) {
+        private async void OnActionPointAdded(object sender, ProjectActionPointEventArgs data) {
             ActionPoint ap = null;
             if (data.ActionPoint.Parent == null || data.ActionPoint.Parent == "") {
                 ap = SpawnActionPoint(data.ActionPoint, null);
@@ -294,8 +294,13 @@ namespace Base {
                 }
 
             }
-            Debug.LogError(ap);
-            Debug.LogError(SelectNewlyCreatedAP);
+            //// FOR EXPERIMENT!!
+            ///
+            //IRobot robot = SceneManager.Instance.GetRobots()[0];
+            //await WebsocketManager.Instance.AddActionPointOrientationUsingRobot(ap.GetId(), robot.GetId(),
+            //  (await robot.GetEndEffectorIds())[0], "def");
+            await WebsocketManager.Instance.AddActionPointOrientation(ap.GetId(), DataHelper.QuaternionToOrientation(Quaternion.Euler(180, 0, 0)), "def");
+            /// END
             if (ap != null && SelectNewlyCreatedAP) {
                 SelectorMenu.Instance.ForceUpdateMenus();
                 SelectorMenu.Instance.SetSelectedObject(ap, true);

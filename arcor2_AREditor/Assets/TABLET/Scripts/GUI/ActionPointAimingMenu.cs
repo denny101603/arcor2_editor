@@ -135,7 +135,8 @@ public class ActionPointAimingMenu : MonoBehaviour, IMenu {
     }
 
     private void OnActionPointOrientationAdded(object sender, ActionPointOrientationEventArgs args) {
-        if (CurrentActionPoint.Data.Id == args.ActionPointId) {
+        if (MenuManager.Instance.ActionPointAimingMenu.CurrentState == SimpleSideMenu.State.Open &&
+                CurrentActionPoint.Data.Id == args.ActionPointId) {
             CreateOrientationBtn(args.Data);
             UpdateOrientationsListLabel();
         }

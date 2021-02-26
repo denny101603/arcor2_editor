@@ -294,21 +294,65 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     #region Action picker click methods
     public void ActionMoveToClick() {
-        Notifications.Instance.ShowNotification("Not implemented", "");
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null)
+            return;
+        string robotId = "";
+        foreach (IRobot r in SceneManager.Instance.GetRobots()) {
+            robotId = r.GetId();
+        }
+        string name = ProjectManager.Instance.GetFreeActionName("MoveTo");
+        NamedOrientation o = ((ActionPoint3D) selectedObject).GetFirstOrientation();
+        List<ActionParameter> parameters = new List<ActionParameter> {
+            new ActionParameter(name: "pose", type: "pose", value: "\"" + o.Id + "\""),
+            new ActionParameter(name: "move_type", type: "string_enum", value: "\"JOINTS\""),
+            new ActionParameter(name: "velocity", type: "double", value: "30.0"),
+            new ActionParameter(name: "acceleration", type: "double", value: "50.0")
+        };
+        IActionProvider robot = SceneManager.Instance.GetActionObject(robotId);
+        WebsocketManager.Instance.AddAction(selectedObject.GetId(), parameters, robotId + "/move", ProjectManager.Instance.GetFreeActionName("MoveTo"), robot.GetActionMetadata("move").GetFlows(name));
         SelectorMenu.Instance.gameObject.SetActive(true);
         ActionPicker.SetActive(false);
         SetActiveSubmenu(LeftMenuSelection.None);
     }
 
     public void ActionPickClick() {
-        Notifications.Instance.ShowNotification("Not implemented", "");
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null)
+            return;
+        string robotId = "";
+        foreach (IRobot r in SceneManager.Instance.GetRobots()) {
+            robotId = r.GetId();
+        }
+        string name = ProjectManager.Instance.GetFreeActionName("MoveTo");
+        NamedOrientation o = ((ActionPoint3D) selectedObject).GetFirstOrientation();
+        List<ActionParameter> parameters = new List<ActionParameter> {
+            new ActionParameter(name: "pick_pose", type: "pose", value: "\"" + o.Id + "\""),
+            new ActionParameter(name: "vertical_offset", type: "double", value: "0.05")
+        };
+        IActionProvider robot = SceneManager.Instance.GetActionObject(robotId);
+        WebsocketManager.Instance.AddAction(selectedObject.GetId(), parameters, robotId + "/pick", ProjectManager.Instance.GetFreeActionName("Pick"), robot.GetActionMetadata("pick").GetFlows(name));
         SelectorMenu.Instance.gameObject.SetActive(true);
         ActionPicker.SetActive(false);
         SetActiveSubmenu(LeftMenuSelection.None);
     }
 
     public void ActionReleaseClick() {
-        Notifications.Instance.ShowNotification("Not implemented", "");
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null)
+            return;
+        string robotId = "";
+        foreach (IRobot r in SceneManager.Instance.GetRobots()) {
+            robotId = r.GetId();
+        }
+        string name = ProjectManager.Instance.GetFreeActionName("MoveTo");
+        NamedOrientation o = ((ActionPoint3D) selectedObject).GetFirstOrientation();
+        List<ActionParameter> parameters = new List<ActionParameter> {
+            new ActionParameter(name: "place_pose", type: "pose", value: "\"" + o.Id + "\""),
+            new ActionParameter(name: "vertical_offset", type: "double", value: "0.05")
+        };
+        IActionProvider robot = SceneManager.Instance.GetActionObject(robotId);
+        WebsocketManager.Instance.AddAction(selectedObject.GetId(), parameters, robotId + "/place", ProjectManager.Instance.GetFreeActionName("Place"), robot.GetActionMetadata("place").GetFlows(name));
         SelectorMenu.Instance.gameObject.SetActive(true);
         ActionPicker.SetActive(false);
         SetActiveSubmenu(LeftMenuSelection.None);
