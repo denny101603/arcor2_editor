@@ -28,6 +28,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private bool requestingObject = false;
 
     private void OnEditorStateChanged(object sender, EditorStateEventArgs args) {
+        UpdateVisibility();
+
         switch (args.Data) {
             case GameManager.EditorStateEnum.Normal:
                 requestingObject = false;
@@ -35,9 +37,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 break;
             case GameManager.EditorStateEnum.InteractionDisabled:
                 updateButtonsInteractivity = false;
-
-                
-
                 break;
             case GameManager.EditorStateEnum.Closed:
                 updateButtonsInteractivity = false;
@@ -54,7 +53,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
 
     private void Update() {
-        UpdateVisibility();
+        //UpdateVisibility();
         if (!updateButtonsInteractivity)
             return;
 
@@ -107,19 +106,23 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             ProjectName.text = "Project: \n" + SceneManager.Instance.SceneMeta.Name;
     }
 
-    private void UpdateVisibility() {
+    public void UpdateVisibility() {
         if (GameManager.Instance.GetGameState() == GameManager.GameStateEnum.MainScreen ||
             GameManager.Instance.GetGameState() == GameManager.GameStateEnum.Disconnected ||
             MenuManager.Instance.MainMenu.CurrentState == DanielLochner.Assets.SimpleSideMenu.SimpleSideMenu.State.Open) {
-            CanvasGroup.interactable = false;
-            CanvasGroup.blocksRaycasts = false;
-            CanvasGroup.alpha = 0;
+            UpdateVisibility(false);
         } else {
-            CanvasGroup.interactable = true;
-            CanvasGroup.blocksRaycasts = true;
-            CanvasGroup.alpha = 1;
+            UpdateVisibility(true);
         }
     }
+
+    public void UpdateVisibility(bool visible) {
+        CanvasGroup.interactable = visible;
+        CanvasGroup.blocksRaycasts = visible;
+        CanvasGroup.alpha = visible ? 1 : 0;
+    }
+
+
 
     public void FocusButtonClick() {
         MenuManager.Instance.HideAllMenus();
@@ -227,7 +230,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (selectedObject is null)
             return;
 
-        gameObject.SetActive(false);
+        UpdateVisibility(false);
         SelectorMenu.Instance.gameObject.SetActive(false);
 
         RenameDialog.Init(selectedObject);
@@ -327,3 +330,4 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 public enum LeftMenuSelection{
     None, Add, Settings, Home
 }
+
