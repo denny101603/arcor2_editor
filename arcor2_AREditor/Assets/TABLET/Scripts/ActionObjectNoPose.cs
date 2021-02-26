@@ -80,4 +80,8 @@ public class ActionObjectNoPose : ActionObject {
     public override bool Removable() {
         return true;
     }
+
+    public override void Rename(string newName) {
+        throw new NotImplementedException();
+    }
 }

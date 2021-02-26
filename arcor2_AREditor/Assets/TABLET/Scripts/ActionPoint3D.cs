@@ -281,4 +281,14 @@ public class ActionPoint3D : Base.ActionPoint {
     public Quaternion GetRotation() {
         return PlayerPrefsHelper.LoadQuaternion(Data.Id, Quaternion.identity);
     }
+
+    public override void Rename(string newName) {
+        try {
+            WebsocketManager.Instance.RenameActionPoint(GetId(), newName);
+            Notifications.Instance.ShowToastMessage("Action point renamed");
+        } catch (RequestFailedException e) {
+            Notifications.Instance.ShowNotification("Failed to rename action point", e.Message);
+            throw;
+        }
+    }
 }

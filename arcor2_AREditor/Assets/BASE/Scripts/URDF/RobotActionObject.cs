@@ -634,5 +634,9 @@ namespace Base {
         public override bool Removable() {
             return false;
         }
+
+        public override void Rename(string newName) {
+            throw new NotImplementedException();
+        }
     }
 }

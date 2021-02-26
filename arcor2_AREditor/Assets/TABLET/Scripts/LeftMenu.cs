@@ -95,7 +95,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
             SetActionPointParentButton.interactable = selectedObject is ActionPoint3D;
             AddActionButton.interactable = selectedObject is ActionPoint3D;
-            RenameButton.interactable = selectedObject is ActionPoint3D || selectedObject is DummyBox;
+            RenameButton.interactable = selectedObject is ActionPoint3D ||
+                selectedObject is DummyBox ||
+                selectedObject is Action3D;
 
             CalibrationButton.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
                 selectedObject.GetType() == typeof(CreateAnchor);

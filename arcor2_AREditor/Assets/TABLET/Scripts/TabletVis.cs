@@ -46,6 +46,10 @@ public class TabletVis : InteractiveObject {
         throw new System.NotImplementedException();
     }
 
+    public override void Rename(string newName) {
+        throw new System.NotImplementedException();
+    }
+
     public override void StartManipulation() {
         throw new System.NotImplementedException();
     }

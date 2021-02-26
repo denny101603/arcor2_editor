@@ -24,36 +24,29 @@ public class RenameDialog : Dialog
         if (objectToRename == null)
             return;
 
+        //TODO add to InteractiveObject a method for getting human friendly name of class?
         if (selectedObject is ActionPoint3D)
             Title.text = "Rename Action point";
+        else if(selectedObject is Action3D)
+            Title.text = "Rename Action";
         else
-            Title.text = "Rename dummy box";
+            Title.text = "Rename Dummy box";
 
         nameInput.SetValue(objectToRename.GetName());
         nameInput.SetLabel("Name", "New name");
         nameInput.SetType("string");
     }
     public override async void Confirm() {
-        Debug.LogError("called confirm");
-
         string name = (string) nameInput.GetValue();
 
         try {
-            if (selectedObject is ActionPoint3D) {
-                Debug.LogError("calling websocket");
-                await WebsocketManager.Instance.RenameActionPoint(selectedObject.GetId(), name);
-                Notifications.Instance.ShowToastMessage("Action point renamed");
-            } else if (selectedObject is DummyBox dummy) {
-                dummy.Rename(name);
-                Notifications.Instance.ShowToastMessage("Dummy box renamed");
-            }
+            selectedObject.Rename(name);
+            SelectorMenu.Instance.ForceUpdateMenus();
             Close();
-
         } catch (RequestFailedException e) {
-            Notifications.Instance.ShowNotification("Failed to rename action point", e.Message);
+            //notification already shown, nothing else to do
         }
     }
-
 
     public override void Close() {
         LeftMenu.Instance.gameObject.SetActive(true);
@@ -61,5 +54,4 @@ public class RenameDialog : Dialog
 
         base.Close();
     }
-
 }

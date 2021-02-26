@@ -158,4 +158,14 @@ public class Action3D : Base.Action {
     public override bool Removable() {
         return true;
     }
+
+    public override void Rename(string newName) {
+        try {
+            WebsocketManager.Instance.RenameAction(GetId(), newName);
+            Notifications.Instance.ShowToastMessage("Action renamed");
+        } catch (RequestFailedException e) {
+            Notifications.Instance.ShowNotification("Failed to rename action", e.Message);
+            throw;
+        }
+    }
 }

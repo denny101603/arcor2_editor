@@ -431,4 +431,8 @@ public class ActionObject3D : ActionObject {
     public override bool Removable() {
         return GameManager.Instance.GetGameState() == GameManager.GameStateEnum.SceneEditor;
     }
+
+    public override void Rename(string newName) {
+        throw new NotImplementedException();
+    }
 }

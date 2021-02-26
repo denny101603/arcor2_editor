@@ -46,7 +46,7 @@ public class DummyBox : InteractiveObject {
         SelectorMenu.Instance.ForceUpdateMenus();
     }
 
-    public void Rename(string newName) {
+    public override void Rename(string newName) {
         string dummyBoxes = PlayerPrefsHelper.LoadString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", "");
 
         if (!string.IsNullOrEmpty(dummyBoxes)) {
