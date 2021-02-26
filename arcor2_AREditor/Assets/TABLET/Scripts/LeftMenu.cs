@@ -14,7 +14,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public Button FocusButton, RobotButton, AddButton, SettingsButton, HomeButton;
     public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton, AddActionButton, RenameButton, CalibrationButton;
-    public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker;
+    public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
     public RenameDialog RenameDialog;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
@@ -178,7 +178,15 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
 
     public void AddActionClick() {
-        Notifications.Instance.ShowNotification("Not implemented", "");
+        if (AddActionButton.GetComponent<Image>().enabled) {
+            AddActionButton.GetComponent<Image>().enabled = false;
+            SelectorMenu.Instance.gameObject.SetActive(true);
+            ActionPicker.SetActive(false);
+        } else {
+            AddActionButton.GetComponent<Image>().enabled = true;
+            SelectorMenu.Instance.gameObject.SetActive(false);
+            ActionPicker.SetActive(true);
+        }
     }
 
     public void AddActionPointClick() {
@@ -284,6 +292,29 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     #endregion
 
+    #region Action picker click methods
+    public void ActionMoveToClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+        SelectorMenu.Instance.gameObject.SetActive(true);
+        ActionPicker.SetActive(false);
+        SetActiveSubmenu(LeftMenuSelection.None);
+    }
+
+    public void ActionPickClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+        SelectorMenu.Instance.gameObject.SetActive(true);
+        ActionPicker.SetActive(false);
+        SetActiveSubmenu(LeftMenuSelection.None);
+    }
+
+    public void ActionReleaseClick() {
+        Notifications.Instance.ShowNotification("Not implemented", "");
+        SelectorMenu.Instance.gameObject.SetActive(true);
+        ActionPicker.SetActive(false);
+        SetActiveSubmenu(LeftMenuSelection.None);
+    }
+    #endregion
+
 
     private void SetActiveSubmenu(LeftMenuSelection which, bool active = true) {
         DeactivateAllSubmenus();
@@ -310,6 +341,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private void DeactivateAllSubmenus() {
         SelectorMenu.Instance.gameObject.SetActive(true);
         MeshPicker.SetActive(false);
+        ActionPicker.SetActive(false);
 
         HomeButtons.SetActive(false);
         SettingsButtons.SetActive(false);
@@ -323,7 +355,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
         AddMeshButton.GetComponent<Image>().enabled = false;
         MoveButton.GetComponent<Image>().enabled = false;
-
+        AddActionButton.GetComponent<Image>().enabled = false;
     }
 }
 
