@@ -8,6 +8,7 @@ using UnityEngine;
 public class DummyBox : InteractiveObject {
     public string Name = "", id = "";
     public GameObject Visual;
+    public OutlineOnClick OutlineOnClick;
 
     private void Awake() {
         id = Guid.NewGuid().ToString();
@@ -73,6 +74,7 @@ public class DummyBox : InteractiveObject {
         return Name;
     }
 
+
     public override bool HasMenu() {
         return false;
     }
@@ -86,11 +88,13 @@ public class DummyBox : InteractiveObject {
     }
 
     public override void OnHoverEnd() {
-
+        OutlineOnClick.UnHighlight();
     }
 
     public override void OnHoverStart() {
-
+        if (!enabled)
+            return;
+        OutlineOnClick.Highlight();
     }
 
     public override void OpenMenu() {
