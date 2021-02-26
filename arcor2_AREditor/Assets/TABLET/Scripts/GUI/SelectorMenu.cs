@@ -300,6 +300,7 @@ public class SelectorMenu : Singleton<SelectorMenu> {
             if (selectorItems.TryGetValue(io.GetId(), out SelectorItem item)) {
                 item.transform.SetParent(ContentAlphabet.transform);
                 item.transform.SetAsLastSibling();
+                item.Label.text = io.GetName();
                 idsToRemove.Remove(io.GetId());
                 if (item.InteractiveObject == null)
                     item.InteractiveObject = io;

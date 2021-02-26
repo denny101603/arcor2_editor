@@ -252,6 +252,17 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     #region Home submenu button click methods
 
+    public void CalibrationButtonClick() {
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null)
+            return;
+        if (selectedObject.GetType() == typeof(Recalibrate)) {
+            ((Recalibrate) selectedObject).OnClick(Clickable.Click.TOUCH);
+        } else if (selectedObject.GetType() == typeof(CreateAnchor)) {
+            ((CreateAnchor) selectedObject).OnClick(Clickable.Click.TOUCH);
+        }
+    }
+
     #endregion
 
     #region Mesh picker click methods

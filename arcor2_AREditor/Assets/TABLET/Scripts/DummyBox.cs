@@ -6,8 +6,12 @@ using Base;
 using UnityEngine;
 
 public class DummyBox : InteractiveObject {
-    public string Name = "";
+    public string Name = "", id = "";
     public GameObject Visual;
+
+    private void Awake() {
+        id = Guid.NewGuid().ToString();
+    }
 
     protected virtual void Update() {
         if (Name == "")
@@ -62,7 +66,7 @@ public class DummyBox : InteractiveObject {
     }
 
     public override string GetId() {
-        return Name;
+        return id;
     }
 
     public override string GetName() {
