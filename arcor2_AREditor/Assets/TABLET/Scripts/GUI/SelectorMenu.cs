@@ -173,6 +173,10 @@ public class SelectorMenu : Singleton<SelectorMenu> {
         if (ContentAim.activeSelf) {
             int count = 0;
             for (int i = selectorItemsAimMenu.Count - 1; i >= 0; --i) {
+                if (selectorItemsAimMenu[i] == null) {
+                    selectorItemsAimMenu.RemoveAt(i);
+                    continue;
+                }
                 if (!(selectorItemsAimMenu[i].IsSelected() && manuallySelected) && (iteration - selectorItemsAimMenu[i].GetLastUpdate()) > 5) {
                     selectorItemsAimMenu[i].transform.SetParent(ContentAlphabet.transform);
                     selectorItemsAimMenu.RemoveAt(i);
