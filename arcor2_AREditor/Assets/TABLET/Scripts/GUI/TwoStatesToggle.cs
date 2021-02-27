@@ -1,13 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Button))]
 public class TwoStatesToggle : MonoBehaviour
 {
-
+    [HideInInspector]
+    public Button Button;
     private void Awake() {
+        Button = GetComponent<Button>();
         icon1 = BigImage.sprite;
         icon2 = SmallImage.sprite;
         Toggle(false);
@@ -35,6 +39,23 @@ public class TwoStatesToggle : MonoBehaviour
             if (invokeEvents) {
                 OnState1?.Invoke();
             }
+        }
+    }
+
+    public void SetState(string state) {
+        if (CurrentState != state)
+            Toggle(false);
+
+    }
+
+    public void SetInteractivity(bool interactive) {
+        Button.interactable = interactive;
+        if (!interactive) {
+            BigImage.color = Color.gray;
+            SmallImage.color = Color.gray;
+        } else {
+            BigImage.color = Color.white;
+            SmallImage.color = Color.white;
         }
     }
 }

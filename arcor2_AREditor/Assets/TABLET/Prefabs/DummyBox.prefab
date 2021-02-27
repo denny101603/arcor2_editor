@@ -48,7 +48,9 @@ MonoBehaviour:
   Colliders:
   - {fileID: 2161508489054566050}
   Name: 
+  id: 
   Visual: {fileID: 3755231564195354761}
+  OutlineOnClick: {fileID: 8994735634994291011}
 --- !u!1 &3755231564195354761
 GameObject:
   m_ObjectHideFlags: 0
@@ -62,6 +64,7 @@ GameObject:
   - component: {fileID: 6945209813584510359}
   - component: {fileID: 2161508489054566050}
   - component: {fileID: 4640858116775616588}
+  - component: {fileID: 8994735634994291011}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -157,3 +160,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Enabled: 1
   Target: {fileID: 1556841632687241916}
+--- !u!114 &8994735634994291011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3755231564195354761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d190eacf2d73849ba8866ad2cb6072, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Enabled: 1
+  OutlineShaderType: 0
+  OutlineClickFirstPass: {fileID: 0}
+  OutlineClickSecondPass: {fileID: 0}
+  OutlineHoverFirstPass: {fileID: 0}
+  OutlineHoverSecondPass: {fileID: 0}
+  OutlineClickMaterial: {fileID: 2100000, guid: 1ef88d2e88b167344b7db905a28877ad,
+    type: 2}
+  OutlineHoverMaterial: {fileID: 2100000, guid: 6f85ebaaa5685a345b1269fa36ddcf6c,
+    type: 2}
+  Renderers:
+  - {fileID: 6945209813584510359}
+  HoverOnly: 0
