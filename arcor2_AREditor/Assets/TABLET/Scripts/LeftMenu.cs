@@ -129,8 +129,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public void FocusButtonClick() {
         MenuManager.Instance.HideAllMenus();
-        SelectorMenu.Instance.gameObject.SetActive(true);
-        TransformMenu.Instance.Hide();
         SetActiveSubmenu(LeftMenuSelection.None);
 
     }
@@ -223,6 +221,11 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
             return;
+
+        if (!SelectorMenu.Instance.gameObject.activeSelf && !MoveButton.GetComponent<Image>().enabled) { //other menu/dialog opened
+            SetActiveSubmenu(LeftMenuSelection.Settings); //close all other opened menus/dialogs and takes care of red background of buttons
+        }
+
         if (MoveButton.GetComponent<Image>().enabled) {
             MoveButton.GetComponent<Image>().enabled = false;
             SelectorMenu.Instance.gameObject.SetActive(true);
@@ -240,17 +243,31 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null || !(selectedObject is DummyBox))
             return;
-        //todo cervene podbarveni a toggle chování
-        SelectorMenu.Instance.gameObject.SetActive(false);
 
-        CubeSizeDialog.Init((DummyBox) selectedObject);
-        CubeSizeDialog.Open();
+        if (!SelectorMenu.Instance.gameObject.activeSelf && !ResizeCubeButton.GetComponent<Image>().enabled) { //other menu/dialog opened
+            SetActiveSubmenu(LeftMenuSelection.Settings); //close all other opened menus/dialogs and takes care of red background of buttons
+        }
+
+        if (ResizeCubeButton.GetComponent<Image>().enabled) {
+            ResizeCubeButton.GetComponent<Image>().enabled = false;
+            SelectorMenu.Instance.gameObject.SetActive(true);
+            CubeSizeDialog.Close();
+        } else {
+            ResizeCubeButton.GetComponent<Image>().enabled = true;
+            SelectorMenu.Instance.gameObject.SetActive(false);
+            CubeSizeDialog.Init((DummyBox) selectedObject);
+            CubeSizeDialog.Open();
+        }        
     }
 
     public void RenameClick() {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
             return;
+
+        if (!SelectorMenu.Instance.gameObject.activeSelf) { //other menu/dialog opened
+            SetActiveSubmenu(LeftMenuSelection.Settings); //close all other opened menus/dialogs and takes care of red background of buttons
+        }
 
         UpdateVisibility(false);
         SelectorMenu.Instance.gameObject.SetActive(false);
@@ -374,7 +391,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     #endregion
 
 
-    private void SetActiveSubmenu(LeftMenuSelection which, bool active = true) {
+    public void SetActiveSubmenu(LeftMenuSelection which, bool active = true) {
         DeactivateAllSubmenus();
         if (!active)
             return;
@@ -398,6 +415,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     private void DeactivateAllSubmenus() {
         SelectorMenu.Instance.gameObject.SetActive(true);
+        CubeSizeDialog.Close();
+        TransformMenu.Instance.Hide();
+
         MeshPicker.SetActive(false);
         ActionPicker.SetActive(false);
 
@@ -414,6 +434,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         AddMeshButton.GetComponent<Image>().enabled = false;
         MoveButton.GetComponent<Image>().enabled = false;
         AddActionButton.GetComponent<Image>().enabled = false;
+        ResizeCubeButton.GetComponent<Image>().enabled = false;
     }
 }
 

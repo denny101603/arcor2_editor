@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +8,6 @@ public class CubeSizeDialog : Dialog {
 
     [SerializeField]
     private LabeledInput inputX, inputY, inputZ;
-    private GameObject overlay;
 
     private DummyBox dummy;
     private char selectedDimension = 'x';
@@ -21,27 +21,67 @@ public class CubeSizeDialog : Dialog {
             return;
 
         Vector3 dimension = dummy.GetDimensions();
-        inputX.SetValue(dimension.x * 100 + xUnit);
-        inputY.SetValue(dimension.y * 100 + xUnit);
-        inputZ.SetValue(dimension.z * 100 + xUnit);
-        //inputX.SetType("string");
+        inputX.SetValue(GetIntegerAndUnits(dimension.x, 'x') + xUnit);
+        inputY.SetValue(GetIntegerAndUnits(dimension.y, 'y') + yUnit);
+        inputZ.SetValue(GetIntegerAndUnits(dimension.z, 'z') + zUnit);
 
-        TransformWheel.InitList((int) (dimension.x * 100)); //todo fix casting
+        OnSelectX();
+    }
+
+    /// <summary>
+    /// NOT SURE IT WORKS PROPERLY ALL THE TIMES!!!
+    /// </summary>
+    /// <param name="valueInMeters"></param>
+    /// <param name="dimension"></param>
+    /// <returns></returns>
+    private int GetIntegerAndUnits(float valueInMeters, char dimension) {
+        string m = String.Format("{0:0.0000000}", Math.Round(valueInMeters) / 1f);
+        string cm = String.Format("{0:0.0000000}", Math.Round(valueInMeters * 100f) / 100f); 
+        string mm = String.Format("{0:0.0000000}", Math.Round(valueInMeters * 1000f) / 1000f); 
+        string mikro = String.Format("{0:0.0000000}", Math.Round(valueInMeters * 1000000f) / 1000000f);
+
+        int val;
+        string unit;
+        if (m == cm) {
+            val = (int) Math.Round(valueInMeters);
+            unit = "m";
+           // Debug.LogError(m + "m=cm" + cm);
+        } else if (cm == mm) {
+            val = (int) Math.Round(valueInMeters * 100);
+            unit = "cm";
+          //  Debug.LogError(cm + "cm=mm" + mm);
+        } else if (mm == mikro) {
+            val = (int) Math.Round(valueInMeters * 1000);
+            unit = "mm";
+          //  Debug.LogError(mm + "mm=mikro" + mikro);
+        } else {
+            val = (int) Math.Round(valueInMeters * 1000000);
+            unit = "μc";
+          //  Debug.LogError("else" + mikro);
+        }
+
+        SetUnit(dimension, unit);
+        return val;
     }
 
     public void OnUnitChange() {
-        switch (selectedDimension) {
+        SetUnit(selectedDimension, TransformWheel.Units.GetValue());
+    }
+
+    private void SetUnit(char dimension, string unit) {
+        switch (dimension) {
             case 'x':
-                xUnit = TransformWheel.Units.GetValue();
+                xUnit = unit;
                 break;
             case 'y':
-                yUnit = TransformWheel.Units.GetValue();
+                yUnit = unit;
                 break;
             case 'z':
-                zUnit = TransformWheel.Units.GetValue();
+                zUnit = unit;
                 break;
         }
     }
+
     private void Update() {
         switch (selectedDimension) {
             case 'x':
@@ -56,26 +96,41 @@ public class CubeSizeDialog : Dialog {
         }
     }
 
+    private void SetVisualsUnselected() {
+        inputX.Text.fontStyle = TMPro.FontStyles.Normal;
+        inputY.Text.fontStyle = TMPro.FontStyles.Normal;
+        inputZ.Text.fontStyle = TMPro.FontStyles.Normal;
+
+    }
+
     public void OnSelectX() {
         selectedDimension = 'x';
         TransformWheel.InitList(GetValueFromString((string) inputX.GetValue()));
         TransformWheel.Units.SetIndex(TransformWheel.Units.Units.IndexOf(xUnit));
+
+        SetVisualsUnselected();
+        inputX.Text.fontStyle = TMPro.FontStyles.Bold;
     }
 
     public void OnSelectY() {
         selectedDimension = 'y';
         TransformWheel.InitList(GetValueFromString((string) inputY.GetValue()));
         TransformWheel.Units.SetIndex(TransformWheel.Units.Units.IndexOf(yUnit));
+
+        SetVisualsUnselected();
+        inputY.Text.fontStyle = TMPro.FontStyles.Bold;
     }
     public void OnSelectZ() {
         selectedDimension = 'z';
         TransformWheel.InitList(GetValueFromString((string) inputZ.GetValue()));
         TransformWheel.Units.SetIndex(TransformWheel.Units.Units.IndexOf(zUnit));
+
+        SetVisualsUnselected();
+        inputZ.Text.fontStyle = TMPro.FontStyles.Bold;
     }
 
     private int GetValueFromString(string stringWithUnit) {
         char[] charsToTrim = { 'μ', 'm', 'c' };
-        Debug.LogError( int.Parse(stringWithUnit.Trim(charsToTrim)));
         return int.Parse(stringWithUnit.Trim(charsToTrim));
     }
 
@@ -97,12 +152,15 @@ public class CubeSizeDialog : Dialog {
         int z = GetValueFromString((string) inputZ.GetValue());
 
         dummy.SetDimensions(GetValueInMeters(x, xUnit), GetValueInMeters(y, yUnit), GetValueInMeters(z, zUnit));
+        CleanAndClose();
+    }
+
+    public void CleanAndClose() {
+        LeftMenu.Instance.SetActiveSubmenu(LeftMenuSelection.Settings);
         Close();
     }
 
     public override void Close() {
-        SelectorMenu.Instance.gameObject.SetActive(true);
-
         base.Close();
     }
 }

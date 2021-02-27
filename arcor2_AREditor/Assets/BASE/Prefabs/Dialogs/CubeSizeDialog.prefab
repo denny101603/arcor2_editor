@@ -920,7 +920,7 @@ GameObject:
   - component: {fileID: 686204649742473257}
   - component: {fileID: 686204649742473256}
   m_Layer: 5
-  m_Name: Content
+  m_Name: Inputs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1004,7 +1004,7 @@ MonoBehaviour:
     m_Top: 8
     m_Bottom: 10
   m_ChildAlignment: 4
-  m_Spacing: 10
+  m_Spacing: 30
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
@@ -2443,7 +2443,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1842770204252702628}
-        m_MethodName: Close
+        m_MethodName: CleanAndClose
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3292,6 +3292,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6454234288915602822, guid: f11fa5015d50d5a4abb2dbc5077ca982,
         type: 3}
+      propertyPath: Units.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6454234288915602822, guid: f11fa5015d50d5a4abb2dbc5077ca982,
+        type: 3}
       propertyPath: OnChange.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
       objectReference: {fileID: 0}
@@ -3552,6 +3557,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_PreferredHeight
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362681770598130656, guid: 3e55beb35891d674093b427fd9fc59ab,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6362681770598130656, guid: 3e55beb35891d674093b427fd9fc59ab,
+        type: 3}
+      propertyPath: m_FillAmount
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8588169511257002130, guid: 3e55beb35891d674093b427fd9fc59ab,
         type: 3}
