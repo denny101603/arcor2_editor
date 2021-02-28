@@ -20,6 +20,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     public CubeSizeDialog CubeSizeDialog;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
+    private bool isVisibilityForced = false;
+
     private void Awake() {
         CanvasGroup = GetComponent<CanvasGroup>();
         GameManager.Instance.OnEditorStateChanged += OnEditorStateChanged;
@@ -30,8 +32,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private bool requestingObject = false;
 
     private void OnEditorStateChanged(object sender, EditorStateEventArgs args) {
-        UpdateVisibility();
-
         switch (args.Data) {
             case GameManager.EditorStateEnum.Normal:
                 requestingObject = false;
@@ -55,7 +55,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
 
     private void Update() {
-        //UpdateVisibility();
+        if (!isVisibilityForced)
+            UpdateVisibility();
+
         if (!updateButtonsInteractivity)
             return;
 
@@ -119,7 +121,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         }
     }
 
-    public void UpdateVisibility(bool visible) {
+    public void UpdateVisibility(bool visible, bool force = false) {
+        isVisibilityForced = force;
+
         CanvasGroup.interactable = visible;
         CanvasGroup.blocksRaycasts = visible;
         CanvasGroup.alpha = visible ? 1 : 0;
@@ -269,7 +273,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             SetActiveSubmenu(LeftMenuSelection.Settings); //close all other opened menus/dialogs and takes care of red background of buttons
         }
 
-        UpdateVisibility(false);
+        UpdateVisibility(false, true);
         SelectorMenu.Instance.gameObject.SetActive(false);
 
         RenameDialog.Init(selectedObject);
@@ -416,6 +420,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private void DeactivateAllSubmenus() {
         SelectorMenu.Instance.gameObject.SetActive(true);
         CubeSizeDialog.Close();
+        if(RenameDialog.isActiveAndEnabled)
+            RenameDialog.Close();
         TransformMenu.Instance.Hide();
 
         MeshPicker.SetActive(false);
