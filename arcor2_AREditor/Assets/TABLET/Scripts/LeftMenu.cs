@@ -1,6 +1,8 @@
+using System;
 using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Base;
 using IO.Swagger.Model;
 using UnityEngine;
@@ -21,6 +23,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
     private bool isVisibilityForced = false;
+    private ActionPoint3D selectedActionPoint;
 
     private void Awake() {
         CanvasGroup = GetComponent<CanvasGroup>();
@@ -114,6 +117,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     public void UpdateVisibility() {
         if (GameManager.Instance.GetGameState() == GameManager.GameStateEnum.MainScreen ||
             GameManager.Instance.GetGameState() == GameManager.GameStateEnum.Disconnected ||
+            GameManager.Instance.GetEditorState() == EditorStateEnum.SelectingActionPointParent ||
             MenuManager.Instance.MainMenu.CurrentState == DanielLochner.Assets.SimpleSideMenu.SimpleSideMenu.State.Open) {
             UpdateVisibility(false);
         } else {
@@ -217,8 +221,17 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     #region Settings submenu button click methods
 
     public void SetActionPointParentClick() {
-        Notifications.Instance.ShowNotification("Not implemented", "");
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null || !(selectedObject is ActionPoint3D))
+            return;
 
+        if (!SelectorMenu.Instance.gameObject.activeSelf) { //other menu/dialog opened
+            SetActiveSubmenu(LeftMenuSelection.None); //close all other opened menus/dialogs and takes care of red background of buttons
+        }
+
+        selectedActionPoint = (ActionPoint3D) selectedObject;
+        Action<object> action = AssignToParent;
+        GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingActionPointParent, action, "Select new parent (action object)", ValidateParent);
     }
 
     public void MoveClick() {
@@ -441,6 +454,26 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         MoveButton.GetComponent<Image>().enabled = false;
         AddActionButton.GetComponent<Image>().enabled = false;
         ResizeCubeButton.GetComponent<Image>().enabled = false;
+    }
+
+    private async Task<RequestResult> ValidateParent(object selectedParent) {
+        IActionPointParent parent = (IActionPointParent) selectedParent;
+        RequestResult result = new RequestResult(true, "");
+        if (parent.GetId() == selectedActionPoint.GetId()) {
+            result.Success = false;
+            result.Message = "Action point cannot be its own parent!";
+        }
+
+        return result;
+    }
+    private async void AssignToParent(object selectedObject) {
+        IActionPointParent parent = (IActionPointParent) selectedObject;
+        if (parent == null)
+            return;
+        bool result = await Base.GameManager.Instance.UpdateActionPointParent(selectedActionPoint, parent.GetId());
+        if (result) {
+            //
+        }
     }
 }
 
