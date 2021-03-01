@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CubeSizeDialog : Dialog {
     public TransformWheel TransformWheel;
+    private Vector3 origDimensions;
 
     [SerializeField]
     private LabeledInput inputX, inputY, inputZ;
@@ -21,6 +22,7 @@ public class CubeSizeDialog : Dialog {
             return;
 
         Vector3 dimension = dummy.GetDimensions();
+        origDimensions = dummy.GetDimensions();
         inputX.SetValue(GetIntegerAndUnits(dimension.x, 'x') + xUnit);
         inputY.SetValue(GetIntegerAndUnits(dimension.y, 'y') + yUnit);
         inputZ.SetValue(GetIntegerAndUnits(dimension.z, 'z') + zUnit);
@@ -83,6 +85,8 @@ public class CubeSizeDialog : Dialog {
     }
 
     private void Update() {
+        if (dummy == null)
+            return;
         switch (selectedDimension) {
             case 'x':
                 inputX.SetValue(TransformWheel.GetValue() + xUnit);
@@ -94,6 +98,11 @@ public class CubeSizeDialog : Dialog {
                 inputZ.SetValue(TransformWheel.GetValue() + zUnit);
                 break;
         }
+        int x = GetValueFromString((string) inputX.GetValue());
+        int y = GetValueFromString((string) inputY.GetValue());
+        int z = GetValueFromString((string) inputZ.GetValue());
+
+        dummy.SetDimensions(GetValueInMeters(x, xUnit), GetValueInMeters(y, yUnit), GetValueInMeters(z, zUnit));
     }
 
     private void SetVisualsUnselected() {
@@ -152,6 +161,7 @@ public class CubeSizeDialog : Dialog {
         int z = GetValueFromString((string) inputZ.GetValue());
 
         dummy.SetDimensions(GetValueInMeters(x, xUnit), GetValueInMeters(y, yUnit), GetValueInMeters(z, zUnit));
+        dummy = null;
         CleanAndClose();
     }
 
@@ -161,6 +171,16 @@ public class CubeSizeDialog : Dialog {
     }
 
     public override void Close() {
+        dummy = null;
         base.Close();
+    }
+
+    public void Cancel(bool clean = true) {
+        if (dummy != null)
+            dummy.SetDimensions(origDimensions);
+        if (clean)
+            CleanAndClose();
+        else
+            Close();
     }
 }

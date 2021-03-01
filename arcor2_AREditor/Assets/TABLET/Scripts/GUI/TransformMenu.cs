@@ -128,12 +128,15 @@ public class TransformMenu : Singleton<TransformMenu> {
             switch (Coordinates.GetSelectedAxis()) {
                 case "x":
                     offsetPosition.x = GetRoundedValue(cameraNow.x - cameraOrig.x);
+                    TransformWheel.SetValue(ComputePositionValue(offsetPosition.x));
                     break;
                 case "y":
                     offsetPosition.y = GetRoundedValue(cameraNow.y - cameraOrig.y);
+                    TransformWheel.SetValue(ComputePositionValue(offsetPosition.y));
                     break;
                 case "z":
                     offsetPosition.z = GetRoundedValue(cameraNow.z - cameraOrig.z);
+                    TransformWheel.SetValue(ComputePositionValue(offsetPosition.z));
                     break;
             }
         } else {
@@ -259,6 +262,7 @@ public class TransformMenu : Singleton<TransformMenu> {
     public void HoldPressed() {
         if (RobotTabletBtn.CurrentState == "tablet") {
             cameraOrig = TransformConvertor.UnityToROS(InteractiveObject.transform.InverseTransformPoint(Camera.main.transform.position));
+            StoreInterPosition();
             handHolding = true;
         } else {
             WebsocketManager.Instance.HandTeachingMode(robotId: robotId, enable: true);

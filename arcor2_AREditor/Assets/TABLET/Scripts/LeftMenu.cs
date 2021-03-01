@@ -186,6 +186,16 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         }
     }
 
+    public void AddConnectionClick() {
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null)
+            return;
+        if (selectedObject.GetType() == typeof(PuckInput) ||
+                selectedObject.GetType() == typeof(PuckOutput)) {
+            ((InputOutput) selectedObject).OnClick(Clickable.Click.TOUCH);
+        }
+    }
+
     public void AddActionClick() {
         if (AddActionButton.GetComponent<Image>().enabled) {
             AddActionButton.GetComponent<Image>().enabled = false;
@@ -268,7 +278,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (ResizeCubeButton.GetComponent<Image>().enabled) {
             ResizeCubeButton.GetComponent<Image>().enabled = false;
             SelectorMenu.Instance.gameObject.SetActive(true);
-            CubeSizeDialog.Close();
+            CubeSizeDialog.Cancel(false);
         } else {
             ResizeCubeButton.GetComponent<Image>().enabled = true;
             SelectorMenu.Instance.gameObject.SetActive(false);
@@ -432,7 +442,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     private void DeactivateAllSubmenus() {
         SelectorMenu.Instance.gameObject.SetActive(true);
-        CubeSizeDialog.Close();
+        CubeSizeDialog.Cancel(false);
         if(RenameDialog.isActiveAndEnabled)
             RenameDialog.Close();
         TransformMenu.Instance.Hide();
