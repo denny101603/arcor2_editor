@@ -231,7 +231,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
         selectedActionPoint = (ActionPoint3D) selectedObject;
         Action<object> action = AssignToParent;
-        GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingActionPointParent, action, "Select new parent (action object)", ValidateParent);
+        GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingActionPointParent, action,
+            "Select new parent (action object)", ValidateParent, UntieActionPointParent);
     }
 
     public void MoveClick() {
@@ -274,7 +275,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             SelectorMenu.Instance.gameObject.SetActive(false);
             CubeSizeDialog.Init((DummyBox) selectedObject);
             CubeSizeDialog.Open();
-        }        
+        }
     }
 
     public void RenameClick() {
@@ -433,7 +434,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private void DeactivateAllSubmenus() {
         SelectorMenu.Instance.gameObject.SetActive(true);
         CubeSizeDialog.Close();
-        if(RenameDialog.isActiveAndEnabled)
+        if (RenameDialog.isActiveAndEnabled)
             RenameDialog.Close();
         TransformMenu.Instance.Hide();
 
@@ -473,6 +474,16 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         bool result = await Base.GameManager.Instance.UpdateActionPointParent(selectedActionPoint, parent.GetId());
         if (result) {
             //
+        }
+    }
+
+    private async void UntieActionPointParent() {
+        Debug.Assert(selectedActionPoint != null);
+        if (selectedActionPoint.GetParent() == null)
+            return;
+
+        if (await Base.GameManager.Instance.UpdateActionPointParent(selectedActionPoint, "")) {
+            Notifications.Instance.ShowToastMessage("Parent of action point untied");
         }
     }
 }

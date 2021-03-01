@@ -513,7 +513,10 @@ namespace Base {
         /// <param name="message">Message displayed to the user</param>
         /// <param name="validationCallback">Action to be called when user selects object. If returns true, callback is called,
         /// otherwise waits for selection of another object</param>
-        public void RequestObject(EditorStateEnum requestType, Action<object> callback, string message, Func<object, Task<RequestResult>> validationCallback = null) {
+        /// <param name="onCancelCallback">Action to be called when clicked on red cross button in addition to just closing
+        /// dialog and setting editorStateEnum</param>
+        public void RequestObject(EditorStateEnum requestType, Action<object> callback, string message,
+            Func<object, Task<RequestResult>> validationCallback = null, UnityAction onCancelCallback = null) {
             // only for "selection" requests
             Debug.Assert(requestType != EditorStateEnum.Closed &&
                 requestType != EditorStateEnum.Normal &&
@@ -567,7 +570,17 @@ namespace Base {
 #if true//(UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
             SelectorMenu.Instance.ForceUpdateMenus();
 #endif
-            SelectObjectInfo.Show(message, () => CancelSelection());
+            if (onCancelCallback == null) {
+
+                SelectObjectInfo.Show(message, () => CancelSelection());
+            } else {
+
+                SelectObjectInfo.Show(message,
+                    () => {
+                        onCancelCallback();
+                        CancelSelection();
+                    });
+            }
         }
 
         /// <summary>
