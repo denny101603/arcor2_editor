@@ -181,7 +181,6 @@ namespace Base {
             }
             Dictionary<string, ActionMetadata> metadata = new Dictionary<string, ActionMetadata>();
             foreach (IO.Swagger.Model.ObjectAction action in actions) {
-                Debug.LogError(action.Name);
                 ActionMetadata a = new ActionMetadata(action);
                 /*
                 foreach (IO.Swagger.Model.ActionParameterMeta arg in action.Parameters) {

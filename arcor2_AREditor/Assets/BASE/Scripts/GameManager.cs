@@ -403,6 +403,7 @@ namespace Base {
             if (ConnectionStatus != ConnectionStatusEnum.Connected)
                 return;
 
+
             // request for delayed openning of scene to allow loading of action objects and their actions
             if (openScene) {
                 openScene = false;
@@ -1809,8 +1810,8 @@ namespace Base {
         public async void AddActionPointExperiment() {
             string name = ProjectManager.Instance.GetFreeAPName("ap");
             Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0f));
-            
-            Position position = DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(ray.GetPoint(0.5f)));
+            Vector3 point = TransformConvertor.UnityToROS(Scene.transform.InverseTransformPoint(ray.GetPoint(0.5f)));
+            Position position = DataHelper.Vector3ToPosition(point);
 
             try {
                 ProjectManager.Instance.SelectNewlyCreatedAP = true;
