@@ -76,7 +76,7 @@ namespace Base {
 
         public GameObject ActionPointSphere;
 
-        public GameObject DummyBoxPrefab, DummyBoxVisual;
+        public GameObject DummyBoxPrefab, DummyBoxVisual, DummyAimBoxPrefab;
 
         public bool SelectNewlyCreatedAP = false;
 
@@ -300,6 +300,8 @@ namespace Base {
             //await WebsocketManager.Instance.AddActionPointOrientationUsingRobot(ap.GetId(), robot.GetId(),
             //  (await robot.GetEndEffectorIds())[0], "def");
             await WebsocketManager.Instance.AddActionPointOrientation(ap.GetId(), DataHelper.QuaternionToOrientation(Quaternion.Euler(180, 0, 0)), "def");
+
+
             /// END
             if (ap != null && SelectNewlyCreatedAP) {
                 SelectorMenu.Instance.ForceUpdateMenus();
@@ -366,9 +368,23 @@ namespace Base {
                     b.Init(name);
                 }
             }
-           
-            
 
+
+            bool boxInScene = PlayerPrefsHelper.LoadBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/inScene", false);
+            
+            if (boxInScene) {
+                DummyAimBox box = AddDummyAimBox(false);
+                try {
+                    ActionPoint ap = GetactionpointByName("dabap");
+                    box.transform.SetParent(ap.transform);
+                    box.transform.localPosition = Vector3.zero;
+
+                    box.Visible = PlayerPrefsHelper.LoadBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/visible", false);
+                } catch (KeyNotFoundException ex) {
+                    box.Remove();
+                }
+                
+            }
             projectChanged = project.Modified == DateTime.MinValue;
             Valid = true;
             OnLoadProject?.Invoke(this, EventArgs.Empty);            
@@ -610,6 +626,17 @@ namespace Base {
                 PlayerPrefsHelper.SaveString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", string.Join(";", boxes));
             }
             box.Init(newName, 0.05f, 0.05f, 0.05f);
+            SelectorMenu.Instance.ForceUpdateMenus();
+            return box;
+        }
+
+        public DummyAimBox AddDummyAimBox(bool init = true) {
+            DummyAimBox box = Instantiate(DummyAimBoxPrefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<DummyAimBox>();
+            if (init) {
+                PlayerPrefsHelper.SaveBool(Instance.ProjectMeta.Id + "/BlueBox/inScene", true);
+                PlayerPrefsHelper.SaveBool(Instance.ProjectMeta.Id + "/BlueBox/visible", false);
+            }
+            SelectorMenu.Instance.ForceUpdateMenus();
             return box;
         }
 

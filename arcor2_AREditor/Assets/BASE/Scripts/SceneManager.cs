@@ -872,12 +872,16 @@ namespace Base {
             }
         }
 
-        public List<ActionObject> GetAllActionObjectsWithoutPose() {
-            List<ActionObject> objects = new List<ActionObject>();
+        public List<InteractiveObject> GetAllActionObjectsWithoutPose() {
+            List<InteractiveObject> objects = new List<InteractiveObject>();
             foreach (ActionObject actionObject in ActionObjects.Values) {
                 if (!actionObject.ActionObjectMetadata.HasPose && actionObject.gameObject.activeSelf) {
                     objects.Add(actionObject);
                 }
+            }
+            List<DummyAimBox> obj = FindObjectsOfType<DummyAimBox>().ToList();
+            if (obj.Count > 0 && !obj[0].Visible) {
+                objects.Add(obj[0]);
             }
             return objects;
         }

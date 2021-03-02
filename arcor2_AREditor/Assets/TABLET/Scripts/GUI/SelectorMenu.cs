@@ -163,6 +163,10 @@ public class SelectorMenu : Singleton<SelectorMenu> {
                     float dist = item.InteractiveObject.GetDistance(aimingPoint.Value);
                     if (dist > 0.2) // add objects max 20cm away from point of impact
                         continue;
+                    if (item.InteractiveObject.GetType() == typeof(DummyAimBox)) {
+                        if (!((DummyAimBox) item.InteractiveObject).Visible)
+                            continue;
+                    }
                     items.Add(new Tuple<float, InteractiveObject>(dist, item.InteractiveObject));
                 } catch (MissingReferenceException ex) {
                     Debug.LogError(ex);
@@ -334,8 +338,8 @@ public class SelectorMenu : Singleton<SelectorMenu> {
         if (!ContentNoPose.activeSelf || !GameManager.Instance.Scene.activeSelf)
             return;
         selectorItemsNoPoseMenu.Clear();
-        foreach (ActionObject actionObject in SceneManager.Instance.GetAllActionObjectsWithoutPose()) {
-            SelectorItem newItem = selectorItems[actionObject.GetId()];
+        foreach (InteractiveObject interactiveObject in SceneManager.Instance.GetAllActionObjectsWithoutPose()) {
+            SelectorItem newItem = selectorItems[interactiveObject.GetId()];
             selectorItemsNoPoseMenu.Add(newItem);
             newItem.transform.SetParent(ContentNoPose.transform);
         }

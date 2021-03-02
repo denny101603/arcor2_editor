@@ -254,6 +254,11 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             SetActiveSubmenu(LeftMenuSelection.Settings); //close all other opened menus/dialogs and takes care of red background of buttons
         }
 
+        if (selectedObject.GetType() == typeof(DummyAimBox)) {
+            ((DummyAimBox) selectedObject).AimFinished();
+            return;
+        }
+
         if (MoveButton.GetComponent<Image>().enabled) {
             MoveButton.GetComponent<Image>().enabled = false;
             SelectorMenu.Instance.gameObject.SetActive(true);
@@ -336,10 +341,10 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     #region Mesh picker click methods
 
     public void BlueBoxClick() {
-        Notifications.Instance.ShowNotification("Not implemented", "");
         SelectorMenu.Instance.gameObject.SetActive(true);
         MeshPicker.SetActive(false);
         SetActiveSubmenu(LeftMenuSelection.None);
+        SelectorMenu.Instance.SetSelectedObject(ProjectManager.Instance.AddDummyAimBox(), true);
     }
 
     public void CubeClick() {
