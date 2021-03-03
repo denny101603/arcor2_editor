@@ -5,6 +5,7 @@ using Base;
 using RosSharp.Urdf;
 using TrilleonAutomation;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.Animations;
 
 [RequireComponent(typeof(CanvasGroup))]
@@ -22,14 +23,25 @@ public class TransformMenu : Singleton<TransformMenu> {
     [HideInInspector]
     public CanvasGroup CanvasGroup;
 
-    private bool handHolding = false;
+    private bool handHolding = false, DummyAimBox = false;
     private string robotId;
 
     private RobotEE endEffector;
 
+    public GameObject DummyBoxing;
+
+    public List<Image> Arrows, Dots, DotsBackgrounds;
+    private List<GameObject> dummyPoints = new List<GameObject>();
+    private int currentArrowIndex;
+    public Button NextArrowBtn, PreviousArrowBtn;
+
+
     private void Awake() {
         CanvasGroup = GetComponent<CanvasGroup>();
-
+        dummyPoints.Add(null);
+        dummyPoints.Add(null);
+        dummyPoints.Add(null);
+        dummyPoints.Add(null);
     }
 
     private void Update() {
@@ -284,24 +296,46 @@ public class TransformMenu : Singleton<TransformMenu> {
         offsetRotation = Quaternion.identity;
     }
 
-    public void Show(InteractiveObject interactiveObject) {
+    public void Show(InteractiveObject interactiveObject, bool dummyAimBox = false) {
         foreach (IRobot robot in SceneManager.Instance.GetRobots()) {
             robotId = robot.GetId();
         }
         RobotTabletBtn.SetState("robot");
         RotateTranslateBtn.SetState("translate");
+        RobotTabletBtn.SetInteractivity(true);
+        RotateTranslateBtn.SetInteractivity(true);
+        DummyBoxing.SetActive(false);
         offsetPosition = Vector3.zero;
         ResetTransformWheel();
-        InteractiveObject = interactiveObject;
+        DummyAimBox = dummyAimBox;
+        if (DummyAimBox)
+            InteractiveObject = ((DummyAimBox) interactiveObject).ActionPoint;
+        else
+            InteractiveObject = interactiveObject;
         SwitchToTranslate();
         SwitchToRobot();
-        if (InteractiveObject.GetType() == typeof(ActionPoint3D)) {
+        if (interactiveObject.GetType() == typeof(ActionPoint3D)) {
             model = ((ActionPoint3D) interactiveObject).GetModelCopy();
             origRotation = TransformConvertor.UnityToROS(((ActionPoint3D) interactiveObject).GetRotation());
-        } else if (InteractiveObject.GetType() == typeof(DummyBox)) {
+        } else if (interactiveObject.GetType() == typeof(DummyBox)) {
             model = ((DummyBox) interactiveObject).GetModelCopy();
             origRotation = interactiveObject.transform.localRotation;
+        } else if (DummyAimBox) {
+            model = GetPointModel();
+            for (int i = 0; i < 4; ++i) {
+                bool aimed = PlayerPrefsHelper.LoadBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/PointAimed/" + i, false);
+                if (aimed)
+                    Dots[i].color = Color.green;
+                else
+                    Dots[i].color = Color.red;
+            }
+            DummyBoxing.SetActive(true);
+            RobotTabletBtn.SetInteractivity(false);
+            RotateTranslateBtn.SetInteractivity(false);
+            currentArrowIndex = 0;
+            SetArrowVisible(0);
         }
+        Debug.LogError(model);
         if (model == null) {
             Hide();
             return;
@@ -315,6 +349,35 @@ public class TransformMenu : Singleton<TransformMenu> {
         GameManager.Instance.Gizmo.SetActive(true);
         enabled = true;
         EditorHelper.EnableCanvasGroup(CanvasGroup, true);
+    }
+
+    private GameObject GetPointModel() {
+        GameObject m = Instantiate(ProjectManager.Instance.ActionPointSphere, InteractiveObject.transform);
+        m.transform.localScale = new Vector3(0.03f, 0.03f, 0.03f);
+        return m;
+    }
+
+    private void SetArrowVisible(int index) {
+        for (int i = 0; i < 4; ++i) {
+            Arrows[i].gameObject.SetActive(false);
+            DotsBackgrounds[i].color = Color.clear;
+        }            
+        Arrows[index].gameObject.SetActive(true);
+        DotsBackgrounds[index].color = Color.white;
+        NextArrowBtn.interactable = index != 3;
+        PreviousArrowBtn.interactable = index != 0;
+    }
+    public void NextArrow() {
+        Debug.LogError("next");
+        if (currentArrowIndex < 3)
+            SetArrowVisible(++currentArrowIndex);
+    }
+
+    public void PreviousArrow() {
+        Debug.LogError("previous");
+        if (currentArrowIndex > 0)
+            SetArrowVisible(--currentArrowIndex);
+
     }
 
     public void Hide() {
@@ -354,7 +417,31 @@ public class TransformMenu : Singleton<TransformMenu> {
     }
 
     public async void SubmitPosition() {
-        if (InteractiveObject.GetType() == typeof(ActionPoint3D)) {
+        if (DummyAimBox) {
+            Dots[currentArrowIndex].color = Color.green;
+            PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/PointAimed/" + currentArrowIndex, true);
+            if (dummyPoints[currentArrowIndex] != null) {
+                GameManager.Instance.Gizmo.transform.SetParent(GameManager.Instance.Scene.transform);
+                Destroy(dummyPoints[currentArrowIndex]);
+            }
+            dummyPoints[currentArrowIndex] = model;
+            model = GetPointModel();
+
+            GameManager.Instance.Gizmo.transform.SetParent(model.transform);
+            GameManager.Instance.Gizmo.transform.localPosition = Vector3.zero;
+            bool done = true;
+            foreach (GameObject p in dummyPoints) {
+                if (p == null) {
+                    done = false;
+                    break;
+                }
+            }
+            if (done) {
+                DummyAimBox dummyAimBox = FindObjectOfType<DummyAimBox>();
+                if (dummyAimBox != null)
+                    dummyAimBox.AimFinished();
+            }
+        } else if (InteractiveObject.GetType() == typeof(ActionPoint3D)) {
             try {
 
                 //Vector3 position = interPosition + offsetPosition;

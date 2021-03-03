@@ -254,10 +254,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             SetActiveSubmenu(LeftMenuSelection.Settings); //close all other opened menus/dialogs and takes care of red background of buttons
         }
 
-        if (selectedObject.GetType() == typeof(DummyAimBox)) {
-            ((DummyAimBox) selectedObject).AimFinished();
-            return;
-        }
+        
 
         if (MoveButton.GetComponent<Image>().enabled) {
             MoveButton.GetComponent<Image>().enabled = false;
@@ -267,7 +264,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             MoveButton.GetComponent<Image>().enabled = true;
             SelectorMenu.Instance.gameObject.SetActive(false);
             //selectedObject.StartManipulation();
-            TransformMenu.Instance.Show(selectedObject);
+            TransformMenu.Instance.Show(selectedObject, selectedObject.GetType() == typeof(DummyAimBox));
         }
 
     }
@@ -484,9 +481,16 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
     private async void AssignToParent(object selectedObject) {
         IActionPointParent parent = (IActionPointParent) selectedObject;
+        
         if (parent == null)
             return;
-        bool result = await Base.GameManager.Instance.UpdateActionPointParent(selectedActionPoint, parent.GetId());
+        string id = "";
+        if (parent.GetType() == typeof(DummyAimBox)) {
+            id = ((DummyAimBox) selectedObject).ActionPoint.GetId();
+        } else {
+            id = parent.GetId();
+        }
+        bool result = await Base.GameManager.Instance.UpdateActionPointParent(selectedActionPoint, id);
         if (result) {
             //
         }

@@ -11,7 +11,7 @@ public class DummyBox : InteractiveObject {
     public GameObject Visual;
     public OutlineOnClick OutlineOnClick;
 
-    private void Awake() {
+    protected virtual void Awake() {
         id = Guid.NewGuid().ToString();
     }
 

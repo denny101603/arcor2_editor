@@ -374,17 +374,13 @@ namespace Base {
             
             if (boxInScene) {
                 DummyAimBox box = AddDummyAimBox(false);
-                try {
-                    ActionPoint ap = GetactionpointByName("dabap");
-                    box.transform.SetParent(ap.transform);
-                    box.transform.localPosition = Vector3.zero;
-
-                    box.Visible = PlayerPrefsHelper.LoadBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/visible", false);
-                } catch (KeyNotFoundException ex) {
-                    box.Remove();
-                }
+                box.Visible = PlayerPrefsHelper.LoadBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/visible", false);
+                
+               
+                
                 
             }
+            HideAPOrientations();
             projectChanged = project.Modified == DateTime.MinValue;
             Valid = true;
             OnLoadProject?.Invoke(this, EventArgs.Empty);            
@@ -632,6 +628,14 @@ namespace Base {
 
         public DummyAimBox AddDummyAimBox(bool init = true) {
             DummyAimBox box = Instantiate(DummyAimBoxPrefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<DummyAimBox>();
+            try {
+                box.ActionPoint = GetactionpointByName("dabap");
+                box.transform.SetParent(box.ActionPoint.transform);
+                box.transform.localPosition = Vector3.zero;
+            } catch (KeyNotFoundException ex) {
+                _ = Base.GameManager.Instance.AddActionPoint("dabap", "", new IO.Swagger.Model.Position((decimal) -0.3, 0, 0));
+            } 
+                
             if (init) {
                 PlayerPrefsHelper.SaveBool(Instance.ProjectMeta.Id + "/BlueBox/inScene", true);
                 PlayerPrefsHelper.SaveBool(Instance.ProjectMeta.Id + "/BlueBox/visible", false);

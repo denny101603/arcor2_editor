@@ -1,12 +1,14 @@
 using System;
+using System.Runtime.Remoting.Messaging;
+using Base;
 using UnityEngine;
 
-public class DummyAimBox : DummyBox {
+public class DummyAimBox : DummyBox, IActionPointParent {
     public bool Visible;
-    public ActionPoint3D ActionPoint;
-    private bool waitingForActionPoint = false;
+    public ActionPoint ActionPoint;
 
-    private void Awake() {
+    protected override void Awake() {
+        base.Awake();
         Base.ProjectManager.Instance.OnActionPointAddedToScene += OnActionPointAddedToScene;
         Name = "BlueBox";
     }
@@ -15,12 +17,10 @@ public class DummyAimBox : DummyBox {
     }
 
     private void OnActionPointAddedToScene(object sender, Base.ActionPointEventArgs args) {
-        if (waitingForActionPoint) {
-            ActionPoint = (ActionPoint3D) args.ActionPoint;
+        if (args.ActionPoint.Data.Name == "dabap") {
+            ActionPoint = args.ActionPoint;
             transform.SetParent(ActionPoint.transform);
             transform.localPosition = Vector3.zero;
-            waitingForActionPoint = false;
-            Visible = true;
         }
     }
 
@@ -35,9 +35,7 @@ public class DummyAimBox : DummyBox {
 
 
     public async void AimFinished() {
-        waitingForActionPoint = true;
         SetVisibility(true);
-        await Base.GameManager.Instance.AddActionPoint("dabap", "", new IO.Swagger.Model.Position((decimal) -0.3, 0, 0));
     }
 
     public void SetVisibility(bool visible) {
@@ -45,14 +43,38 @@ public class DummyAimBox : DummyBox {
         PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/visible", visible);
     }
 
-    public override void Remove() {
-        PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/visible", false);
-        PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/inScene", false);
-
-        Destroy(gameObject);
-
-        SelectorMenu.Instance.ForceUpdateMenus();
+    public override async void Remove() {
+        try {
+            await WebsocketManager.Instance.RemoveActionPoint(ActionPoint.Data.Id);
+            PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/visible", false);
+            PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/inScene", false);
+            Destroy(gameObject);
+            for (int i = 0; i < 4; ++i)
+                PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/PointAimed/" + i, false);
+            SelectorMenu.Instance.ForceUpdateMenus();
+        } catch (RequestFailedException e) {
+            Notifications.Instance.ShowNotification("Failed to remove BlueBox", e.Message);
+        }
+        
     }
 
+    public bool IsActionObject() {
+        return false;
+    }
 
+    public ActionObject GetActionObject() {
+        throw new NotImplementedException();
+    }
+
+    public Transform GetTransform() {
+        return ActionPoint.transform;
+    }
+
+    public GameObject GetGameObject() {
+        return ActionPoint.gameObject;
+    }
+
+    public void OnDestroy() {
+        Base.ProjectManager.Instance.OnActionPointAddedToScene -= OnActionPointAddedToScene;
+    }
 }
