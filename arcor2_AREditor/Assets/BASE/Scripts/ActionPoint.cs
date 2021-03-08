@@ -27,7 +27,7 @@ namespace Base {
         [SerializeField]
         protected GameObject orientations;
 
-        public bool OrientationsVisible, ActionsCollapsed;
+        public bool ActionsCollapsed;
 
 
         public bool Locked {
@@ -74,7 +74,6 @@ namespace Base {
             Debug.Assert(apData != null);
             SetParent(parent);
             Data = apData;
-            OrientationsVisible = PlayerPrefsHelper.LoadBool("/AP/" + Data.Id + "/visible", true);
             ActionsCollapsed = PlayerPrefsHelper.LoadBool("/AP/" + Data.Id + "/actionsCollapsed", false);
             transform.localPosition = GetScenePosition();
             SetSize(size);
@@ -592,6 +591,7 @@ namespace Base {
             apOrientation.ActionPoint = this;
             apOrientation.SetOrientation(orientation.Orientation);
             apOrientation.OrientationId = orientation.Id;
+            apOrientation.gameObject.SetActive(ProjectManager.Instance.APOrientationsVisible);
         }
 
         internal void ShowAimingMenu(string orientationId) {

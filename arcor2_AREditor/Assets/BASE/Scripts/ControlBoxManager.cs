@@ -137,7 +137,7 @@ public class ControlBoxManager : Singleton<ControlBoxManager> {
 
     private void GameStateChanged(object sender, GameStateEventArgs args) {
         CreateGlobalActionPointBtn.SetActive(false);
-        CreateGlobalActionPointUsingRobotBtn.SetActive(false);
+        //CreateGlobalActionPointUsingRobotBtn.SetActive(false);
         MoveToggle.gameObject.SetActive(false);
         RotateToggle.gameObject.SetActive(false);
         ConnectionsToggle.gameObject.SetActive(false);
@@ -145,7 +145,7 @@ public class ControlBoxManager : Singleton<ControlBoxManager> {
 
             case GameManager.GameStateEnum.ProjectEditor:
                 CreateGlobalActionPointBtn.SetActive(true);
-                CreateGlobalActionPointUsingRobotBtn.SetActive(true);
+               // CreateGlobalActionPointUsingRobotBtn.SetActive(true);
                 MoveToggle.gameObject.SetActive(true);
                 // use move only if the gizmo was previously active (for tablet version)
                 if (UseGizmoMove || UseGizmoRotate)

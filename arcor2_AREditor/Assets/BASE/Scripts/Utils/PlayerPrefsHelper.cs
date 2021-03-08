@@ -21,7 +21,6 @@ public static class PlayerPrefsHelper {
 
     public static void SaveBool(string key, bool value) {
         PlayerPrefs.SetInt(key, value ? 1 : 0);
-        Debug.LogError(value ? 1 : 0);
         PlayerPrefs.Save();
     }
 
@@ -33,7 +32,6 @@ public static class PlayerPrefsHelper {
     /// <returns></returns>
     public static bool LoadBool(string key, bool defaultValue) {
         int value = PlayerPrefs.GetInt(key, defaultValue ? 1 : 0);
-        Debug.LogError(value);
         return value == 1 ? true : false;
     }
 

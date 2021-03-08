@@ -169,6 +169,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (selectedObject is null)
             return;
         if (selectedObject.GetType() == typeof(ActionPoint3D)) {
+            ProjectManager.Instance.SelectAPNameWhenCreated = "copy_of_" + selectedObject.GetName();
             WebsocketManager.Instance.CopyActionPoint(selectedObject.GetId(), null);
         } else if (selectedObject.GetType() == typeof(Action3D)) {
             Action3D action = (Action3D) selectedObject;
@@ -344,6 +345,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         SelectorMenu.Instance.gameObject.SetActive(true);
         MeshPicker.SetActive(false);
         SetActiveSubmenu(LeftMenuSelection.None);
+        SelectorMenu.Instance.SwitchToNoPose();
         SelectorMenu.Instance.SetSelectedObject(ProjectManager.Instance.AddDummyAimBox(), true);
     }
 
