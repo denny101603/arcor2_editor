@@ -568,9 +568,8 @@ namespace Base {
             ObjectCallback = callback;
             ObjectValidationCallback = validationCallback;
             // display info for user and bind cancel callback,
-#if true//(UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
             SelectorMenu.Instance.ForceUpdateMenus();
-#endif
+
             if (onCancelCallback == null) {
 
                 SelectObjectInfo.Show(message, () => CancelSelection());
@@ -605,7 +604,7 @@ namespace Base {
         /// </summary>
         /// <param name="enable"></param>
         public void EnableServiceInteractiveObjects(bool enable) {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
             if (CalibrationManager.Instance.WorldAnchorLocal != null)
                 CalibrationManager.Instance.WorldAnchorLocal.GetComponent<InteractiveObject>().Enable(enable);
             VRModeManager.Instance.ARCameraVis.GetComponent<InteractiveObject>().Enable(enable);
@@ -679,7 +678,7 @@ namespace Base {
         /// </summary>
         private void Start() {
             SetDefaultFramerate();
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
             ARSession.enabled = false;
             /*Firebase.FirebaseApp.CheckAndFixDependenciesAsync().ContinueWith(task => {
               var dependencyStatus = task.Result;
@@ -711,38 +710,35 @@ namespace Base {
             WebsocketManager.Instance.OnSceneBaseUpdated += OnSceneBaseUpdated;
         }
 
-        //private IEnumerator Waiter() {
-        //    for (int i = 0; i < 20; i++) {
-        //        Debug.LogError("ziju" + i.ToString());
-        //       yield return new WaitForSeconds(2);
-        //    }
-        //}
-        
-        private void OnApplicationPause(bool pause) {
-            Debug.LogError("onAppPause, pause:" + pause.ToString());
-            //if(pause)
-            //    StartCoroutine(Waiter());
-
-            //Notifications.Instance.ShowNotification("on app pause", pause.ToString());
-            //if (pause && ConnectionStatus != ConnectionStatusEnum.Disconnected)
-            //  WebsocketManager.Instance.DisconnectFromSever();
+        /// <summary>
+        /// Waits until websocket is null and calls callback method (because after application pause disconnecting isn't finished completely)
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <returns></returns>
+        private IEnumerator WaitUntilWebsocketFullyDisconnected(UnityAction callback) {
+            yield return new WaitWhile(() => !WebsocketManager.Instance.IsWebsocketNull());
+            callback();
         }
 
-        private void OnApplicationFocus(bool focus) {
-            if (ConnectionStatus == ConnectionStatusEnum.Disconnected) {
-                Debug.LogError("onAppFocus, disconnected state, focus: " + focus.ToString());
-                if (focus) {
-                    try {
-                       //LandingScreen.Instance.ConnectToServer();
-                    } catch(NullReferenceException ex) {
-                        Debug.LogError("na landing je websocket ještě null " + ex.Message);
-                    }
+#if (UNITY_ANDROID || UNITY_IOS)
+
+        /// <summary>
+        /// Manages connection to server when app is paused or gains focus again
+        /// </summary>
+        /// <param name="pause"></param>
+        private void OnApplicationPause(bool pause) {
+            if (pause) {
+                if (connectionStatus == ConnectionStatusEnum.Connected) {
+                    WebsocketManager.Instance.DisconnectFromSever();
                 }
-            } else {
-                Debug.LogError("onAppFocus, connected/ing state, focus: " + focus.ToString());
+            } else { //automatically connect again
+                if (LandingScreen.Instance.KeepConnected.isOn) {
+                    StartCoroutine(WaitUntilWebsocketFullyDisconnected(() => LandingScreen.Instance.ConnectToServer()));
+                }
             }
         }
-        
+#endif
+
 
         private void OnSceneBaseUpdated(object sender, BareSceneEventArgs args) {
             foreach (ListScenesResponseData s in Scenes) {
@@ -826,7 +822,7 @@ namespace Base {
             // initialize when connected to the server
             ExecutingAction = null;
             ConnectionStatus = GameManager.ConnectionStatusEnum.Connected;
-            Debug.LogError("onConnected triggered");
+            //Debug.LogError("onConnected triggered");
         }
 
         /// <summary>
@@ -1646,8 +1642,8 @@ namespace Base {
         /// <param name="updateResources">Whether or not update lists of scenes/packages/projects</param>
         /// <returns></returns>
         public async Task OpenMainScreen(ShowMainScreenData.WhatEnum what, string highlight, bool updateResources = true) {
-            
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
             ARSession.enabled = false;
 #endif
             Scene.SetActive(false);
@@ -1683,7 +1679,7 @@ namespace Base {
         /// Opens scene editor
         /// </summary>
         public void OpenSceneEditor() {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
             ARSession.enabled = true;
             if (CalibrationManager.Instance.Calibrated) {
                 Scene.SetActive(true);
@@ -1703,7 +1699,7 @@ namespace Base {
         /// Opens project editor
         /// </summary>
         public void OpenProjectEditor() {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
             ARSession.enabled = true;
             if (CalibrationManager.Instance.Calibrated) {
                 Scene.SetActive(true);
@@ -1731,7 +1727,7 @@ namespace Base {
                 SetEditorState(EditorStateEnum.InteractionDisabled);
                 EditorHelper.EnableCanvasGroup(MainMenuBtnCG, true);
                 EditorHelper.EnableCanvasGroup(StatusPanelCG, true);
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
                 ARSession.enabled = true;
                 if (CalibrationManager.Instance.Calibrated) {
                     Scene.SetActive(true);
@@ -1766,7 +1762,7 @@ namespace Base {
         /// Opens disconnected screen
         /// </summary>
         public void OpenDisconnectedScreen() {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
             ARSession.enabled = false;
 #endif
             MenuManager.Instance.MainMenu.Close();
@@ -1774,6 +1770,15 @@ namespace Base {
             SetGameState(GameStateEnum.Disconnected);
             EditorInfo.text = "";
             HideLoadingScreen(true);
+        }
+
+        /// <summary>
+        /// Activates/Disactivates the Scene and calls all necessary methods (Selector menu update).
+        /// </summary>
+        /// <param name="active"></param>
+        public void SceneSetActive(bool active) {
+            Scene.SetActive(active);
+            SelectorMenu.Instance.ForceUpdateMenus();
         }
 
         /// <summary>
@@ -1797,12 +1802,17 @@ namespace Base {
         /// <param name="parent">ID of parent object (empty string if global action point)</param>
         /// <param name="position">Relative offset from parent object (or from scene origin if global AP)</param>
         /// <returns></returns>
-        public async Task<bool> AddActionPoint(string name, string parent, Position position) {
+        public async Task<bool> AddActionPoint(string name, string parent) {
             try {
+                Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0f));
+                Vector3 point = TransformConvertor.UnityToROS(Scene.transform.InverseTransformPoint(ray.GetPoint(0.5f)));
+                Position position = DataHelper.Vector3ToPosition(point);
+                ProjectManager.Instance.SelectAPNameWhenCreated = name;
                 await WebsocketManager.Instance.AddActionPoint(name, parent, position);
                 return true;
             } catch (RequestFailedException e) {
                 Notifications.Instance.ShowNotification("Failed to add action point", e.Message);
+                ProjectManager.Instance.SelectAPNameWhenCreated = "";
                 return false;
             }
         }
@@ -1864,8 +1874,8 @@ namespace Base {
             throw new ItemNotFoundException("Scene with id: " + sceneId + " not found");
         }
 
-        public List<InteractiveObject> GetAllInteractiveObjects() {          
-            return FindObjectsOfType<InteractiveObject>().ToList();
+        public List<InteractiveObject> GetAllInteractiveObjects() {
+            return FindObjectsOfType<InteractiveObject>().OrderBy(o => o.GetName()).ToList();
         }
 
     }

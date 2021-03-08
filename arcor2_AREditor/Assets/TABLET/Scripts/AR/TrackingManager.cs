@@ -65,7 +65,7 @@ public class TrackingManager : Singleton<TrackingManager> {
     }
 
     private void Start() {
-#if UNITY_ANDROID && !UNITY_EDITOR
+#if UNITY_ANDROID && AR_ON
         // We want to display notifications about tracking only when the camera feed is on screen (only in project or scene edit).
         GameManager.Instance.OnOpenProjectEditor += StartTrackingNotifications;
         GameManager.Instance.OnOpenSceneEditor += StartTrackingNotifications;
@@ -111,7 +111,7 @@ public class TrackingManager : Singleton<TrackingManager> {
                             anchorTrackingStatus = AnchorTrackingStatus.Tracking;
                             if (deviceTrackingStatus == DeviceTrackingStatus.WaitingForAnchor) {
                                 Notifications.Instance.ShowNotification("Tracking state", "Session Tracking");
-                                GameManager.Instance.Scene.SetActive(true);
+                                GameManager.Instance.SceneSetActive(true);
                             }
                         }
                         break;
@@ -130,7 +130,7 @@ public class TrackingManager : Singleton<TrackingManager> {
                         trackingAnchorFailureNotify = StartCoroutine(TrackingFailureNotify("Tracking lost!", "Locate the calibration marker.", 9f, anchorTrackingFailure:true));
                         TrackingLostAnimation.PlayVideo();
                         anchorTrackingStatus = AnchorTrackingStatus.NotTracking;
-                        GameManager.Instance.Scene.SetActive(false);
+                        GameManager.Instance.SceneSetActive(false);
                         break;
                 }
             }
@@ -238,26 +238,26 @@ public class TrackingManager : Singleton<TrackingManager> {
                     case NotTrackingReason.InsufficientLight:
                         trackingFailureNotify = StartCoroutine(TrackingFailureNotify("Tracking lost due to insufficient light!", "Enlight your environment.", 9f));
                         deviceTrackingStatus = DeviceTrackingStatus.InsufficientLight;
-                        GameManager.Instance.Scene.SetActive(false);
+                        GameManager.Instance.SceneSetActive(false);
                         break;
                     case NotTrackingReason.InsufficientFeatures:
                         trackingFailureNotify = StartCoroutine(TrackingFailureNotify("Tracking lost due to insufficient features!", "Try to move the device slowly around your environment.", 9f));
                         TrackingLostAnimation.PlayVideo();
                         deviceTrackingStatus = DeviceTrackingStatus.InsufficientFeatures;
-                        GameManager.Instance.Scene.SetActive(false);
+                        GameManager.Instance.SceneSetActive(false);
                         break;
                     case NotTrackingReason.ExcessiveMotion:
                         trackingFailureNotify = StartCoroutine(TrackingFailureNotify("Tracking lost due to excessive motion!", "You are moving the device too fast.", 9f));
                         TrackingLostAnimation.PlayVideo();
                         deviceTrackingStatus = DeviceTrackingStatus.ExcessiveMotion;
-                        GameManager.Instance.Scene.SetActive(false);
+                        GameManager.Instance.SceneSetActive(false);
                         break;
                     case NotTrackingReason.Initializing:
                     case NotTrackingReason.Relocalizing:
                     case NotTrackingReason.Unsupported:
                         trackingFailureNotify = StartCoroutine(TrackingFailureNotify("Tracking lost!", "Reason: " + ARSession.notTrackingReason.ToString(), 9f));
                         deviceTrackingStatus = DeviceTrackingStatus.UnknownFailure;
-                        GameManager.Instance.Scene.SetActive(false);
+                        GameManager.Instance.SceneSetActive(false);
                         break;
                 }
                 break;
@@ -267,7 +267,7 @@ public class TrackingManager : Singleton<TrackingManager> {
                     // Anchor and device is tracking normally
                     Notifications.Instance.ShowNotification("Tracking state", "Session Tracking");
                     deviceTrackingStatus = DeviceTrackingStatus.Tracking;
-                    GameManager.Instance.Scene.SetActive(true);
+                    GameManager.Instance.SceneSetActive(true);
                 } else {
                     deviceTrackingStatus = DeviceTrackingStatus.WaitingForAnchor;
                 }
@@ -323,7 +323,7 @@ public class TrackingManager : Singleton<TrackingManager> {
     }
 
     public void DisplayPlanesAndPointClouds(bool active) {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
         planesAndPointCloudsActive = active;
         DisplayPlanes(active);
         DisplayPointClouds(active);
@@ -357,7 +357,7 @@ public class TrackingManager : Singleton<TrackingManager> {
     }
 
     public void ChangePlaneTransparency(bool transparent) {
-#if (UNITY_ANDROID || UNITY_IOS) && !UNITY_EDITOR
+#if (UNITY_ANDROID || UNITY_IOS) && AR_ON
         planesTransparent = transparent;
         foreach (ARPlane plane in ARPlaneManager.trackables) {
             ChangePlaneTransparency(transparent, plane.GetComponent<Renderer>());

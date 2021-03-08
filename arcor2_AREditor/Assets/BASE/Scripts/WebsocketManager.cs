@@ -617,6 +617,10 @@ namespace Base {
             GameManager.Instance.HandleActionResult(actionResult.Data);
         }
 
+        public bool IsWebsocketNull() {
+            return websocket == null;
+        }
+
         /// <summary>
         /// Informs that execution of action was canceled
         /// </summary>
@@ -1850,9 +1854,9 @@ namespace Base {
         /// <param name="speed">Speed of movement in interval 0..1</param>
         /// <param name="jointsId">ID of joints on selected action point</param>
         /// <returns></returns>
-        public async Task MoveToActionPointJoints(string robotId, decimal speed, string jointsId) {
+        public async Task MoveToActionPointJoints(string robotId, decimal speed, string jointsId, bool safe) {
             int r_id = Interlocked.Increment(ref requestID);
-            IO.Swagger.Model.MoveToActionPointRequestArgs args = new IO.Swagger.Model.MoveToActionPointRequestArgs(robotId: robotId, endEffectorId: null, speed: speed, orientationId: null, jointsId: jointsId);
+            IO.Swagger.Model.MoveToActionPointRequestArgs args = new IO.Swagger.Model.MoveToActionPointRequestArgs(robotId: robotId, endEffectorId: null, speed: speed, orientationId: null, jointsId: jointsId, safe: safe);
             IO.Swagger.Model.MoveToActionPointRequest request = new IO.Swagger.Model.MoveToActionPointRequest(r_id, "MoveToActionPoint", args);
             SendDataToServer(request.ToJson(), r_id, true);
             IO.Swagger.Model.RenameActionPointJointsResponse response = await WaitForResult<IO.Swagger.Model.RenameActionPointJointsResponse>(r_id);
@@ -1870,9 +1874,9 @@ namespace Base {
         /// <param name="speed">Speed of movement in interval 0..1</param>
         /// <param name="orientationId">ID of orientation on selected action point</param>
         /// <returns></returns>
-        public async Task MoveToActionPointOrientation(string robotId, string endEffectorId, decimal speed, string orientationId) {
+        public async Task MoveToActionPointOrientation(string robotId, string endEffectorId, decimal speed, string orientationId, bool safe) {
             int r_id = Interlocked.Increment(ref requestID);
-            IO.Swagger.Model.MoveToActionPointRequestArgs args = new IO.Swagger.Model.MoveToActionPointRequestArgs(robotId: robotId, endEffectorId: endEffectorId, speed: speed, orientationId: orientationId, jointsId: null);
+            IO.Swagger.Model.MoveToActionPointRequestArgs args = new IO.Swagger.Model.MoveToActionPointRequestArgs(robotId: robotId, endEffectorId: endEffectorId, speed: speed, orientationId: orientationId, jointsId: null, safe: safe);
             IO.Swagger.Model.MoveToActionPointRequest request = new IO.Swagger.Model.MoveToActionPointRequest(r_id, "MoveToActionPoint", args);
             SendDataToServer(request.ToJson(), r_id, true);
             IO.Swagger.Model.MoveToActionPointResponse response = await WaitForResult<IO.Swagger.Model.MoveToActionPointResponse>(r_id);
@@ -2313,6 +2317,49 @@ namespace Base {
             } 
         }
 
+        public async Task<string> GetCameraColorImage(string cameraId) {
+            int r_id = Interlocked.Increment(ref requestID);
+            IO.Swagger.Model.CameraColorImageRequestArgs args = new CameraColorImageRequestArgs(id: cameraId);
+
+            IO.Swagger.Model.CameraColorImageRequest request = new IO.Swagger.Model.CameraColorImageRequest(r_id, "CameraColorImage", args: args);
+            SendDataToServer(request.ToJson(), r_id, true);
+            IO.Swagger.Model.CameraColorImageResponse response = await WaitForResult<IO.Swagger.Model.CameraColorImageResponse>(r_id);
+            if (response == null || !response.Result) {
+                throw new RequestFailedException(response == null ? new List<string>() { "Failed to get image from camera " + cameraId } : response.Messages);
+            } else {
+                return response.Data;
+            }
+        }
+
+        public async Task<IO.Swagger.Model.Pose> GetCameraPose(CameraParameters cameraParams, string img) {
+            int r_id = Interlocked.Increment(ref requestID);
+            IO.Swagger.Model.GetCameraPoseRequestArgs args = new GetCameraPoseRequestArgs(cameraParameters: cameraParams, image: img);
+
+            IO.Swagger.Model.GetCameraPoseRequest request = new IO.Swagger.Model.GetCameraPoseRequest(r_id, "GetCameraPose", args: args);
+            SendDataToServer(request.ToJson(), r_id, true);
+            IO.Swagger.Model.GetCameraPoseResponse response = await WaitForResult<IO.Swagger.Model.GetCameraPoseResponse>(r_id);
+            if (response == null || !response.Result) {
+                throw new RequestFailedException(response == null ? new List<string>() { "Failed to calibrate tablet" } : response.Messages);
+            } else {
+                return response.Data;
+            }
+        }
+
+        public async Task<List<IO.Swagger.Model.MarkerCorners>> GetMarkerCorners(CameraParameters cameraParams, string img) {
+            int r_id = Interlocked.Increment(ref requestID);
+            IO.Swagger.Model.MarkersCornersRequestArgs args = new MarkersCornersRequestArgs(cameraParameters: cameraParams, image: img);
+
+            IO.Swagger.Model.MarkersCornersRequest request = new IO.Swagger.Model.MarkersCornersRequest(r_id, "MarkersCorners", args: args);
+            SendDataToServer(request.ToJson(), r_id, true);
+            IO.Swagger.Model.MarkersCornersResponse response = await WaitForResult<IO.Swagger.Model.MarkersCornersResponse>(r_id);
+            if (response == null || !response.Result) {
+                throw new RequestFailedException(response == null ? new List<string>() { "Failed to calibrate tablet" } : response.Messages);
+            } else {
+                return response.Data;
+            }
+        }
+
+
         public async Task HandTeachingMode(string robotId, bool enable) {
             int r_id = Interlocked.Increment(ref requestID);
             IO.Swagger.Model.HandTeachingModeRequestArgs args = new HandTeachingModeRequestArgs(enable: enable, robotId: robotId);
@@ -2336,7 +2383,8 @@ namespace Base {
                 throw new RequestFailedException(response == null ? new List<string>() { "Failed to copy action point" } : response.Messages);
             }
         }
+
     }
 
-    
+
 }
