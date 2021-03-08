@@ -219,6 +219,8 @@ public class ActionPoint3D : Base.ActionPoint {
         sphereMaterial = Sphere.GetComponent<Renderer>().material;
         ActionPointName.text = apData.Name;
         SetRotation(GetRotation());
+        if (GetName() == "dabap")
+            Visual.SetActive(false);
     }
 
     public override void Enable(bool enable) {

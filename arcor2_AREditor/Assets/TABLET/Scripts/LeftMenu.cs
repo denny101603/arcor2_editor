@@ -344,6 +344,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         SetActiveSubmenu(LeftMenuSelection.None);
         SelectorMenu.Instance.SwitchToNoPose();
         SelectorMenu.Instance.SetSelectedObject(ProjectManager.Instance.AddDummyAimBox(), true);
+        ToggleGroupIconButtons.Instance.SelectButton(ToggleGroupIconButtons.Instance.Buttons[2]);
     }
 
     public void CubeClick() {

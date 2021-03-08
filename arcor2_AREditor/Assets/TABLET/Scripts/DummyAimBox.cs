@@ -36,11 +36,19 @@ public class DummyAimBox : DummyBox, IActionPointParent {
 
     public async void AimFinished() {
         SetVisibility(true);
+        bool aimed1 = PlayerPrefsHelper.LoadBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed1", false);
+        if (!aimed1) {
+            PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed1", true);
+        } else {
+            PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed2", true);
+            WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(0, 0, 1));
+        }
     }
 
     public void SetVisibility(bool visible) {
         Visible = visible;
         PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/visible", visible);
+
     }
 
     public override async void Remove() {
@@ -48,7 +56,8 @@ public class DummyAimBox : DummyBox, IActionPointParent {
             await WebsocketManager.Instance.RemoveActionPoint(ActionPoint.Data.Id);
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/visible", false);
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/inScene", false);
-            Destroy(gameObject);
+            if (gameObject != null)
+                Destroy(gameObject);
             for (int i = 0; i < 4; ++i)
                 PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/PointAimed/" + i, false);
             SelectorMenu.Instance.ForceUpdateMenus();

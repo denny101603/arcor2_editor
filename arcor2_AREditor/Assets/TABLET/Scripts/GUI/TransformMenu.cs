@@ -468,7 +468,19 @@ public class TransformMenu : Singleton<TransformMenu> {
         }
     }
 
-    public void ResetPosition() {        
+    public void ResetPosition(bool manually = false) {
+        if (manually && DummyAimBox) {
+            for (int i = 0; i < 4; ++i) {
+                Dots[i].color = Color.red;
+                PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/PointAimed/" + i, false);
+                if (dummyPoints[i] != null) {
+                    Destroy(dummyPoints[i]);
+                }
+                DummyAimBox dummyAimBox = FindObjectOfType<DummyAimBox>();
+                if (dummyAimBox != null)
+                    dummyAimBox.SetVisibility(false);
+            }
+        }
         offsetPosition = Vector3.zero;
         interPosition = Vector3.zero;
         offsetRotation = Quaternion.identity;

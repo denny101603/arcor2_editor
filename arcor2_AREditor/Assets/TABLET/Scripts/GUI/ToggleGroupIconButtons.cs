@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Base;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ToggleGroupIconButtons : MonoBehaviour {
+public class ToggleGroupIconButtons : Singleton<ToggleGroupIconButtons> {
     public List<IconButton> Buttons = new List<IconButton>();
     public IconButton Default;
 
