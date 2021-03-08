@@ -78,8 +78,6 @@ namespace Base {
 
         public GameObject DummyBoxPrefab, DummyBoxVisual, DummyAimBoxPrefab;
 
-        public bool SelectNewlyCreatedAP = false;
-
         public bool ProjectChanged {
             get => projectChanged;
             set {
@@ -92,6 +90,11 @@ namespace Base {
                     OnProjectSavedSatusChanged?.Invoke(this, EventArgs.Empty);
                 }
             } 
+        }
+
+        public string SelectAPNameWhenCreated {
+            get;
+            internal set;
         }
 
         /// <summary>
@@ -284,7 +287,6 @@ namespace Base {
             ActionPoint ap = null;
             if (data.ActionPoint.Parent == null || data.ActionPoint.Parent == "") {
                 ap = SpawnActionPoint(data.ActionPoint, null);
-
             } else {
                 try {
                     IActionPointParent actionPointParent = GetActionPointParent(data.ActionPoint.Parent);
@@ -294,19 +296,16 @@ namespace Base {
                 }
 
             }
-            //// FOR EXPERIMENT!!
-            ///
-            //IRobot robot = SceneManager.Instance.GetRobots()[0];
-            //await WebsocketManager.Instance.AddActionPointOrientationUsingRobot(ap.GetId(), robot.GetId(),
-            //  (await robot.GetEndEffectorIds())[0], "def");
-            await WebsocketManager.Instance.AddActionPointOrientation(ap.GetId(), DataHelper.QuaternionToOrientation(Quaternion.Euler(180, 0, 0)), "def");
-
-
-            /// END
-            if (ap != null && SelectNewlyCreatedAP) {
+            if (ap != null && SelectAPNameWhenCreated.Equals(ap.GetName())) {
                 SelectorMenu.Instance.ForceUpdateMenus();
                 SelectorMenu.Instance.SetSelectedObject(ap, true);
-                SelectNewlyCreatedAP = false;
+                SelectAPNameWhenCreated = "";
+                //// FOR EXPERIMENT!!
+                ///
+                IRobot robot = SceneManager.Instance.GetRobots()[0];
+                await WebsocketManager.Instance.AddActionPointOrientationUsingRobot(ap.GetId(), robot.GetId(),
+                  "default", "def");
+                //await WebsocketManager.Instance.AddActionPointOrientationUsingRobot(ap.GetId(), DataHelper.QuaternionToOrientation(Quaternion.Euler(180, 0, 0)), "def");
             }
             updateProject = true;
         }
@@ -352,7 +351,7 @@ namespace Base {
             UpdateActionPoints(project);
             if (project.HasLogic)
                 UpdateLogicItems(project.Logic);
-
+            HideAPOrientations();
 
 
             ///////////////////////////////

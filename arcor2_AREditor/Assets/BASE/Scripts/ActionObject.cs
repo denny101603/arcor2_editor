@@ -38,11 +38,12 @@ namespace Base {
             } else {
                 
             }
-            
+            Debug.LogError(transform.localPosition);
             Data.Id = uuid;
             
             CreateModel(customCollisionModels);
             enabled = true;
+            
             if (VRModeManager.Instance.VRModeON) {
                 SetVisibility(PlayerPrefsHelper.LoadFloat("AOVisibilityVR", 1f));
             } else {

@@ -53,7 +53,6 @@ public class MenuManager : Base.Singleton<MenuManager> {
     public void ShowMenu(SimpleSideMenu menu) {
         Debug.Assert(menu != null); 
         HideAllMenus();
-        menu.gameObject.SetActive(true);
         menu.Open();
         menu.gameObject.GetComponent<IMenu>().UpdateMenu();
         MenuOpened = menu;
@@ -132,8 +131,6 @@ public class MenuManager : Base.Singleton<MenuManager> {
                     // no menus are opened, scene should be interactable
                     // invoke an event from GameManager to let everyone know, that scene is interactable
                     GameManager.Instance.InvokeSceneInteractable(true);
-                    if (menu.GetComponent<MainMenu>() == null)
-                        menu.gameObject.SetActive(false);
                 }
                 break;
         }
