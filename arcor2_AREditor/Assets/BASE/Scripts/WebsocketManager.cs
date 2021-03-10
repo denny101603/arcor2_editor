@@ -1894,9 +1894,9 @@ namespace Base {
         /// <param name="position">Position in world frame</param>
         /// <param name="orientation">Orientation in world frame</param>
         /// <returns></returns>
-        public async Task MoveToPose(string robotId, string endEffectorId, decimal speed, Position position, Orientation orientation) {
+        public async Task MoveToPose(string robotId, string endEffectorId, decimal speed, Position position, Orientation orientation, bool safe) {
             int r_id = Interlocked.Increment(ref requestID);
-            IO.Swagger.Model.MoveToPoseRequestArgs args = new IO.Swagger.Model.MoveToPoseRequestArgs(robotId: robotId, endEffectorId: endEffectorId, speed: speed, orientation: orientation, position: position);
+            IO.Swagger.Model.MoveToPoseRequestArgs args = new IO.Swagger.Model.MoveToPoseRequestArgs(robotId: robotId, endEffectorId: endEffectorId, speed: speed, orientation: orientation, position: position, safe: safe);
             IO.Swagger.Model.MoveToPoseRequest request = new IO.Swagger.Model.MoveToPoseRequest(r_id, "MoveToPose", args);
             SendDataToServer(request.ToJson(), r_id, true);
             IO.Swagger.Model.MoveToPoseResponse response = await WaitForResult<IO.Swagger.Model.MoveToPoseResponse>(r_id);

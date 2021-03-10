@@ -16,6 +16,7 @@ namespace Base {
         private List<string> logicItemIds = new List<string>();
         [SerializeField]
         private OutlineOnClick outlineOnClick;
+        public GameObject Arrow;
 
         public object ifValue;
 
@@ -343,10 +344,18 @@ namespace Base {
 
         public override string GetName() {
             if (typeof(PuckOutput) == GetType()) {
-                return "Output of " + Action.Data.Name;
+                return Action.Data.Name + "/Out";
             } else {
-                return "Input of " + Action.Data.Name;
+                return Action.Data.Name + "/In";
             }
+        }
+
+        public void Hide() {
+            transform.localScale = new Vector3(0, 0, 0);
+        }
+
+        public void Show() {
+
         }
 
         public override string GetId() {

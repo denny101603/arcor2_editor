@@ -12,6 +12,7 @@ using UnityEngine.Animations;
 public class TransformMenu : Singleton<TransformMenu> {
     public InteractiveObject InteractiveObject;
     public TransformWheel TransformWheel;
+    public GameObject Wheel, StepButtons;
     public CoordinatesBtnGroup Coordinates;
     public TranformWheelUnits Units, UnitsDegrees;
     private GameObject model;
@@ -135,27 +136,8 @@ public class TransformMenu : Singleton<TransformMenu> {
         };
     }
 
-    private void UpdateTranslate(float wheelValue) {
-        if (RobotTabletBtn.CurrentState == "robot") {
-            IO.Swagger.Model.Position position = endEffector.Position;
-            if (prevValue != wheelValue) {
-                switch (Coordinates.GetSelectedAxis()) {
-                    case "x":
-                        position.X += (decimal) wheelValue;
-                        break;
-                    case "y":
-                        position.Y += (decimal) wheelValue;
-                        break;
-                    case "z":
-                        position.Z += (decimal) wheelValue;
-                        break;
-                }
-                WebsocketManager.Instance.MoveToPose(robotId, endEffector.EEId, (decimal) 0.3, position, endEffector.Orientation);
-            }
-            prevValue = wheelValue;           
-            
-            return;
-        }
+    private async void UpdateTranslate(float wheelValue) {
+        
         if (handHolding) {
             Vector3 cameraNow = TransformConvertor.UnityToROS(InteractiveObject.transform.InverseTransformPoint(Camera.main.transform.position));
             offsetPosition.x = GetRoundedValue(cameraNow.x - cameraOrig.x);
@@ -262,6 +244,8 @@ public class TransformMenu : Singleton<TransformMenu> {
     public void SwitchToTablet() {
         TransformWheel.gameObject.SetActive(true);
         ResetPosition();
+        Wheel.gameObject.SetActive(true);
+        StepButtons.gameObject.SetActive(false);
         RotateTranslateBtn.SetInteractivity(true);
     }
 
@@ -274,6 +258,8 @@ public class TransformMenu : Singleton<TransformMenu> {
             }
         }
         //TransformWheel.gameObject.SetActive(false);
+        Wheel.gameObject.SetActive(false);
+        StepButtons.gameObject.SetActive(true);
         ResetPosition();
         if (RotateTranslateBtn.CurrentState == "rotate") {
             RotateTranslateBtn.SetState("translate");
@@ -498,5 +484,88 @@ public class TransformMenu : Singleton<TransformMenu> {
         //    origRotation = TransformConvertor.UnityToROS(((ActionPoint3D) InteractiveObject).GetRotation());
         //}
         ResetTransformWheel();
+    }
+    /*if (RobotTabletBtn.CurrentState == "robot" && endEffector != null) {
+            IO.Swagger.Model.Position position = endEffector.Position;
+            if (prevValue != wheelValue) {
+                switch (Coordinates.GetSelectedAxis()) {
+                    case "x":
+                        position.X += (decimal) wheelValue;
+                        break;
+                    case "y":
+                        position.Y += (decimal) wheelValue;
+                        break;
+                    case "z":
+                        position.Z += (decimal) wheelValue;
+                        break;
+                }
+
+                //Vector3 p = TransformConvertor.ROSToUnity(interPosition + offsetPosition);
+                //model.transform.localPosition = ((ActionPoint3D) InteractiveObject).GetRotation() * p;
+                try {
+                    await WebsocketManager.Instance.MoveToPose(robotId, endEffector.EEId, (decimal) 0.3, position, endEffector.Orientation, false);
+
+                    prevValue = wheelValue;
+                } catch (RequestFailedException ex) {
+                    prevValue = float.MinValue;
+                }
+            }          
+            
+            return;
+        }*/
+
+    public void RobotStepUp() {
+        RobotStep(GetPositionValue(1));
+    }
+
+
+    public void RobotStepDown() {
+        RobotStep(GetPositionValue(-1));
+    }
+
+    public async void RobotStep(float step) {
+        if (RobotTabletBtn.CurrentState == "robot" && endEffector != null) {
+            IO.Swagger.Model.Position position = endEffector.Position;
+            Vector3 offset = Vector3.zero;
+
+            switch (Coordinates.GetSelectedAxis()) {
+                case "x":
+
+                    offset = new Vector3(step, 0, 0);
+                    break;
+                case "y":
+                    offset = new Vector3(0, step, 0);
+                    break;
+                case "z":
+                    offset = new Vector3(0, 0, step);
+                    break;
+            }
+            if (InteractiveObject.GetType() == typeof(ActionPoint3D)) {
+                position.X += DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(((ActionPoint3D) InteractiveObject).GetRotation()) * offset).X;
+                position.Y += DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(((ActionPoint3D) InteractiveObject).GetRotation()) * offset).Y;
+                position.Z += DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(((ActionPoint3D) InteractiveObject).GetRotation()) * offset).Z;
+                try {
+                    StepButtons.SetActive(false);
+                    await WebsocketManager.Instance.MoveToPose(robotId, endEffector.EEId, (decimal) 0.3, position, endEffector.Orientation, false);
+                } catch (RequestFailedException) {
+
+                } finally {
+                    StepButtons.SetActive(true);
+                }
+            } else if (InteractiveObject.GetType() == typeof(DummyBox)) {
+                position.X += DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(InteractiveObject.transform.localRotation) * offset).X;
+                position.Y += DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(InteractiveObject.transform.localRotation) * offset).Y;
+                position.Z += DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(InteractiveObject.transform.localRotation) * offset).Z;
+                try {
+                    StepButtons.SetActive(false);
+                    await WebsocketManager.Instance.MoveToPose(robotId, endEffector.EEId, (decimal) 0.3, position, endEffector.Orientation, false);
+                } catch (RequestFailedException) {
+
+                } finally {
+                    StepButtons.SetActive(true);
+                }
+            }
+
+        }
     }
 }
