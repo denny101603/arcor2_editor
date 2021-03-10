@@ -18,8 +18,8 @@ public class TransformMenu : Singleton<TransformMenu> {
     public TwoStatesToggle RobotTabletBtn, RotateTranslateBtn;
     private float prevValue;
 
-    private Vector3 origPosition = new Vector3(), offsetPosition = new Vector3(), interPosition = new Vector3(), cameraOrig = new Vector3();
-    private Quaternion origRotation = new Quaternion(), offsetRotation = new Quaternion(), interRotation = Quaternion.identity;
+    private Vector3 offsetPosition = new Vector3(), interPosition = new Vector3(), cameraOrig = new Vector3();
+    private Quaternion offsetRotation = new Quaternion(), interRotation = Quaternion.identity;
 
     [HideInInspector]
     public CanvasGroup CanvasGroup;
@@ -69,7 +69,7 @@ public class TransformMenu : Singleton<TransformMenu> {
         
         if (InteractiveObject.GetType() == typeof(ActionPoint3D)) {
             Vector3 position = TransformConvertor.ROSToUnity(interPosition + offsetPosition);
-            model.transform.localPosition = TransformConvertor.ROSToUnity(origRotation) * position;
+            model.transform.localPosition = ((ActionPoint3D) InteractiveObject).GetRotation() * position;
             Quaternion rotation = TransformConvertor.ROSToUnity(TransformConvertor.UnityToROS(((ActionPoint3D) InteractiveObject).GetRotation()) * interRotation * offsetRotation);
             model.transform.localRotation = rotation;
         } else if (InteractiveObject.GetType() == typeof(DummyBox)) {
@@ -176,8 +176,8 @@ public class TransformMenu : Singleton<TransformMenu> {
                     break;
             }
         }
-        
-        Vector3 newPosition = origPosition + InteractiveObject.transform.TransformDirection(interPosition + offsetPosition);
+
+        Vector3 newPosition = TransformConvertor.UnityToROS(InteractiveObject.transform.localPosition + model.transform.localPosition);
         Coordinates.X.SetValueMeters(newPosition.x);
         Coordinates.X.SetDeltaMeters(offsetPosition.x + interPosition.x);
         Coordinates.Y.SetValueMeters(newPosition.y);
@@ -218,7 +218,7 @@ public class TransformMenu : Singleton<TransformMenu> {
         }
         Quaternion delta = Quaternion.identity;
         if (InteractiveObject.GetType() == typeof(ActionPoint3D)) {
-            delta = TransformConvertor.UnityToROS(model.transform.localRotation) * Quaternion.Inverse(origRotation);
+            delta = TransformConvertor.UnityToROS(model.transform.localRotation * Quaternion.Inverse(((ActionPoint3D) InteractiveObject).GetRotation()));
         } else if (InteractiveObject.GetType() == typeof(DummyBox)) {
             delta = TransformConvertor.UnityToROS(model.transform.localRotation);
         }
@@ -327,10 +327,10 @@ public class TransformMenu : Singleton<TransformMenu> {
         SwitchToTablet ();
         if (interactiveObject.GetType() == typeof(ActionPoint3D)) {
             model = ((ActionPoint3D) interactiveObject).GetModelCopy();
-            origRotation = TransformConvertor.UnityToROS(((ActionPoint3D) interactiveObject).GetRotation());
+            //origRotation = TransformConvertor.UnityToROS(((ActionPoint3D) interactiveObject).GetRotation());
         } else if (interactiveObject.GetType() == typeof(DummyBox)) {
             model = ((DummyBox) interactiveObject).GetModelCopy();
-            origRotation = interactiveObject.transform.localRotation;
+            //origRotation = interactiveObject.transform.localRotation;
         } else if (DummyAimBox) {
             model = GetPointModel();
             for (int i = 0; i < 4; ++i) {
@@ -352,7 +352,6 @@ public class TransformMenu : Singleton<TransformMenu> {
             return;
         }
         
-        origPosition = TransformConvertor.UnityToROS(interactiveObject.transform.localPosition);
         
         GameManager.Instance.Gizmo.transform.SetParent(model.transform);
         GameManager.Instance.Gizmo.transform.localPosition = Vector3.zero;
@@ -458,13 +457,12 @@ public class TransformMenu : Singleton<TransformMenu> {
                 //Vector3 position = interPosition + offsetPosition;
                 //model.transform.localPosition = TransformConvertor.ROSToUnity(origRotation) * position;
                 if (RobotTabletBtn.CurrentState == "tablet")
-                    await WebsocketManager.Instance.UpdateActionPointPosition(InteractiveObject.GetId(), DataHelper.Vector3ToPosition(origPosition + origRotation *(interPosition + offsetPosition)));
+                    await WebsocketManager.Instance.UpdateActionPointPosition(InteractiveObject.GetId(), DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(InteractiveObject.transform.localPosition + model.transform.localPosition)));
                 else {
                     await WebsocketManager.Instance.UpdateActionPointUsingRobot(InteractiveObject.GetId(), robotId, endEffector.GetId());
                 }
                 ((ActionPoint3D) InteractiveObject).SetRotation(model.transform.localRotation);
-                origRotation = TransformConvertor.UnityToROS(model.transform.localRotation);
-                origPosition = origPosition + origRotation * (interPosition + offsetPosition);
+                //origRotation = TransformConvertor.UnityToROS(model.transform.localRotation);
                 ResetPosition();
             } catch (RequestFailedException e) {
                 Notifications.Instance.ShowNotification("Failed to update action point position", e.Message);
@@ -496,9 +494,9 @@ public class TransformMenu : Singleton<TransformMenu> {
         interPosition = Vector3.zero;
         offsetRotation = Quaternion.identity;
         interRotation = Quaternion.identity;
-        if (InteractiveObject.GetType() == typeof(ActionPoint3D)) {
-            origRotation = TransformConvertor.UnityToROS(((ActionPoint3D) InteractiveObject).GetRotation());
-        }
+        //if (InteractiveObject.GetType() == typeof(ActionPoint3D)) {
+        //    origRotation = TransformConvertor.UnityToROS(((ActionPoint3D) InteractiveObject).GetRotation());
+        //}
         ResetTransformWheel();
     }
 }

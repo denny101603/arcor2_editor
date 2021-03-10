@@ -277,10 +277,18 @@ public class ActionPoint3D : Base.ActionPoint {
         return copy;
     }
 
+    /// <summary>
+    /// Sets rotation of AP in unity coord system
+    /// </summary>
+    /// <param name="quaternion"></param>
     public void SetRotation(Quaternion quaternion) {
         PlayerPrefsHelper.SaveQuaternion(Data.Id, quaternion);
     }
 
+    /// <summary>
+    /// Gets rotation of AP in unity coord system
+    /// </summary>
+    /// <param name="quaternion"></param>
     public Quaternion GetRotation() {
         return PlayerPrefsHelper.LoadQuaternion(Data.Id, Quaternion.identity);
     }
