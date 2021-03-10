@@ -304,7 +304,7 @@ namespace Base {
                 ///
                 IRobot robot = SceneManager.Instance.GetRobots()[0];
                 await WebsocketManager.Instance.AddActionPointOrientationUsingRobot(ap.GetId(), robot.GetId(),
-                  "default", "def");
+                  "default", "default");
                 //await WebsocketManager.Instance.AddActionPointOrientationUsingRobot(ap.GetId(), DataHelper.QuaternionToOrientation(Quaternion.Euler(180, 0, 0)), "def");
             }
             updateProject = true;
