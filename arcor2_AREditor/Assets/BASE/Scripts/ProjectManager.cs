@@ -1201,6 +1201,7 @@ namespace Base {
                 // updates parameters of the action
                 action.ActionUpdate(projectAction);
                 updateProject = true;
+                SelectorMenu.Instance.SetSelectedObject(action, true);
             } catch (RequestFailedException ex) {
                 Debug.LogError(ex);
             }            

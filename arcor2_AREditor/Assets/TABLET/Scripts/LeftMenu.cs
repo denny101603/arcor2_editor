@@ -179,7 +179,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             }
             WebsocketManager.Instance.AddAction(action.ActionPoint.GetId(), parameters, action.ActionProvider.GetProviderId() + "/" + action.Metadata.Name, action.GetName() + "_copy", action.GetFlows());
         } else if (selectedObject.GetType() == typeof(DummyBox)) {
-            DummyBox box = ProjectManager.Instance.AddDummyBox(selectedObject.GetName());
+            DummyBox box = ProjectManager.Instance.AddDummyBox(selectedObject.GetName() + "_copy");
             box.transform.position = selectedObject.transform.position;
             box.transform.rotation = selectedObject.transform.rotation;
             box.SetDimensions(((DummyBox) selectedObject).GetDimensions());

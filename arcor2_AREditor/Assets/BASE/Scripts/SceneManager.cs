@@ -375,8 +375,7 @@ namespace Base {
                 try {
                     IRobot robot = GetRobot(args.Data.RobotId);
                     RobotEE ee = robot.GetEE(eefPose.EndEffectorId);
-                    ee.UpdatePosition(TransformConvertor.ROSToUnity(DataHelper.PositionToVector3(eefPose.Pose.Position)),
-                        TransformConvertor.ROSToUnity(DataHelper.OrientationToQuaternion(eefPose.Pose.Orientation)));
+                    ee.UpdatePosition(eefPose.Pose.Position, eefPose.Pose.Orientation);
                 } catch (ItemNotFoundException) {
                     continue;
                 }

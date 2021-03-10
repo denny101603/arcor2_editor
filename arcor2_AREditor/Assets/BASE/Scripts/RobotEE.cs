@@ -8,6 +8,8 @@ public class RobotEE : InteractiveObject {
     
     [SerializeField]
     private TMPro.TMP_Text eeName;
+    public IO.Swagger.Model.Position Position;
+    public IO.Swagger.Model.Orientation Orientation;
 
     public string RobotId, EEId;
     
@@ -41,8 +43,10 @@ public class RobotEE : InteractiveObject {
     /// </summary>
     /// <param name="position">Position in world frame</param>
     /// <param name="orientation">Orientation in world frame</param>
-    public void UpdatePosition(Vector3 position, Quaternion orientation) {
-        transform.position = SceneManager.Instance.SceneOrigin.transform.TransformPoint(position);
+    public void UpdatePosition(IO.Swagger.Model.Position position, IO.Swagger.Model.Orientation orientation) {
+        Position = position;
+        Orientation = orientation;
+        transform.position = SceneManager.Instance.SceneOrigin.transform.TransformPoint(TransformConvertor.ROSToUnity(DataHelper.PositionToVector3(position)));
         // rotation set according to this
         // https://answers.unity.com/questions/275565/what-is-the-rotation-equivalent-of-inversetransfor.html
         //transform.rotation = SceneManager.Instance.SceneOrigin.transform.rotation * orientation;
