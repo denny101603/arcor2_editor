@@ -30,7 +30,7 @@ public class LogicItem
         input = ProjectManager.Instance.GetAction(logicItem.End).Input;
         output = ProjectManager.Instance.GetAction(logicItem.Start).Output;
         input.AddLogicItem(Data.Id);
-        output.AddLogicItem(Data.Id);        
+        output.AddLogicItem(Data.Id);
         connection = ConnectionManagerArcoro.Instance.CreateConnection(input.gameObject, output.gameObject);
     }
 

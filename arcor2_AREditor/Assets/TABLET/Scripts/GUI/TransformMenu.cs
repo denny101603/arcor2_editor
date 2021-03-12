@@ -332,7 +332,6 @@ public class TransformMenu : Singleton<TransformMenu> {
             currentArrowIndex = 0;
             SetArrowVisible(0);
         }
-        Debug.LogError(model);
         if (model == null) {
             Hide();
             return;
@@ -515,7 +514,7 @@ public class TransformMenu : Singleton<TransformMenu> {
         }*/
 
     public void RobotStepUp() {
-        RobotStep(GetPositionValue(1));
+        RobotStep(GetPositionValue(5));
     }
 
 
@@ -546,7 +545,7 @@ public class TransformMenu : Singleton<TransformMenu> {
                 position.Z += DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(((ActionPoint3D) InteractiveObject).GetRotation()) * offset).Z;
                 try {
                     StepButtons.SetActive(false);
-                    await WebsocketManager.Instance.MoveToPose(robotId, endEffector.EEId, (decimal) 0.3, position, endEffector.Orientation, false);
+                    await WebsocketManager.Instance.MoveToPose(robotId, endEffector.EEId, (decimal) 1, position, DataHelper.QuaternionToOrientation(Quaternion.identity), false);
                 } catch (RequestFailedException) {
 
                 } finally {
@@ -558,7 +557,7 @@ public class TransformMenu : Singleton<TransformMenu> {
                 position.Z += DataHelper.Vector3ToPosition(TransformConvertor.UnityToROS(InteractiveObject.transform.localRotation) * offset).Z;
                 try {
                     StepButtons.SetActive(false);
-                    await WebsocketManager.Instance.MoveToPose(robotId, endEffector.EEId, (decimal) 0.3, position, endEffector.Orientation, false);
+                    await WebsocketManager.Instance.MoveToPose(robotId, endEffector.EEId, (decimal) 1, position, endEffector.Orientation, false);
                 } catch (RequestFailedException) {
 
                 } finally {

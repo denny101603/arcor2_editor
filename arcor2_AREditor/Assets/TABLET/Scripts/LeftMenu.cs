@@ -16,7 +16,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public Button FocusButton, RobotButton, AddButton, SettingsButton, HomeButton;
     public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton,
-        AddActionButton, RenameButton, CalibrationButton, ResizeCubeButton;
+        AddActionButton, RenameButton, CalibrationButton, ResizeCubeButton, AddConnectionButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
     public RenameDialog RenameDialog;
     public CubeSizeDialog CubeSizeDialog;
@@ -108,6 +108,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             CalibrationButton.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
                 selectedObject.GetType() == typeof(CreateAnchor);
             ResizeCubeButton.interactable = selectedObject is DummyBox;
+            AddConnectionButton.interactable = selectedObject.GetType() == typeof(Action3D) && !((Action3D) selectedObject).Output.ConnectionExists();
         }
 
         if (SceneManager.Instance.SceneMeta != null)
@@ -191,9 +192,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
             return;
-        if (selectedObject.GetType() == typeof(PuckInput) ||
-                selectedObject.GetType() == typeof(PuckOutput)) {
-            ((InputOutput) selectedObject).OnClick(Clickable.Click.TOUCH);
+        if (selectedObject.GetType() == typeof(Action3D)) {
+            ((Action3D) selectedObject).OnClick(Clickable.Click.TOUCH);
         }
     }
 
@@ -250,6 +250,12 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
             return;
+
+        if (selectedObject.GetType() == typeof(PuckInput) ||
+            selectedObject.GetType() == typeof(PuckOutput)) {
+            selectedObject.StartManipulation();
+            return;
+        }
 
         if (!SelectorMenu.Instance.gameObject.activeSelf && !MoveButton.GetComponent<Image>().enabled) { //other menu/dialog opened
             SetActiveSubmenu(LeftMenuSelection.Settings); //close all other opened menus/dialogs and takes care of red background of buttons

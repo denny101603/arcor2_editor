@@ -49,7 +49,7 @@ public class RobotEE : InteractiveObject {
         transform.position = SceneManager.Instance.SceneOrigin.transform.TransformPoint(TransformConvertor.ROSToUnity(DataHelper.PositionToVector3(position)));
         // rotation set according to this
         // https://answers.unity.com/questions/275565/what-is-the-rotation-equivalent-of-inversetransfor.html
-        //transform.rotation = SceneManager.Instance.SceneOrigin.transform.rotation * orientation;
+        //transform.rotation = SceneManager.Instance.SceneOrigin.transform.rotation * TransformConvertor.ROSToUnity(DataHelper.OrientationToQuaternion(orientation));
     }
 
     public override string GetName() {

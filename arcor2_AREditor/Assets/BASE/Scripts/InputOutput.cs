@@ -20,15 +20,25 @@ namespace Base {
 
         public object ifValue;
 
+        private void Start() {
+            if (logicItemIds.Count == 0) {
+                Hide();
+            } else {
+                Show();
+            }
+        }
+
 
         public void AddLogicItem(string logicItemId) {
             Debug.Assert(logicItemId != null);
             logicItemIds.Add(logicItemId);
+            Show();
         }
 
         public void RemoveLogicItem(string logicItemId) {
             Debug.Assert(logicItemIds.Contains(logicItemId));
             logicItemIds.Remove(logicItemId);
+            Hide();
         }
 
         public List<LogicItem> GetLogicItems() {
@@ -88,8 +98,12 @@ namespace Base {
                     int howManyConditions = 0;
 
                     // kterej connection chci, případně chci vytvořit novej
-                    Dictionary<string, LogicItem> items = new Dictionary<string, LogicItem>();
-                    foreach (string itemId in logicItemIds) {
+                    //Dictionary<string, LogicItem> items = new Dictionary<string, LogicItem>();
+                    if (ProjectManager.Instance.LogicItems.TryGetValue(logicItemIds[0], out LogicItem logicItem)) {
+                        SelectedConnection(logicItem);
+                    }
+                    return;
+                    /*foreach (string itemId in logicItemIds) {
                         if (ProjectManager.Instance.LogicItems.TryGetValue(itemId, out LogicItem logicItem)) {
                             Action start = ProjectManager.Instance.GetAction(logicItem.Data.Start);
                             Action end = ProjectManager.Instance.GetAction(logicItem.Data.End);
@@ -114,7 +128,7 @@ namespace Base {
                             return;
                         }
                     }
-                    MenuManager.Instance.ConnectionSelectorDialog.Open(items, showNewConnectionButton, this);
+                    MenuManager.Instance.ConnectionSelectorDialog.Open(items, showNewConnectionButton, this);*/
 
                     /*GameObject theOtherOne = ConnectionManagerArcoro.Instance.GetConnectedTo(GetLogicItems().GetConnection(), gameObject);
                         
@@ -196,33 +210,35 @@ namespace Base {
 
 
         public async void GetInput() {
-            List<Action> actionList = ProjectManager.Instance.GetAllActions();
+            /*List<Action> actionList = ProjectManager.Instance.GetAllActions();
             actionList.Add(ProjectManager.Instance.StartAction);
-            actionList.Add(ProjectManager.Instance.EndAction);
+            actionList.Add(ProjectManager.Instance.EndAction);*/
             /*foreach (Action a in actionList) {
                 if (!await ConnectionManagerArcoro.Instance.ValidateConnection(this, a.Input)) {
                     a.Input.Disable();
                 }
             }*/
-            GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingActionInput, GetInput, "Select input of other action", ValidateInput);
+            GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingAction, GetInput, "Select next action", ValidateInput);
         }
 
         public async void GetOutput() {
-            List<Action> actionList = ProjectManager.Instance.GetAllActions();
+            /*List<Action> actionList = ProjectManager.Instance.GetAllActions();
             actionList.Add(ProjectManager.Instance.StartAction);
-            actionList.Add(ProjectManager.Instance.EndAction);
+            actionList.Add(ProjectManager.Instance.EndAction);*/
             /*foreach (Action a in actionList) {
                 if (!await ConnectionManagerArcoro.Instance.ValidateConnection(a.Output, this)) {
                     a.Output.Disable();
                 }
             }*/
-            GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingActionOutput, GetOutput, "Select output of other action", ValidateOutput);
+            GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingAction, GetOutput, "Select other action", ValidateOutput);
         }
 
         private async Task<RequestResult> ValidateInput(object selectedInput) {
             InputOutput input;
             try {
-                input = (InputOutput) selectedInput;
+                input = ((Action3D) selectedInput).Input;
+                if (input.ConnectionExists())
+                    return new RequestResult(false, "Action already connected");
             } catch (InvalidCastException) {
                 return new RequestResult(false, "Wrong object type selected");
             } 
@@ -238,7 +254,9 @@ namespace Base {
         private async Task<RequestResult> ValidateOutput(object selectedOutput) {
             PuckOutput output;
             try {
-                output = (PuckOutput) selectedOutput;
+                output = ((Action3D) selectedOutput).Output;
+                if (output.ConnectionExists())
+                    return new RequestResult(false, "Action already connected");
             } catch (InvalidCastException) {
                 return new RequestResult(false, "Wrong object type selected");
             }
@@ -251,7 +269,9 @@ namespace Base {
         }
 
         protected async virtual void GetInput(object selectedInput) {
-            InputOutput input = (InputOutput) selectedInput;
+            Action3D action = (Action3D) selectedInput;
+            
+            InputOutput input = action.Input;
             
             if (selectedInput == null || input == null) {
                 ConnectionManagerArcoro.Instance.DestroyConnectionToMouse();
@@ -269,7 +289,9 @@ namespace Base {
         }
 
         private async void GetOutput(object selectedOutput) {
-            PuckOutput output = (PuckOutput) selectedOutput;
+            Action3D action = (Action3D) selectedOutput;
+
+            PuckOutput output = action.Output;
             
             if (selectedOutput == null || output == null) {
                 ConnectionManagerArcoro.Instance.DestroyConnectionToMouse();
@@ -343,6 +365,7 @@ namespace Base {
         }
 
         public override string GetName() {
+            
             if (typeof(PuckOutput) == GetType()) {
                 return Action.Data.Name + "/Out";
             } else {
@@ -351,11 +374,13 @@ namespace Base {
         }
 
         public void Hide() {
-            transform.localScale = new Vector3(0, 0, 0);
+            Arrow.transform.localScale = new Vector3(0, 0, 0);
+            Enabled = false;
         }
 
         public void Show() {
-
+            Arrow.transform.localScale = new Vector3(0.03f, 0.02f, 0.03f);
+            Enabled = true;
         }
 
         public override string GetId() {
@@ -371,23 +396,28 @@ namespace Base {
         }
 
         public override bool Movable() {
-            return false;
+            return true;
         }
 
         public override void StartManipulation() {
-            throw new NotImplementedException();
+            OnClick(Click.MOUSE_LEFT_BUTTON);
         }
 
         public override void Remove() {
-            throw new NotImplementedException();
+            if (logicItemIds.Count > 0)
+                _ = WebsocketManager.Instance.RemoveLogicItem(logicItemIds[0]);
         }
 
         public override bool Removable() {
-            return false;
+            return true;
         }
 
         public override void Rename(string newName) {
             throw new NotImplementedException();
+        }
+
+        public bool ConnectionExists() {
+            return logicItemIds.Count > 0;
         }
     }
 

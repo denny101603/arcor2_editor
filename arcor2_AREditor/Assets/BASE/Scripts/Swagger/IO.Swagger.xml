@@ -1337,7 +1337,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ProjectLogicIf">
              <summary>
-             ProjectLogicIf(what: str, value: str)
+             ProjectLogicIf(what: 'str', value: 'str')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ProjectLogicIf.#ctor">
@@ -1403,7 +1403,7 @@
             </member>
         <member name="T:IO.Swagger.Model.BareProject">
              <summary>
-             BareProject(id: str, name: str, scene_id: str, desc: str = &lt;factory&gt;, has_logic: bool = True, modified: Union[datetime.datetime, NoneType] = None, int_modified: Union[datetime.datetime, NoneType] = None)
+             BareProject(name: 'str', scene_id: 'str', desc: 'str' = &lt;factory&gt;, has_logic: 'bool' = True, modified: 'Optional[datetime]' = None, int_modified: 'Optional[datetime]' = None, id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.BareProject.#ctor">
@@ -1417,7 +1417,7 @@
              </summary>
              <param name="desc">desc (default to "").</param>
              <param name="hasLogic">hasLogic (default to true).</param>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="intModified">intModified.</param>
              <param name="modified">modified.</param>
              <param name="name">name (required).</param>
@@ -4470,7 +4470,7 @@
             </member>
         <member name="T:IO.Swagger.Model.NamedOrientation">
              <summary>
-             NamedOrientation(id: str, name: str, orientation: arcor2.data.common.Orientation)
+             NamedOrientation(name: 'str', orientation: 'Orientation', id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.NamedOrientation.#ctor">
@@ -4482,7 +4482,7 @@
              <summary>
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.NamedOrientation" /> class.
              </summary>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="name">name (required).</param>
              <param name="orientation">orientation (required).</param>
             </member>
@@ -5294,7 +5294,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ProjectFunction">
              <summary>
-             ProjectFunction(id: str, name: str, actions: List[arcor2.data.common.Action] = &lt;factory&gt;, logic: List[arcor2.data.common.LogicItem] = &lt;factory&gt;, parameters: List[arcor2.data.common.ActionParameter] = &lt;factory&gt;, returns: List[arcor2.data.common.FunctionReturns] = &lt;factory&gt;)
+             ProjectFunction(name: 'str', actions: 'List[Action]' = &lt;factory&gt;, logic: 'List[LogicItem]' = &lt;factory&gt;, parameters: 'List[ActionParameter]' = &lt;factory&gt;, returns: 'List[FunctionReturns]' = &lt;factory&gt;, id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ProjectFunction.#ctor">
@@ -5307,7 +5307,7 @@
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.ProjectFunction" /> class.
              </summary>
              <param name="actions">actions.</param>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="logic">logic.</param>
              <param name="name">name (required).</param>
              <param name="parameters">parameters.</param>
@@ -9553,7 +9553,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Scene">
              <summary>
-             Scene(id: str, name: str, desc: str = &lt;factory&gt;, modified: Union[datetime.datetime, NoneType] = None, int_modified: Union[datetime.datetime, NoneType] = None, objects: List[arcor2.data.common.SceneObject] = &lt;factory&gt;)
+             Scene(name: 'str', desc: 'str' = &lt;factory&gt;, modified: 'Optional[datetime]' = None, int_modified: 'Optional[datetime]' = None, id: 'str' = '', objects: 'List[SceneObject]' = &lt;factory&gt;)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.Scene.#ctor">
@@ -9566,7 +9566,7 @@
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.Scene" /> class.
              </summary>
              <param name="desc">desc (default to "").</param>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="intModified">intModified.</param>
              <param name="modified">modified.</param>
              <param name="name">name (required).</param>
@@ -12095,7 +12095,7 @@
             </member>
         <member name="T:IO.Swagger.Model.SceneObjectOverride">
              <summary>
-             SceneObjectOverride(id: str, parameters: List[arcor2.data.common.Parameter])
+             SceneObjectOverride(id: 'str', parameters: 'List[Parameter]')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.SceneObjectOverride.#ctor">
@@ -14105,7 +14105,7 @@
             </member>
         <member name="T:IO.Swagger.Model.LogicItem">
              <summary>
-             LogicItem(id: str, start: str, end: str, condition: Union[arcor2.data.common.ProjectLogicIf, NoneType] = None)
+             LogicItem(start: 'str', end: 'str', condition: 'Optional[ProjectLogicIf]' = None, id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.LogicItem.#ctor">
@@ -14119,7 +14119,7 @@
              </summary>
              <param name="condition">condition.</param>
              <param name="end">end (required).</param>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="start">start (required).</param>
             </member>
         <member name="P:IO.Swagger.Model.LogicItem.Condition">
@@ -14508,7 +14508,7 @@
             </member>
         <member name="T:IO.Swagger.Model.IdValue">
              <summary>
-             IdValue(id: str, value: str)
+             IdValue(id: 'str', value: 'str')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.IdValue.#ctor">
@@ -20524,7 +20524,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ListScenesResponseData">
              <summary>
-             Data(id: str, name: str, desc: Union[str, NoneType], modified: Union[datetime.datetime, NoneType] = None)
+             Data(id: 'str', name: 'str', desc: 'Optional[str]', modified: Union[datetime.datetime, NoneType] = None)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ListScenesResponseData.#ctor">
@@ -21528,7 +21528,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ListProjectsResponseData">
              <summary>
-             Data(id: str, name: str, desc: Union[str, NoneType], scene_id: str, valid: bool = False, executable: bool = False, problems: List[str] = &lt;factory&gt;, modified: Union[datetime.datetime, NoneType] = None)
+             Data(id: 'str', name: 'str', desc: 'Optional[str]', scene_id: str, valid: bool = False, executable: bool = False, problems: List[str] = &lt;factory&gt;, modified: Union[datetime.datetime, NoneType] = None)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ListProjectsResponseData.#ctor">
@@ -23914,7 +23914,7 @@
             </member>
         <member name="T:IO.Swagger.Model.SceneObject">
              <summary>
-             SceneObject(id: str, name: str, type: str, pose: Union[arcor2.data.common.Pose, NoneType] = None, parameters: List[arcor2.data.common.Parameter] = &lt;factory&gt;, children: List[ForwardRef('SceneObject')] = &lt;factory&gt;)
+             SceneObject(name: 'str', type: 'str', pose: 'Optional[Pose]' = None, parameters: 'List[Parameter]' = &lt;factory&gt;, children: 'List[SceneObject]' = &lt;factory&gt;, id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.SceneObject.#ctor">
@@ -23927,7 +23927,7 @@
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.SceneObject" /> class.
              </summary>
              <param name="children">children.</param>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="name">name (required).</param>
              <param name="parameters">parameters.</param>
              <param name="pose">pose.</param>
@@ -26909,7 +26909,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ProjectRobotJoints">
              <summary>
-             ProjectRobotJoints(id: str, name: str, robot_id: str, joints: List[arcor2.data.common.Joint], is_valid: bool = False)
+             ProjectRobotJoints(name: 'str', robot_id: 'str', joints: 'List[Joint]', is_valid: 'bool' = False, id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ProjectRobotJoints.#ctor">
@@ -26921,7 +26921,7 @@
              <summary>
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.ProjectRobotJoints" /> class.
              </summary>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="isValid">isValid (default to false).</param>
              <param name="joints">joints (required).</param>
              <param name="name">name (required).</param>
@@ -27497,7 +27497,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ProjectConstant">
              <summary>
-             ProjectConstant(id: str, name: str, type: str, value: str)
+             ProjectConstant(name: 'str', type: 'str', value: 'str', id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ProjectConstant.#ctor">
@@ -27509,7 +27509,7 @@
              <summary>
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.ProjectConstant" /> class.
              </summary>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="name">name (required).</param>
              <param name="type">type (required).</param>
              <param name="value">value (required).</param>
@@ -27797,7 +27797,7 @@
             </member>
         <member name="T:IO.Swagger.Model.BareScene">
              <summary>
-             BareScene(id: str, name: str, desc: str = &lt;factory&gt;, modified: Union[datetime.datetime, NoneType] = None, int_modified: Union[datetime.datetime, NoneType] = None)
+             BareScene(name: 'str', desc: 'str' = &lt;factory&gt;, modified: 'Optional[datetime]' = None, int_modified: 'Optional[datetime]' = None, id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.BareScene.#ctor">
@@ -27810,7 +27810,7 @@
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.BareScene" /> class.
              </summary>
              <param name="desc">desc (default to "").</param>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="intModified">intModified.</param>
              <param name="modified">modified.</param>
              <param name="name">name (required).</param>
@@ -27881,7 +27881,7 @@
             </member>
         <member name="T:IO.Swagger.Model.IdDesc">
              <summary>
-             IdDesc(id: str, name: str, desc: Union[str, NoneType])
+             IdDesc(id: 'str', name: 'str', desc: 'Optional[str]')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.IdDesc.#ctor">
@@ -28333,7 +28333,7 @@
             </member>
         <member name="T:IO.Swagger.Model.BareAction">
              <summary>
-             BareAction(id: str, name: str, type: str)
+             BareAction(name: 'str', type: 'str', id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.BareAction.#ctor">
@@ -28345,7 +28345,7 @@
              <summary>
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.BareAction" /> class.
              </summary>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="name">name (required).</param>
              <param name="type">type (required).</param>
             </member>
@@ -31328,7 +31328,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Flow">
              <summary>
-             Flow(type: arcor2.data.common.FlowTypes = &lt;FlowTypes.DEFAULT: 'default'&gt;, outputs: List[str] = &lt;factory&gt;)
+             Flow(type: 'FlowTypes' = &lt;FlowTypes.DEFAULT: 'default'&gt;, outputs: 'List[str]' = &lt;factory&gt;)
              </summary>
             </member>
         <member name="T:IO.Swagger.Model.Flow.TypeEnum">
@@ -31876,7 +31876,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Pose">
              <summary>
-             Pose(position: arcor2.data.common.Position = &lt;factory&gt;, orientation: arcor2.data.common.Orientation = &lt;factory&gt;)
+             Pose(position: 'Position' = &lt;factory&gt;, orientation: 'Orientation' = &lt;factory&gt;)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.Pose.#ctor(IO.Swagger.Model.Orientation,IO.Swagger.Model.Position)">
@@ -32468,7 +32468,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ActionPoint">
              <summary>
-             ActionPoint(id: str, name: str, position: arcor2.data.common.Position, parent: Union[str, NoneType] = None, orientations: List[arcor2.data.common.NamedOrientation] = &lt;factory&gt;, robot_joints: List[arcor2.data.common.ProjectRobotJoints] = &lt;factory&gt;, actions: List[arcor2.data.common.Action] = &lt;factory&gt;)
+             ActionPoint(name: 'str', position: 'Position', parent: 'Optional[str]' = None, id: 'str' = '', orientations: 'List[NamedOrientation]' = &lt;factory&gt;, robot_joints: 'List[ProjectRobotJoints]' = &lt;factory&gt;, actions: 'List[Action]' = &lt;factory&gt;)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ActionPoint.#ctor">
@@ -32480,7 +32480,7 @@
              <summary>
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.ActionPoint" /> class.
              </summary>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="name">name (required).</param>
              <param name="parent">parent.</param>
              <param name="position">position (required).</param>
@@ -32828,7 +32828,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Action">
              <summary>
-             Action(id: str, name: str, type: str, parameters: List[arcor2.data.common.ActionParameter] = &lt;factory&gt;, flows: List[arcor2.data.common.Flow] = &lt;factory&gt;)
+             Action(name: 'str', type: 'str', id: 'str' = '', parameters: 'List[ActionParameter]' = &lt;factory&gt;, flows: 'List[Flow]' = &lt;factory&gt;)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.Action.#ctor">
@@ -32840,7 +32840,7 @@
              <summary>
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.Action" /> class.
              </summary>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="name">name (required).</param>
              <param name="type">type (required).</param>
              <param name="flows">flows.</param>
@@ -33183,7 +33183,7 @@
             </member>
         <member name="T:IO.Swagger.Model.FunctionReturns">
              <summary>
-             FunctionReturns(type: str, link: str)
+             FunctionReturns(type: 'str', link: 'str')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.FunctionReturns.#ctor">
@@ -33537,7 +33537,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Parameter">
              <summary>
-             Parameter(name: str, type: str, value: str)
+             Parameter(name: 'str', type: 'str', value: 'str')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.Parameter.#ctor">
@@ -34836,7 +34836,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Position">
              <summary>
-             Position(x: float = 0.0, y: float = 0.0, z: float = 0.0)
+             Position(x: 'float' = 0.0, y: 'float' = 0.0, z: 'float' = 0.0)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.Position.#ctor(System.Decimal,System.Decimal,System.Decimal)">
@@ -35606,7 +35606,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Project">
              <summary>
-             Project(id: str, name: str, scene_id: str, desc: str = &lt;factory&gt;, has_logic: bool = True, modified: Union[datetime.datetime, NoneType] = None, int_modified: Union[datetime.datetime, NoneType] = None, action_points: List[arcor2.data.common.ActionPoint] = &lt;factory&gt;, constants: List[arcor2.data.common.ProjectConstant] = &lt;factory&gt;, functions: List[arcor2.data.common.ProjectFunction] = &lt;factory&gt;, logic: List[arcor2.data.common.LogicItem] = &lt;factory&gt;, object_overrides: List[arcor2.data.common.SceneObjectOverride] = &lt;factory&gt;)
+             Project(name: 'str', scene_id: 'str', desc: 'str' = &lt;factory&gt;, has_logic: 'bool' = True, modified: 'Optional[datetime]' = None, int_modified: 'Optional[datetime]' = None, id: 'str' = '', action_points: 'List[ActionPoint]' = &lt;factory&gt;, constants: 'List[ProjectConstant]' = &lt;factory&gt;, functions: 'List[ProjectFunction]' = &lt;factory&gt;, logic: 'List[LogicItem]' = &lt;factory&gt;, object_overrides: 'List[SceneObjectOverride]' = &lt;factory&gt;)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.Project.#ctor">
@@ -35620,7 +35620,7 @@
              </summary>
              <param name="desc">desc (default to "").</param>
              <param name="hasLogic">hasLogic (default to true).</param>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="intModified">intModified.</param>
              <param name="modified">modified.</param>
              <param name="name">name (required).</param>
@@ -35936,7 +35936,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ActionParameter">
              <summary>
-             ActionParameter(name: str, type: str, value: str)
+             ActionParameter(name: 'str', type: 'str', value: 'str')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ActionParameter.#ctor">
@@ -37087,7 +37087,7 @@
             </member>
         <member name="T:IO.Swagger.Model.ActionMetadata">
              <summary>
-             ActionMetadata(blocking: bool = False, composite: bool = False, blackbox: bool = False)
+             ActionMetadata(blocking: 'bool' = False, composite: 'bool' = False, blackbox: 'bool' = False)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.ActionMetadata.#ctor(System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
@@ -38730,7 +38730,7 @@
             </member>
         <member name="T:IO.Swagger.Model.BareActionPoint">
              <summary>
-             BareActionPoint(id: str, name: str, position: arcor2.data.common.Position, parent: Union[str, NoneType] = None)
+             BareActionPoint(name: 'str', position: 'Position', parent: 'Optional[str]' = None, id: 'str' = '')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.BareActionPoint.#ctor">
@@ -38742,7 +38742,7 @@
              <summary>
              Initializes a new instance of the <see cref="T:IO.Swagger.Model.BareActionPoint" /> class.
              </summary>
-             <param name="id">id (required).</param>
+             <param name="id">id (default to "").</param>
              <param name="name">name (required).</param>
              <param name="parent">parent.</param>
              <param name="position">position (required).</param>
@@ -38808,7 +38808,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Joint">
              <summary>
-             Joint(name: str, value: float)
+             Joint(name: 'str', value: 'float')
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.Joint.#ctor">
@@ -39665,7 +39665,7 @@
             </member>
         <member name="T:IO.Swagger.Model.Orientation">
              <summary>
-             Orientation(x: float = 0.0, y: float = 0.0, z: float = 0.0, w: float = 1.0)
+             Orientation(x: 'float' = 0.0, y: 'float' = 0.0, z: 'float' = 0.0, w: 'float' = 1.0)
              </summary>
             </member>
         <member name="M:IO.Swagger.Model.Orientation.#ctor(System.Decimal,System.Decimal,System.Decimal,System.Decimal)">
