@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Base;
 using UnityEngine;
 
 public class CubeSizeDialog : Dialog {
@@ -28,6 +29,11 @@ public class CubeSizeDialog : Dialog {
         inputZ.SetValue(GetIntegerAndUnits(dimension.z, 'z') + zUnit);
 
         OnSelectX();
+
+        GameManager.Instance.Gizmo.transform.SetParent(dummy.transform);
+        GameManager.Instance.Gizmo.transform.localPosition = Vector3.zero;
+        GameManager.Instance.Gizmo.transform.localRotation = Quaternion.identity;
+        GameManager.Instance.Gizmo.SetActive(true);
     }
 
     /// <summary>
@@ -172,6 +178,8 @@ public class CubeSizeDialog : Dialog {
 
     public override void Close() {
         dummy = null;
+        GameManager.Instance.Gizmo.SetActive(false);
+        GameManager.Instance.Gizmo.transform.SetParent(GameManager.Instance.Scene.transform);
         base.Close();
     }
 
