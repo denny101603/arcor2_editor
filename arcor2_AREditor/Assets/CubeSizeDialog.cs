@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Base;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CubeSizeDialog : Dialog {
     public TransformWheel TransformWheel;
-    private Vector3 origDimensions;
+    public Image ArrowImage; //for changing color
 
     [SerializeField]
     private LabeledInput inputX, inputY, inputZ;
@@ -16,6 +17,7 @@ public class CubeSizeDialog : Dialog {
     private string xUnit = "cm";
     private string yUnit = "cm";
     private string zUnit = "cm";
+    private Vector3 origDimensions;
 
     public void Init(DummyBox dummy) {
         this.dummy = dummy;
@@ -125,6 +127,7 @@ public class CubeSizeDialog : Dialog {
 
         SetVisualsUnselected();
         inputX.Text.fontStyle = TMPro.FontStyles.Bold;
+        ArrowImage.color = new Color32(27, 205, 33, 255); //green
     }
 
     public void OnSelectY() {
@@ -134,6 +137,7 @@ public class CubeSizeDialog : Dialog {
 
         SetVisualsUnselected();
         inputY.Text.fontStyle = TMPro.FontStyles.Bold;
+        ArrowImage.color = new Color32(27, 29, 200, 255); //blue
     }
     public void OnSelectZ() {
         selectedDimension = 'z';
@@ -142,6 +146,7 @@ public class CubeSizeDialog : Dialog {
 
         SetVisualsUnselected();
         inputZ.Text.fontStyle = TMPro.FontStyles.Bold;
+        ArrowImage.color = new Color32(255, 46, 45, 255); //red
     }
 
     private int GetValueFromString(string stringWithUnit) {
