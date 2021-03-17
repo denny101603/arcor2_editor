@@ -279,8 +279,10 @@ public class TransformMenu : Singleton<TransformMenu> {
     }
 
     public void HoldReleased() {
-        if (RobotTabletBtn.CurrentState == "tablet")
+        if (RobotTabletBtn.CurrentState == "tablet") {
             handHolding = false;
+            StoreInterPosition();
+        }
         else
             WebsocketManager.Instance.HandTeachingMode(robotId: robotId, enable: false);
     }
@@ -391,8 +393,8 @@ public class TransformMenu : Singleton<TransformMenu> {
 
     public void ResetTransformWheel() {
         StoreInterPosition();
-        if (handHolding)
-            cameraOrig = TransformConvertor.UnityToROS(InteractiveObject.transform.InverseTransformPoint(Camera.main.transform.position));
+        /*if (handHolding)
+            cameraOrig = TransformConvertor.UnityToROS(InteractiveObject.transform.InverseTransformPoint(Camera.main.transform.position));*/
         switch (Coordinates.GetSelectedAxis()) {
             case "x":
                 if (RotateTranslateBtn.CurrentState == "rotate")
