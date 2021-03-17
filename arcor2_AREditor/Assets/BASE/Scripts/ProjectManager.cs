@@ -609,7 +609,7 @@ namespace Base {
 
         public DummyBox AddDummyBox(string name) {
             Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0f));
-            DummyBox box = Instantiate(DummyBoxPrefab, ray.GetPoint(0.5f), Camera.main.transform.rotation, GameManager.Instance.Scene.transform).GetComponent<DummyBox>();
+            DummyBox box = Instantiate(DummyBoxPrefab, ray.GetPoint(0.5f), GameManager.Instance.Scene.transform.rotation, GameManager.Instance.Scene.transform).GetComponent<DummyBox>();
             string dummyBoxes = PlayerPrefsHelper.LoadString(Base.ProjectManager.Instance.ProjectMeta.Id + "/DummyBoxes", "");
             string newName = name;
             int i = 2;
