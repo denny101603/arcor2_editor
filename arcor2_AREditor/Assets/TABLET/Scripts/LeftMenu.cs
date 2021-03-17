@@ -16,7 +16,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public Button FocusButton, RobotButton, AddButton, SettingsButton, HomeButton;
     public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton,
-        AddActionButton, RenameButton, CalibrationButton, ResizeCubeButton, AddConnectionButton;
+        AddActionButton, RenameButton, CalibrationButton, ResizeCubeButton, AddConnectionButton, RunButton;
     public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
     public RenameDialog RenameDialog;
     public CubeSizeDialog CubeSizeDialog;
@@ -94,6 +94,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             RenameButton.interactable = false;
             CalibrationButton.interactable = false;
             ResizeCubeButton.interactable = false;
+            AddConnectionButton.interactable = false;
+            RunButton.interactable = true;
         } else {
             SelectedObjectText.text = selectedObject.GetName() + "\n" + selectedObject.GetType();
 
@@ -109,6 +111,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 selectedObject.GetType() == typeof(CreateAnchor);
             ResizeCubeButton.interactable = selectedObject is DummyBox;
             AddConnectionButton.interactable = selectedObject.GetType() == typeof(Action3D) && !((Action3D) selectedObject).Output.ConnectionExists();
+            RunButton.interactable = selectedObject.GetType() == typeof(Action3D);
         }
 
         if (SceneManager.Instance.SceneMeta != null)
@@ -338,6 +341,28 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         }
 
         SetActiveSubmenu(LeftMenuSelection.None);
+    }
+
+    public async void RunButtonClick() {
+        InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
+        if (selectedObject is null) {
+            GameManager.Instance.ShowLoadingScreen("Running project", true);
+            try {
+                await Base.WebsocketManager.Instance.TemporaryPackage();
+                MenuManager.Instance.MainMenu.Close();
+            } catch (RequestFailedException ex) {
+                Base.Notifications.Instance.ShowNotification("Failed to run temporary package", "");
+                Debug.LogError(ex);
+                GameManager.Instance.HideLoadingScreen(true);
+            }
+        } else if (selectedObject.GetType() == typeof(Action3D)) {
+            try {
+                await WebsocketManager.Instance.ExecuteAction(selectedObject.GetId(), false);
+            } catch (RequestFailedException ex) {
+                Notifications.Instance.ShowNotification("Failed to execute action", ex.Message);
+                return;
+            }
+        }
     }
 
     #endregion

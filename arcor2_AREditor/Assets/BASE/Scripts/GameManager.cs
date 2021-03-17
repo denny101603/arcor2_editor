@@ -563,6 +563,16 @@ namespace Base {
                     ProjectManager.Instance.EnableAllActionInputs(false);
                     EnableServiceInteractiveObjects(false);
                     break;
+                case EditorStateEnum.SelectingAction:
+                    ProjectManager.Instance.EnableAllActionPoints(false);
+                    ProjectManager.Instance.EnableAllActionInputs(false);
+                    ProjectManager.Instance.EnableAllActions(true);
+                    SceneManager.Instance.EnableAllActionObjects(false);
+                    ProjectManager.Instance.EnableAllOrientations(false);
+                    ProjectManager.Instance.EnableAllRobotsEE(false);
+                    EnableServiceInteractiveObjects(false);
+                    ProjectManager.Instance.EnableAllActionOutputs(false);
+                    break;
 
             }
             ObjectCallback = callback;

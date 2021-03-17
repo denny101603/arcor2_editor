@@ -17,6 +17,7 @@ namespace Base {
         [SerializeField]
         private OutlineOnClick outlineOnClick;
         public GameObject Arrow;
+        private object _origObject = null;
 
         public object ifValue;
 
@@ -166,9 +167,9 @@ namespace Base {
                 await WebsocketManager.Instance.RemoveLogicItem(logicItem.Data.Id);
                 ConnectionManagerArcoro.Instance.CreateConnectionToPointer(theOtherOne);
                 if (typeof(PuckOutput) == GetType()) {
-                    theOtherOne.GetComponent<PuckInput>().GetOutput();
+                    theOtherOne.GetComponent<PuckInput>().GetOutput(true, Action);
                 } else {
-                    theOtherOne.GetComponent<PuckOutput>().GetInput();
+                    theOtherOne.GetComponent<PuckOutput>().GetInput(true, Action);
                 }
             } catch (RequestFailedException ex) {
                 Debug.LogError(ex);
@@ -202,14 +203,15 @@ namespace Base {
         private void CreateNewConnection() {
             ConnectionManagerArcoro.Instance.CreateConnectionToPointer(gameObject);
             if (typeof(PuckOutput) == GetType()) {
-                GetInput();
+                GetInput(false);
             } else {
-                GetOutput();
+                GetOutput(false);
             }
         }
 
 
-        public async void GetInput() {
+        public async void GetInput(bool cancelCallback, object origObject = null) {
+            _origObject = origObject;
             /*List<Action> actionList = ProjectManager.Instance.GetAllActions();
             actionList.Add(ProjectManager.Instance.StartAction);
             actionList.Add(ProjectManager.Instance.EndAction);*/
@@ -218,10 +220,11 @@ namespace Base {
                     a.Input.Disable();
                 }
             }*/
-            GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingAction, GetInput, "Select next action", ValidateInput);
+            GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingAction, GetInput, "Select next action", ValidateInput, cancelCallback ? (UnityAction) CancelCallbackOutput : null);
         }
 
-        public async void GetOutput() {
+        public async void GetOutput(bool cancelCallback, object origObject = null) {
+            _origObject = origObject;
             /*List<Action> actionList = ProjectManager.Instance.GetAllActions();
             actionList.Add(ProjectManager.Instance.StartAction);
             actionList.Add(ProjectManager.Instance.EndAction);*/
@@ -230,7 +233,21 @@ namespace Base {
                     a.Output.Disable();
                 }
             }*/
-            GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingAction, GetOutput, "Select other action", ValidateOutput);
+            GameManager.Instance.RequestObject(GameManager.EditorStateEnum.SelectingAction, GetOutput, "Select other action", ValidateOutput, cancelCallback ? (UnityAction) CancelCallbackOutput : null);
+        }
+
+        public void CancelCallbackOutput() {
+            if (_origObject != null) {
+                GetOutput(_origObject);
+                _origObject = null;
+            }
+        }
+
+        public void CancelCallbackInput() {
+            if (_origObject != null) {
+                GetInput(_origObject);
+                _origObject = null;
+            }
         }
 
         private async Task<RequestResult> ValidateInput(object selectedInput) {
@@ -271,12 +288,12 @@ namespace Base {
         protected async virtual void GetInput(object selectedInput) {
             Action3D action = (Action3D) selectedInput;
             
-            InputOutput input = action.Input;
-            
-            if (selectedInput == null || input == null) {
+            if (selectedInput == null || action == null) {
                 ConnectionManagerArcoro.Instance.DestroyConnectionToMouse();
                 return;
             }
+            InputOutput input = action.Input;
+
             try {
                 await WebsocketManager.Instance.AddLogicItem(Action.Data.Id, input.Action.Data.Id, GetProjectLogicIf(), false);
                 ifValue = null;
@@ -290,13 +307,14 @@ namespace Base {
 
         private async void GetOutput(object selectedOutput) {
             Action3D action = (Action3D) selectedOutput;
-
-            PuckOutput output = action.Output;
+           
             
-            if (selectedOutput == null || output == null) {
+            
+            if (selectedOutput == null || action == null) {
                 ConnectionManagerArcoro.Instance.DestroyConnectionToMouse();
                 return;
             }
+            PuckOutput output = action.Output;
             try {
                 await WebsocketManager.Instance.AddLogicItem(output.Action.Data.Id, Action.Data.Id, output.GetProjectLogicIf(), false);
                 ifValue = null;
@@ -365,12 +383,15 @@ namespace Base {
         }
 
         public override string GetName() {
-            
-            if (typeof(PuckOutput) == GetType()) {
-                return Action.Data.Name + "/Out";
-            } else {
-                return Action.Data.Name + "/In";
-            }
+            //if (logicItemIds.Count > 0) {
+                //GameObject theOtherOne = ConnectionManagerArcoro.Instance.GetConnectedTo(ProjectManager.Instance.LogicItems[logicItemIds[0]].GetConnection(), gameObject);
+                if (typeof(PuckOutput) == GetType()) {
+                    return Action.Data.Name + "/Out";
+                } else {
+                    return Action.Data.Name + "/In";
+                }
+            //}
+            //return "input/output";
         }
 
         public void Hide() {
