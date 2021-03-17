@@ -863,6 +863,12 @@ namespace Base {
                     continue;
                 ao.Enable(enable);
             }
+            foreach (DummyBox db in Resources.FindObjectsOfTypeAll(typeof(DummyBox))) {
+                db.Enable(enable);
+            }
+            foreach (DummyBox db in Resources.FindObjectsOfTypeAll(typeof(DummyAimBox))) {
+                db.Enable(enable);
+            }
         }
 
         public void EnableAllRobots(bool enable) {

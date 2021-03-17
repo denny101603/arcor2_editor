@@ -287,7 +287,7 @@ MonoBehaviour:
   UnitsDegrees: {fileID: 9014622126289755119}
   RobotTabletBtn: {fileID: 7493538937648367539}
   RotateTranslateBtn: {fileID: 1638670809968610058}
-  CanvasGroup: {fileID: 0}
+  CanvasGroup: {fileID: 4595658156852722566}
   DummyBoxing: {fileID: 2702871970587811200}
   Arrows:
   - {fileID: 1980452688994666791}

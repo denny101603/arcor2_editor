@@ -22,7 +22,6 @@ public class TransformMenu : Singleton<TransformMenu> {
     private Vector3 offsetPosition = new Vector3(), interPosition = new Vector3(), cameraOrig = new Vector3();
     private Quaternion offsetRotation = new Quaternion(), interRotation = Quaternion.identity;
 
-    [HideInInspector]
     public CanvasGroup CanvasGroup;
 
     private bool handHolding = false, DummyAimBox = false;
