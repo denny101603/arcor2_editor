@@ -305,12 +305,16 @@ public class TransformMenu : Singleton<TransformMenu> {
         offsetPosition = Vector3.zero;
         ResetTransformWheel();
         DummyAimBox = dummyAimBox;
-        if (DummyAimBox)
-            InteractiveObject = ((DummyAimBox) interactiveObject).ActionPoint;
-        else
-            InteractiveObject = interactiveObject;
         SwitchToTranslate();
-        SwitchToTablet ();
+        if (DummyAimBox) {
+            InteractiveObject = ((DummyAimBox) interactiveObject).ActionPoint;
+            SwitchToRobot();
+        }
+        else {
+            InteractiveObject = interactiveObject;
+            SwitchToTablet();
+        }
+        
         if (interactiveObject.GetType() == typeof(ActionPoint3D)) {
             model = ((ActionPoint3D) interactiveObject).GetModelCopy();
             //origRotation = TransformConvertor.UnityToROS(((ActionPoint3D) interactiveObject).GetRotation());
@@ -514,7 +518,7 @@ public class TransformMenu : Singleton<TransformMenu> {
         }*/
 
     public void RobotStepUp() {
-        RobotStep(GetPositionValue(5));
+        RobotStep(GetPositionValue(1));
     }
 
 

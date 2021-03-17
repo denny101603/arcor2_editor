@@ -111,7 +111,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 selectedObject.GetType() == typeof(CreateAnchor);
             ResizeCubeButton.interactable = selectedObject is DummyBox;
             AddConnectionButton.interactable = selectedObject.GetType() == typeof(Action3D) && !((Action3D) selectedObject).Output.ConnectionExists();
-            RunButton.interactable = selectedObject.GetType() == typeof(Action3D);
+            RunButton.interactable = selectedObject.GetType() == typeof(Action3D) || selectedObject.GetType() == typeof(ActionPoint3D);
         }
 
         if (SceneManager.Instance.SceneMeta != null)
@@ -362,7 +362,16 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 Notifications.Instance.ShowNotification("Failed to execute action", ex.Message);
                 return;
             }
-        }
+        } else if (selectedObject.GetType() == typeof(ActionPoint3D)) {
+            string robotId = "";
+            foreach (IRobot r in SceneManager.Instance.GetRobots()) {
+                robotId = r.GetId();
+            }
+            NamedOrientation o = ((ActionPoint3D) selectedObject).GetFirstOrientation();
+            IRobot robot = SceneManager.Instance.GetRobot(robotId);
+            await WebsocketManager.Instance.MoveToActionPointOrientation(robot.GetId(), (await robot.GetEndEffectorIds())[0], 0.5m, o.Id, false);
+        }            
+        
     }
 
     #endregion
