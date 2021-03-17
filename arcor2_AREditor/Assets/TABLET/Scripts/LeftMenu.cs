@@ -14,10 +14,10 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     private CanvasGroup CanvasGroup;
 
-    public Button FocusButton, RobotButton, AddButton, SettingsButton, HomeButton;
+    public Button FavoritesButton, RobotButton, AddButton, SettingsButton, HomeButton;
     public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton,
         AddActionButton, RenameButton, CalibrationButton, ResizeCubeButton, AddConnectionButton, RunButton;
-    public GameObject HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
+    public GameObject FavoritesButtons, HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
     public RenameDialog RenameDialog;
     public CubeSizeDialog CubeSizeDialog;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
@@ -65,8 +65,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             return;
 
         if (MenuManager.Instance.CheckIsAnyRightMenuOpened()) {
-            SetActiveSubmenu(LeftMenuSelection.None);
-            FocusButton.GetComponent<Image>().enabled = false;
+            SetActiveSubmenu(LeftMenuSelection.Favorites);
 
             RobotButton.interactable = false;
             AddButton.interactable = false;
@@ -74,8 +73,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             HomeButton.interactable = false;
             return;
         }
-
-        FocusButton.GetComponent<Image>().enabled = SelectorMenu.Instance.gameObject.activeSelf;
 
         RobotButton.interactable = true;
         AddButton.interactable = true;
@@ -139,9 +136,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
 
 
-    public void FocusButtonClick() {
+    public void FavoritesButtonClick() {
         MenuManager.Instance.HideAllMenus();
-        SetActiveSubmenu(LeftMenuSelection.None);
+        SetActiveSubmenu(LeftMenuSelection.Favorites);
 
     }
 
@@ -152,18 +149,18 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
 
     public void AddButtonClick() {
-        SetActiveSubmenu(LeftMenuSelection.Add, !AddButtons.activeInHierarchy);
+        SetActiveSubmenu(LeftMenuSelection.Add);
 
     }
 
     public void SettingsButtonClick() {
-        SetActiveSubmenu(LeftMenuSelection.Settings, !SettingsButtons.activeInHierarchy);
+        SetActiveSubmenu(LeftMenuSelection.Settings);
 
 
     }
 
     public void HomeButtonClick() {
-        SetActiveSubmenu(LeftMenuSelection.Home, !HomeButtons.activeInHierarchy);
+        SetActiveSubmenu(LeftMenuSelection.Home);
     }
 
     #region Add submenu button click methods
@@ -201,6 +198,10 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
 
     public void AddActionClick() {
+        if (!SelectorMenu.Instance.gameObject.activeSelf && !AddActionButton.GetComponent<Image>().enabled) { //other menu/dialog opened
+            SetActiveSubmenu(LeftMenuSelection.Favorites); //close all other opened menus/dialogs and takes care of red background of buttons
+        }
+
         if (AddActionButton.GetComponent<Image>().enabled) {
             AddActionButton.GetComponent<Image>().enabled = false;
             SelectorMenu.Instance.gameObject.SetActive(true);
@@ -214,7 +215,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public void AddActionPointClick() {
         GameManager.Instance.AddActionPointExperiment();
-        SetActiveSubmenu(LeftMenuSelection.None);
     }
 
     public void AddMeshClick() {
@@ -260,11 +260,10 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             return;
         }
 
-        if (!SelectorMenu.Instance.gameObject.activeSelf && !MoveButton.GetComponent<Image>().enabled) { //other menu/dialog opened
-            SetActiveSubmenu(LeftMenuSelection.Settings); //close all other opened menus/dialogs and takes care of red background of buttons
-        }
 
-        
+        if (!SelectorMenu.Instance.gameObject.activeSelf && !MoveButton.GetComponent<Image>().enabled) { //other menu/dialog opened
+            SetActiveSubmenu(LeftMenuSelection.Favorites); //close all other opened menus/dialogs and takes care of red background of buttons
+        }
 
         if (MoveButton.GetComponent<Image>().enabled) {
             MoveButton.GetComponent<Image>().enabled = false;
@@ -322,7 +321,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             return;
 
         selectedObject.Remove();
-        SetActiveSubmenu(LeftMenuSelection.None);
     }
 
 
@@ -471,6 +469,10 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         switch (which) {
             case LeftMenuSelection.None:
                 break;
+            case LeftMenuSelection.Favorites:
+                FavoritesButtons.SetActive(active);
+                FavoritesButton.GetComponent<Image>().enabled = active;
+                break;
             case LeftMenuSelection.Add:
                 AddButtons.SetActive(active);
                 AddButton.GetComponent<Image>().enabled = active;
@@ -483,6 +485,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 HomeButtons.SetActive(active);
                 HomeButton.GetComponent<Image>().enabled = active;
                 break;
+            
         }
     }
 
@@ -496,11 +499,12 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         MeshPicker.SetActive(false);
         ActionPicker.SetActive(false);
 
+        FavoritesButtons.SetActive(false);
         HomeButtons.SetActive(false);
         SettingsButtons.SetActive(false);
         AddButtons.SetActive(false);
 
-        FocusButton.GetComponent<Image>().enabled = false;
+        FavoritesButton.GetComponent<Image>().enabled = false;
         RobotButton.GetComponent<Image>().enabled = false;
         AddButton.GetComponent<Image>().enabled = false;
         SettingsButton.GetComponent<Image>().enabled = false;
@@ -551,6 +555,6 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 }
 
 public enum LeftMenuSelection{
-    None, Add, Settings, Home
+    None, Favorites, Add, Settings, Home
 }
 
