@@ -15,8 +15,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     private CanvasGroup CanvasGroup;
 
     public Button FavoritesButton, RobotButton, AddButton, SettingsButton, HomeButton;
-    public Button AddMeshButton, MoveButton, RemoveButton, SetActionPointParentButton,
-        AddActionButton, RenameButton, CalibrationButton, ResizeCubeButton, AddConnectionButton, RunButton;
+    public Button AddMeshButton, MoveButton, MoveButton2, RemoveButton, SetActionPointParentButton,
+        AddActionButton, AddActionButton2, RenameButton, CalibrationButton, ResizeCubeButton,
+        AddConnectionButton, AddConnectionButton2, RunButton, RunButton2; //Buttons with number 2 are duplicates in favorites submenu
     public GameObject FavoritesButtons, HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
     public RenameDialog RenameDialog;
     public CubeSizeDialog CubeSizeDialog;
@@ -24,6 +25,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     private bool isVisibilityForced = false;
     private ActionPoint3D selectedActionPoint;
+    private LeftMenuSelection currentSubmenuOpened;
 
     private void Awake() {
         CanvasGroup = GetComponent<CanvasGroup>();
@@ -85,22 +87,28 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (requestingObject || selectedObject == null) {
             SelectedObjectText.text = "";
             MoveButton.interactable = false;
+            MoveButton2.interactable = false;
             RemoveButton.interactable = false;
             SetActionPointParentButton.interactable = false;
             AddActionButton.interactable = false;
+            AddActionButton2.interactable = false;
             RenameButton.interactable = false;
             CalibrationButton.interactable = false;
             ResizeCubeButton.interactable = false;
             AddConnectionButton.interactable = false;
+            AddConnectionButton2.interactable = false;
             RunButton.interactable = true;
+            RunButton2.interactable = true;
         } else {
             SelectedObjectText.text = selectedObject.GetName() + "\n" + selectedObject.GetType();
 
             MoveButton.interactable = selectedObject.Movable();
+            MoveButton2.interactable = selectedObject.Movable();
             RemoveButton.interactable = selectedObject.Removable();
 
             SetActionPointParentButton.interactable = selectedObject is ActionPoint3D;
             AddActionButton.interactable = selectedObject is ActionPoint3D;
+            AddActionButton2.interactable = selectedObject is ActionPoint3D;
             RenameButton.interactable = selectedObject is ActionPoint3D ||
                 selectedObject is DummyBox ||
                 selectedObject is Action3D;
@@ -108,7 +116,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 selectedObject.GetType() == typeof(CreateAnchor);
             ResizeCubeButton.interactable = selectedObject is DummyBox;
             AddConnectionButton.interactable = selectedObject.GetType() == typeof(Action3D) && !((Action3D) selectedObject).Output.ConnectionExists();
+            AddConnectionButton2.interactable = AddConnectionButton.interactable;
             RunButton.interactable = selectedObject.GetType() == typeof(Action3D) || selectedObject.GetType() == typeof(ActionPoint3D);
+            RunButton2.interactable = RunButton.interactable;
         }
 
         if (SceneManager.Instance.SceneMeta != null)
@@ -198,16 +208,22 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     }
 
     public void AddActionClick() {
-        if (!SelectorMenu.Instance.gameObject.activeSelf && !AddActionButton.GetComponent<Image>().enabled) { //other menu/dialog opened
-            SetActiveSubmenu(LeftMenuSelection.Favorites); //close all other opened menus/dialogs and takes care of red background of buttons
+        //was clicked the button in favorites or settings submenu?
+        Button clickedButton = AddActionButton;
+        if (currentSubmenuOpened == LeftMenuSelection.Favorites) {
+            clickedButton = AddActionButton2;
         }
 
-        if (AddActionButton.GetComponent<Image>().enabled) {
-            AddActionButton.GetComponent<Image>().enabled = false;
+        if (!SelectorMenu.Instance.gameObject.activeSelf && !clickedButton.GetComponent<Image>().enabled) { //other menu/dialog opened
+            SetActiveSubmenu(currentSubmenuOpened); //close all other opened menus/dialogs and takes care of red background of buttons
+        }
+
+        if (clickedButton.GetComponent<Image>().enabled) {
+            clickedButton.GetComponent<Image>().enabled = false;
             SelectorMenu.Instance.gameObject.SetActive(true);
             ActionPicker.SetActive(false);
         } else {
-            AddActionButton.GetComponent<Image>().enabled = true;
+            clickedButton.GetComponent<Image>().enabled = true;
             SelectorMenu.Instance.gameObject.SetActive(false);
             ActionPicker.SetActive(true);
         }
@@ -261,16 +277,21 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         }
 
 
-        if (!SelectorMenu.Instance.gameObject.activeSelf && !MoveButton.GetComponent<Image>().enabled) { //other menu/dialog opened
-            SetActiveSubmenu(LeftMenuSelection.Favorites); //close all other opened menus/dialogs and takes care of red background of buttons
+        //was clicked the button in favorites or settings submenu?
+        Button clickedButton = MoveButton;
+        if (currentSubmenuOpened == LeftMenuSelection.Favorites)
+            clickedButton = MoveButton2;
+
+        if (!SelectorMenu.Instance.gameObject.activeSelf && !clickedButton.GetComponent<Image>().enabled) { //other menu/dialog opened
+            SetActiveSubmenu(currentSubmenuOpened); //close all other opened menus/dialogs and takes care of red background of buttons
         }
 
-        if (MoveButton.GetComponent<Image>().enabled) {
-            MoveButton.GetComponent<Image>().enabled = false;
+        if (clickedButton.GetComponent<Image>().enabled) {
+            clickedButton.GetComponent<Image>().enabled = false;
             SelectorMenu.Instance.gameObject.SetActive(true);
             TransformMenu.Instance.Hide();
         } else {
-            MoveButton.GetComponent<Image>().enabled = true;
+            clickedButton.GetComponent<Image>().enabled = true;
             SelectorMenu.Instance.gameObject.SetActive(false);
             //selectedObject.StartManipulation();
             TransformMenu.Instance.Show(selectedObject, selectedObject.GetType() == typeof(DummyAimBox));
@@ -464,6 +485,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public void SetActiveSubmenu(LeftMenuSelection which, bool active = true) {
         DeactivateAllSubmenus();
+        currentSubmenuOpened = which;
         if (!active)
             return;
         switch (which) {
@@ -512,7 +534,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
         AddMeshButton.GetComponent<Image>().enabled = false;
         MoveButton.GetComponent<Image>().enabled = false;
+        MoveButton2.GetComponent<Image>().enabled = false;
         AddActionButton.GetComponent<Image>().enabled = false;
+        AddActionButton2.GetComponent<Image>().enabled = false;
         ResizeCubeButton.GetComponent<Image>().enabled = false;
     }
 
