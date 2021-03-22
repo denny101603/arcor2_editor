@@ -161,6 +161,12 @@ namespace Base {
             }
         }
 
+        private void Update() {
+            if (websocket != null && websocket.State == WebSocketState.Open) {
+                websocket.DispatchMessageQueue();
+            }
+        }
+
         /// <summary>
         /// Disconnects from server
         /// </summary>
