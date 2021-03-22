@@ -21,6 +21,7 @@ public class DummyAimBox : DummyBox, IActionPointParent {
             ActionPoint = args.ActionPoint;
             transform.SetParent(ActionPoint.transform);
             transform.localPosition = Vector3.zero;
+            transform.rotation = GameManager.Instance.Scene.transform.rotation;
         }
     }
 
@@ -41,7 +42,7 @@ public class DummyAimBox : DummyBox, IActionPointParent {
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed1", true);
         } else {
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed2", true);
-            WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(0, 0, 1));
+            WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(-0.432m, 0.44m, 0));
         }
     }
 

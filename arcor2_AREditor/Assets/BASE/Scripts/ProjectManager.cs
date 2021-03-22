@@ -626,13 +626,14 @@ namespace Base {
         }
 
         public DummyAimBox AddDummyAimBox(bool init = true) {
-            DummyAimBox box = Instantiate(DummyAimBoxPrefab, new Vector3(0, 0, 0), Quaternion.identity).GetComponent<DummyAimBox>();
+            DummyAimBox box = Instantiate(DummyAimBoxPrefab, new Vector3(0, 0, 0), Quaternion.identity, GameManager.Instance.Scene.transform).GetComponent<DummyAimBox>();
             try {
                 box.ActionPoint = GetactionpointByName("dabap");
                 box.transform.SetParent(box.ActionPoint.transform);
                 box.transform.localPosition = Vector3.zero;
+                box.transform.rotation = GameManager.Instance.Scene.transform.rotation;
             } catch (KeyNotFoundException ex) {
-                _ = Base.GameManager.Instance.AddActionPoint("dabap", "", new IO.Swagger.Model.Position((decimal) -0.3, 0, 0));
+                _ = Base.GameManager.Instance.AddActionPoint("dabap", "", new IO.Swagger.Model.Position(-0.25m, 0.59m, 0));
             } 
                 
             if (init) {
