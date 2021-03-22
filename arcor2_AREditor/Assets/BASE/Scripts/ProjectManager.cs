@@ -1201,6 +1201,8 @@ namespace Base {
                 action.ActionUpdateBaseData(DataHelper.ActionToBareAction(projectAction));
                 // updates parameters of the action
                 action.ActionUpdate(projectAction);
+                
+                SelectorMenu.Instance.ForceUpdateMenus();
                 updateProject = true;
                 SelectorMenu.Instance.SetSelectedObject(action, true);
             } catch (RequestFailedException ex) {

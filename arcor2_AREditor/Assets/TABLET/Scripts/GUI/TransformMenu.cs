@@ -260,6 +260,7 @@ public class TransformMenu : Singleton<TransformMenu> {
         Wheel.gameObject.SetActive(false);
         StepButtons.gameObject.SetActive(true);
         ResetPosition();
+        RobotTabletBtn.SetState("robot");
         if (RotateTranslateBtn.CurrentState == "rotate") {
             RotateTranslateBtn.SetState("translate");
             SwitchToTranslate();
