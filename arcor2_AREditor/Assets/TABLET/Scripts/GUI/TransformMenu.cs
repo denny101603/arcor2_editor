@@ -476,8 +476,10 @@ public class TransformMenu : Singleton<TransformMenu> {
                     Destroy(dummyPoints[i]);
                 }
                 DummyAimBox dummyAimBox = FindObjectOfType<DummyAimBox>();
-                if (dummyAimBox != null)
+                if (dummyAimBox != null) {
                     dummyAimBox.SetVisibility(false);
+                    dummyAimBox.Reseted = true;
+                }
             }
         }
         offsetPosition = Vector3.zero;

@@ -6,6 +6,7 @@ using UnityEngine;
 public class DummyAimBox : DummyBox, IActionPointParent {
     public bool Visible;
     public ActionPoint ActionPoint;
+    public bool Reseted = true;
 
     protected override void Awake() {
         base.Awake();
@@ -36,14 +37,21 @@ public class DummyAimBox : DummyBox, IActionPointParent {
 
 
     public async void AimFinished() {
+        if (!Reseted)
+            return;
         SetVisibility(true);
         bool aimed1 = PlayerPrefsHelper.LoadBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed1", false);
+        bool aimed2 = PlayerPrefsHelper.LoadBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed2", false);
         if (!aimed1) {
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed1", true);
-        } else {
+            PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed2", false);
+            WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(-0.25m, 0.59m, 0));
+        } else if (!aimed2) {
+            PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed1", false);
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed2", true);
             WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(-0.432m, 0.44m, 0));
         }
+        Reseted = false;
     }
 
     public void SetVisibility(bool visible) {

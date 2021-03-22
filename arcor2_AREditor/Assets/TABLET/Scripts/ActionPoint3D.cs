@@ -44,6 +44,8 @@ public class ActionPoint3D : Base.ActionPoint {
                 manipulationStarted = false;
             }
         }
+        if (GetName() == "dabap" && Visual.activeSelf)
+            Visual.SetActive(false);
             
         //TODO shouldn't this be called first?
         base.Update();
