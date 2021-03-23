@@ -57,7 +57,7 @@ public class TransformMenu : Singleton<TransformMenu> {
                 Coordinates.Y.SetDeltaMeters(model.transform.position.y - InteractiveObject.transform.position.y);
                 Coordinates.Z.SetValueMeters(endEffector.transform.position.z);
                 Coordinates.Z.SetDeltaMeters(model.transform.position.z - InteractiveObject.transform.position.z);
-                UpdateTranslate(GetPositionValue(TransformWheel.GetValue()));
+                //UpdateTranslate(GetPositionValue(TransformWheel.GetValue()));
                 return;
             }
         }

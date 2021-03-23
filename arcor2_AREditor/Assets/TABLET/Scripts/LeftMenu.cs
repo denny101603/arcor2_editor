@@ -115,7 +115,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             CalibrationButton.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
                 selectedObject.GetType() == typeof(CreateAnchor);
             ResizeCubeButton.interactable = selectedObject is DummyBox;
-            AddConnectionButton.interactable = selectedObject.GetType() == typeof(Action3D) && !((Action3D) selectedObject).Output.ConnectionExists();
+            AddConnectionButton.interactable = (selectedObject.GetType() == typeof(Action3D) ||
+                selectedObject.GetType() == typeof(StartAction)) && !((Action3D) selectedObject).Output.ConnectionExists();
             AddConnectionButton2.interactable = AddConnectionButton.interactable;
             RunButton.interactable = selectedObject.GetType() == typeof(Action3D) || selectedObject.GetType() == typeof(ActionPoint3D);
             RunButton2.interactable = RunButton.interactable;
@@ -202,7 +203,9 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
         if (selectedObject is null)
             return;
-        if (selectedObject.GetType() == typeof(Action3D)) {
+        if ((selectedObject.GetType() == typeof(Action3D) ||
+                selectedObject.GetType() == typeof(StartAction) ||
+                selectedObject.GetType() == typeof(EndAction))) {
             ((Action3D) selectedObject).OnClick(Clickable.Click.TOUCH);
         }
     }

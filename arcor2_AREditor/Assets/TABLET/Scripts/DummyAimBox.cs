@@ -45,11 +45,11 @@ public class DummyAimBox : DummyBox, IActionPointParent {
         if (!aimed1) {
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed1", true);
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed2", false);
-            WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(-0.25m, 0.59m, 0));
+            WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(-0.11m, 1m, 0));
         } else if (!aimed2) {
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed1", false);
             PlayerPrefsHelper.SaveBool(Base.ProjectManager.Instance.ProjectMeta.Id + "/BlueBox/aimed2", true);
-            WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(-0.432m, 0.44m, 0));
+            WebsocketManager.Instance.UpdateActionPointPosition(ActionPoint.GetId(), new IO.Swagger.Model.Position(-0.432m, 0.503m, 0));
         }
         Reseted = false;
     }
