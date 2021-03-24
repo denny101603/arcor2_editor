@@ -98,8 +98,8 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             ResizeCubeButton.interactable = false;
             AddConnectionButton.interactable = false;
             AddConnectionButton2.interactable = false;
-            RunButton.interactable = true;
-            RunButton2.interactable = true;
+            RunButton.interactable = false;
+            RunButton2.interactable = false;
         } else {
             SelectedObjectText.text = selectedObject.GetName() + "\n" + selectedObject.GetType();
 
@@ -119,7 +119,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
             AddConnectionButton.interactable = (selectedObject.GetType() == typeof(Action3D) ||
                 selectedObject.GetType() == typeof(StartAction)) && !((Action3D) selectedObject).Output.ConnectionExists();
             AddConnectionButton2.interactable = AddConnectionButton.interactable;
-            RunButton.interactable = selectedObject.GetType() == typeof(Action3D) || selectedObject.GetType() == typeof(ActionPoint3D);
+            RunButton.interactable = selectedObject.GetType() == typeof(StartAction) || selectedObject.GetType() == typeof(Action3D) || selectedObject.GetType() == typeof(ActionPoint3D);
             RunButton2.interactable = RunButton.interactable;
         }
 
@@ -382,7 +382,11 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public async void RunButtonClick() {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        if (selectedObject is null) {
+        if (selectedObject is null)
+            return;
+
+        if (selectedObject.GetType() == typeof(StartAction)) {
+            await GameManager.Instance.SaveProject();
             GameManager.Instance.ShowLoadingScreen("Running project", true);
             try {
                 await Base.WebsocketManager.Instance.TemporaryPackage();
