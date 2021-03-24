@@ -392,10 +392,15 @@ public class ActionObject3D : ActionObject {
     public override void Enable(bool enable) {
         base.Enable(enable);
 
-        if (enable)
+        if (enable) {
+            Visual.SetActive(true);
             modelMaterial.color = new Color(0.89f, 0.83f, 0.44f);
-        else
-            modelMaterial.color = Color.gray;
+        } else {
+            if(GameManager.Instance.GreyVsHide)
+                modelMaterial.color = Color.gray;
+            else
+                Visual.SetActive(false);
+        }
     }
 
     public override void OpenMenu() {

@@ -366,20 +366,25 @@ namespace Base {
 
         public override void Enable(bool enable) {
             base.Enable(enable);
-            if (enable)
-                foreach (Renderer renderer in outlineOnClick.Renderers) {
-                    if (Action.Data.Id == "START")
-                        renderer.material.color = Color.green;
-                    else if (Action.Data.Id == "END")
-                        renderer.material.color = Color.red;
-                    else
-                        renderer.material.color = new Color(0.9f, 0.84f, 0.27f);
+            if (GameManager.Instance.GreyVsHide) {
+                if (enable)
+                    foreach (Renderer renderer in outlineOnClick.Renderers) {
+                        if (Action.Data.Id == "START")
+                            renderer.material.color = Color.green;
+                        else if (Action.Data.Id == "END")
+                            renderer.material.color = Color.red;
+                        else
+                            renderer.material.color = new Color(0.9f, 0.84f, 0.27f);
+                    }
+                else {
+                    foreach (Renderer renderer in outlineOnClick.Renderers)
+                        renderer.material.color = Color.gray;
                 }
-            else {
+            } else {
                 foreach (Renderer renderer in outlineOnClick.Renderers)
-                    renderer.material.color = Color.gray;
+                    renderer.enabled = enable;
             }
-                
+
         }
 
         public override string GetName() {

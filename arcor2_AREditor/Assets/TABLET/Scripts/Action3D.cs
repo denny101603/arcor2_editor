@@ -126,11 +126,15 @@ public class Action3D : Base.Action {
 
     public override void Enable(bool enable) {
         base.Enable(enable);
-        foreach (Renderer renderer in outlineOnClick.Renderers)
-            if (enable)
-                renderer.material.color = new Color(0.9f, 0.84f, 0.27f);
-            else
-                renderer.material.color = Color.gray;
+        if (GameManager.Instance.GreyVsHide) {
+            foreach (Renderer renderer in outlineOnClick.Renderers)
+                if (enable)
+                    renderer.material.color = new Color(0.9f, 0.84f, 0.27f);
+                else
+                    renderer.material.color = Color.gray;
+        } else {
+            Visual.enabled = enable;
+        }
 
     }
 

@@ -22,6 +22,12 @@ namespace Base {
         public bool ExpertMode = true;
 
         /// <summary>
+        /// TRUE for setting objects GREY, when not enabled
+        /// FALSE for HIDING object completely, when not enabled
+        /// </summary>
+        public bool GreyVsHide;
+
+        /// <summary>
         /// Called when project was saved
         /// </summary>
         public event EventHandler OnSaveProject;
