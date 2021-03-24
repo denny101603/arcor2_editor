@@ -21,6 +21,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     public GameObject FavoritesButtons, HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
     public RenameDialog RenameDialog;
     public CubeSizeDialog CubeSizeDialog;
+    public ConfirmationDialog ConfirmationDialog;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
     private bool isVisibilityForced = false;
@@ -344,7 +345,21 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (selectedObject is null)
             return;
 
-        selectedObject.Remove();
+        UpdateVisibility(false, true);
+        SelectorMenu.Instance.gameObject.SetActive(false);
+        ConfirmationDialog.Open("Remove object",
+                         "Are you sure you want to remove " + selectedObject.GetName() + "?",
+                         () => {
+                             selectedObject.Remove();
+                             UpdateVisibility(true);
+                             SelectorMenu.Instance.gameObject.SetActive(true);
+                             ConfirmationDialog.Close();
+                         },
+                         () => {
+                             UpdateVisibility(true);
+                             SelectorMenu.Instance.gameObject.SetActive(true);
+                             ConfirmationDialog.Close();
+                             });
     }
 
 
