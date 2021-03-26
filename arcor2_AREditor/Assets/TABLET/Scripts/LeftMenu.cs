@@ -21,6 +21,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
     public GameObject FavoritesButtons, HomeButtons, SettingsButtons, AddButtons, MeshPicker, ActionPicker;
     public RenameDialog RenameDialog;
     public CubeSizeDialog CubeSizeDialog;
+    public VelocityDialog VelocityDialog;
     public ConfirmationDialog ConfirmationDialog;
     public TMPro.TMP_Text ProjectName, SelectedObjectText;
 
@@ -115,7 +116,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
                 selectedObject is Action3D;
             CalibrationButton.interactable = selectedObject.GetType() == typeof(Recalibrate) ||
                 selectedObject.GetType() == typeof(CreateAnchor);
-            ResizeCubeButton.interactable = selectedObject is DummyBox;
+            ResizeCubeButton.interactable = selectedObject is DummyBox || (selectedObject is Base.Action action && !(selectedObject is StartEndAction) && action.Metadata.Name == "move");
             AddConnectionButton.interactable = (selectedObject.GetType() == typeof(Action3D) ||
                 selectedObject.GetType() == typeof(StartAction)) && !((Action3D) selectedObject).Output.ConnectionExists();
             AddConnectionButton2.interactable = AddConnectionButton.interactable;
@@ -305,7 +306,7 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
 
     public void ResizeCubeClick() {
         InteractiveObject selectedObject = SelectorMenu.Instance.GetSelectedObject();
-        if (selectedObject is null || !(selectedObject is DummyBox))
+        if (selectedObject is null)
             return;
 
         if (!SelectorMenu.Instance.gameObject.activeSelf && !ResizeCubeButton.GetComponent<Image>().enabled) { //other menu/dialog opened
@@ -315,12 +316,21 @@ public class LeftMenu : Base.Singleton<LeftMenu> {
         if (ResizeCubeButton.GetComponent<Image>().enabled) {
             ResizeCubeButton.GetComponent<Image>().enabled = false;
             SelectorMenu.Instance.gameObject.SetActive(true);
-            CubeSizeDialog.Cancel(false);
+            if (selectedObject is DummyBox) {
+                CubeSizeDialog.Cancel(false);
+            } else if (selectedObject is Base.Action) {
+                VelocityDialog.Cancel(false);
+            }
         } else {
             ResizeCubeButton.GetComponent<Image>().enabled = true;
             SelectorMenu.Instance.gameObject.SetActive(false);
-            CubeSizeDialog.Init((DummyBox) selectedObject);
-            CubeSizeDialog.Open();
+            if (selectedObject is DummyBox) {
+                CubeSizeDialog.Init((DummyBox) selectedObject);
+                CubeSizeDialog.Open();
+            } else if (selectedObject is Base.Action action) {
+                VelocityDialog.Init(action);
+                VelocityDialog.Open();
+            }
         }
     }
 

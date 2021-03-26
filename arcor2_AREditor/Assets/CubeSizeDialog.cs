@@ -95,6 +95,9 @@ public class CubeSizeDialog : Dialog {
     private void Update() {
         if (dummy == null)
             return;
+        if (TransformWheel.GetValue() < 0)
+            TransformWheel.SetValue(0);
+
         switch (selectedDimension) {
             case 'x':
                 inputX.SetValue(TransformWheel.GetValue() + xUnit);
