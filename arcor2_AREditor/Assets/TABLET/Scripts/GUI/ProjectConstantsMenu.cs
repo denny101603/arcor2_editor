@@ -22,12 +22,6 @@ public class ProjectConstantsMenu : Singleton<ProjectConstantsMenu> {
     private bool isMenuOpened;
 
     public void Show() {
-        //if (!await action.WriteLock(false))
-        //    return false;
-        //currentAction = action;
-        //actionParameters = await Parameter.InitActionParameters(currentAction.ActionProvider.GetProviderId(), currentAction.Parameters.Values.ToList(), Content, OnChangeParameterHandler, DynamicContentLayout, CanvasRoot, false);
-        //parametersChanged = false;
-        //SaveParametersBtn.SetInteractivity(false, "Parameters unchaged");
         if (isMenuOpened) {
             Hide();
             return;
@@ -65,7 +59,7 @@ public class ProjectConstantsMenu : Singleton<ProjectConstantsMenu> {
 
     private ProjectConstantButton GenerateConstantButton(ProjectConstant constant) {
         ProjectConstantButton btn = Instantiate(ConstantButtonPrefab, Content.transform).GetComponent<ProjectConstantButton>();
-        //btn.transform.localScale = new Vector3(1, 1, 1);
+        btn.Id = constant.Id;
         btn.SetName(constant.Name);
         btn.SetValue(Base.Parameter.GetValue<string>(constant.Value)); //TODO fix other types than string
         btn.Button.onClick.AddListener(async () => {

@@ -5,10 +5,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using Base;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 public class ProjectConstantButton : MonoBehaviour
 {
     public Button Button;
+    [SerializeField]
+    private ButtonWithTooltip ButtonWithTooltip;
     public TMPro.TMP_Text Name, Value;
     public string Id;
 
@@ -16,6 +19,14 @@ public class ProjectConstantButton : MonoBehaviour
     void Start()
     {
         WebsocketManager.Instance.OnProjectConstantUpdated += OnConstantUpdated;
+        LockingEventsCache.Instance.OnObjectLockingEvent += OnLockingEvent;
+    }
+
+    private void OnLockingEvent(object sender, ObjectLockingEventArgs args) {
+        if (!args.ObjectIds.Contains(Id))
+            return;
+
+        ButtonWithTooltip.SetInteractivity(!args.Locked && args.Owner != LandingScreen.Instance.GetUsername(), "Constant is being edited by " + args.Owner);
     }
 
     private void OnConstantUpdated(object sender, ProjectConstantEventArgs args) {
@@ -28,6 +39,7 @@ public class ProjectConstantButton : MonoBehaviour
 
     private void OnDestroy() {
         WebsocketManager.Instance.OnProjectConstantUpdated -= OnConstantUpdated;
+        LockingEventsCache.Instance.OnObjectLockingEvent -= OnLockingEvent;
     }
 
     internal void SetName(string name) {
@@ -40,4 +52,5 @@ public class ProjectConstantButton : MonoBehaviour
     internal void SetValue(object value) {
         SetValue(value.ToString());
     }
+
 }
