@@ -14,7 +14,9 @@ public class MenuManager : Base.Singleton<MenuManager> {
 
     public OutputTypeDialog OutputTypeDialog;
     public ConnectionSelectorDialog ConnectionSelectorDialog;
-    public Dialog InputDialog, ConfirmationDialog, InputDialogWithToggle;
+    public LeftMenuScene LeftMenuScene;
+    public LeftMenuProject LeftMenuProject;
+    public Dialog InputDialog, ConfirmationDialog, InputDialogWithToggle, EditConstantDialog;
 
 
     private void Start() {
@@ -94,6 +96,7 @@ public class MenuManager : Base.Singleton<MenuManager> {
         ConfirmationDialog.Close();
         InputDialog.Close();
         InputDialogWithToggle.Close();
+        EditConstantDialog.Close();
     }
 
     public void DisableAllMenus() {

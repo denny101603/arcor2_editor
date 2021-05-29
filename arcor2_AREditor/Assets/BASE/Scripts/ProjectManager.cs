@@ -25,6 +25,10 @@ namespace Base {
         /// </summary>
         public Dictionary<string, LogicItem> LogicItems = new Dictionary<string, LogicItem>();
         /// <summary>
+        /// All Project constants <id, instance>
+        /// </summary>
+        public List<IO.Swagger.Model.ProjectConstant> ProjectConstants = new List<ProjectConstant>();
+        /// <summary>
         /// Spawn point for global action points
         /// </summary>
         public GameObject ActionPointsOrigin;
@@ -144,6 +148,23 @@ namespace Base {
             WebsocketManager.Instance.OnActionPointJointsUpdated += OnActionPointJointsUpdated;
             WebsocketManager.Instance.OnActionPointJointsBaseUpdated += OnActionPointJointsBaseUpdated;
             WebsocketManager.Instance.OnActionPointJointsRemoved += OnActionPointJointsRemoved;
+
+            WebsocketManager.Instance.OnProjectConstantAdded += OnProjectConstantAdded;
+            WebsocketManager.Instance.OnProjectConstantUpdated += OnProjectConstantUpdated;
+            WebsocketManager.Instance.OnProjectConstantRemoved += OnProjectConstantRemoved;
+        }
+
+        private void OnProjectConstantRemoved(object sender, ProjectConstantEventArgs args) {
+            ProjectConstants.Remove(args.ProjectConstant);
+        }
+
+        private void OnProjectConstantUpdated(object sender, ProjectConstantEventArgs args) {
+            ProjectConstants.RemoveAll(c => c.Id == args.ProjectConstant.Id);
+            ProjectConstants.Add(args.ProjectConstant);
+        }
+
+        private void OnProjectConstantAdded(object sender, ProjectConstantEventArgs args) {
+            ProjectConstants.Add(args.ProjectConstant);
         }
 
         private void OnActionPointJointsRemoved(object sender, StringEventArgs args) {
@@ -333,8 +354,8 @@ namespace Base {
                     
                 }
             }
-
             UpdateActionPoints(project);
+            UpdateProjectConstants(project.Constants);
             if (project.HasLogic)
                 UpdateLogicItems(project.Logic);
             if (project.Modified == System.DateTime.MinValue) { //new project, never saved
@@ -347,6 +368,13 @@ namespace Base {
             Valid = true;
             OnLoadProject?.Invoke(this, EventArgs.Empty);     
             return true;
+        }
+
+        private void UpdateProjectConstants(List<ProjectConstant> constants) {
+            ProjectConstants.Clear();
+            if (constants == null)
+                return;
+            ProjectConstants.AddRange(constants);
         }
 
 
@@ -371,6 +399,7 @@ namespace Base {
             ActionPoints.Clear();
             ConnectionManagerArcoro.Instance.Clear();
             LogicItems.Clear();
+            ProjectConstants.Clear();
             return true;
         }
 

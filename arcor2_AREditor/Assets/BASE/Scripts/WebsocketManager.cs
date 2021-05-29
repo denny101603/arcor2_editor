@@ -2593,6 +2593,14 @@ namespace Base {
             }
         }
 
+        /// <summary>
+        /// Add project constant
+        /// </summary>
+        /// <param name="name">Name of the project constant</param>
+        /// <param name="type">Type of the constant. As of now, 4 types are supported: str, int, bool, float</param>
+        /// <param name="value">Value of the constant. It needs to be formatted as JSON</param>
+        /// <param name="dryRun"></param>
+        /// <returns></returns>
         public async Task AddConstant(string name, string type, string value, bool dryRun = false) {
             int r_id = Interlocked.Increment(ref requestID);
             IO.Swagger.Model.AddConstantRequestArgs args = new AddConstantRequestArgs(name, type, value);
@@ -2610,7 +2618,7 @@ namespace Base {
         /// </summary>
         /// <param name="id">ID of constant</param>
         /// <param name="name">New name of constant</param>
-        /// <param name="value">New value of constant</param>
+        /// <param name="value">New value of constant in JSON format</param>
         /// <param name="dryRun"></param>
         /// <returns></returns>
         public async Task UpdateConstant(string id, string name, string value, bool dryRun = false) {
