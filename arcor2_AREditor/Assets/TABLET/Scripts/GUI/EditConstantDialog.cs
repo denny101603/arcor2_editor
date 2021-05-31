@@ -21,6 +21,8 @@ public class EditConstantDialog : Dialog
     private DropdownParameter dropdown;
     [SerializeField]
     private Toggle trueToggle;
+    [SerializeField]
+    private GameObject booleanBlock, removeButton;
 
     private ProjectConstant constant;
     private bool isNewConstant, booleanValue;
@@ -49,6 +51,7 @@ public class EditConstantDialog : Dialog
 
         if (isNewConstant) {
             Title.text = "Add new constant";
+            removeButton.SetActive(false);
             nameInput.SetValue("");
             valueInput.SetValue("");
             OnTypeSelected(ProjectConstantTypes.integer);
@@ -58,8 +61,9 @@ public class EditConstantDialog : Dialog
 
         } else { //editing constant
             try {
-                Title.text = "Edit constant";
                 await WebsocketManager.Instance.WriteLock(constant.Id, false);
+                Title.text = "Edit constant";
+                removeButton.SetActive(true);
                 nameInput.SetValue(constant.Name);
                 OnTypeSelected(constant.Type);
                 dropdown.Dropdown.selectedItemIndex = (int) selectedType;
@@ -75,6 +79,7 @@ public class EditConstantDialog : Dialog
 
             } catch (RequestFailedException e) {
                 Notifications.Instance.ShowNotification("Failed to lock " + constant.Name, e.Message);
+                this.constant = null;
                 return false;
             }
         }
@@ -83,7 +88,7 @@ public class EditConstantDialog : Dialog
 
     private void SetValueInputType() {
         valueInput.SetValue(null);
-        trueToggle.gameObject.SetActive(selectedType == ProjectConstantTypes.boolean);
+        booleanBlock.gameObject.SetActive(selectedType == ProjectConstantTypes.boolean);
         valueInput.gameObject.SetActive(selectedType != ProjectConstantTypes.boolean);
 
         switch (selectedType) {
@@ -203,6 +208,15 @@ public class EditConstantDialog : Dialog
             Notifications.Instance.ShowNotification("Failed to unlock " + constant.Name, e.Message);
         }
         Close();
+    }
+
+    public async void Remove() {
+        try {
+            await WebsocketManager.Instance.RemoveConstant(constant.Id);
+            Close();
+        } catch (RequestFailedException e) {
+            Notifications.Instance.ShowNotification("Failed to remove constant", e.Message);
+        }
     }
 }
 

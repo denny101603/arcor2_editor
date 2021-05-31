@@ -18,8 +18,12 @@ public class ProjectConstantsMenu : Singleton<ProjectConstantsMenu> {
     private bool parametersChanged;
     public VerticalLayoutGroup DynamicContentLayout;
     public GameObject CanvasRoot;
-    public EditConstantDialog EditConstantDialog;
+    private EditConstantDialog EditConstantDialog;
     private bool isMenuOpened;
+
+    private void Start() {
+        EditConstantDialog = (EditConstantDialog) MenuManager.Instance.EditConstantDialog;
+    }
 
     public void Show() {
         if (isMenuOpened) {
